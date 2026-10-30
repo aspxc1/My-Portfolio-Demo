@@ -1,0 +1,166 @@
+.hero {
+  display: flex;
+  flex-direction: column;
+  gap: 4rem;
+  padding-top: 3rem;
+  padding-bottom: 5rem;
+}
+
+.hero__top {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.hero__accent {
+  color: var(--primary);
+}
+
+.hero__muted {
+  color: var(--muted-foreground);
+}
+
+.hero__command {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: var(--muted-foreground);
+}
+
+/* ---------- ASCII art + info, side by side on wider screens ---------- */
+
+.hero__neofetch {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+
+.hero__ascii {
+  flex-shrink: 0;
+  font-size: 0.75rem;
+  line-height: 1.25;
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.hero__info {
+  display: flex;
+  min-width: 0;
+  flex-direction: column;
+  gap: 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.hero__title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.hero__name {
+  font-size: 2.25rem;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -0.05em;
+  text-wrap: balance;
+}
+
+.hero__dashes {
+  overflow: hidden;
+  white-space: nowrap;
+  color: var(--muted-foreground);
+}
+
+/* Two columns: amber keys on the left, values on the right. */
+.hero__facts {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  column-gap: 1rem;
+  row-gap: 0.25rem;
+}
+
+/* Lets the dt/dd inside each row sit directly in the grid above. */
+.hero__fact {
+  display: contents;
+}
+
+.hero__fact dt {
+  font-weight: 700;
+  color: var(--primary);
+}
+
+.hero__swatches {
+  display: flex;
+  gap: 0.25rem;
+  padding-top: 0.25rem;
+}
+
+.hero__swatch {
+  width: 1.75rem;
+  height: 1rem;
+  border: 1px solid var(--border);
+}
+
+/* ---------- Intro paragraph + status ---------- */
+
+.hero__intro {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.hero__summary {
+  max-width: 42rem;
+  font-size: 1.125rem;
+  line-height: 1.625;
+  color: var(--muted-foreground);
+  text-wrap: pretty;
+}
+
+.hero__summary-lead {
+  color: var(--foreground);
+}
+
+.hero__status {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.hero__status-dot {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 9999px;
+  background: var(--primary);
+}
+
+@media (min-width: 640px) {
+  .hero__ascii {
+    font-size: 1rem;
+  }
+  .hero__name {
+    font-size: 3.75rem;
+  }
+}
+
+@media (min-width: 768px) {
+  .hero {
+    padding-top: 5rem;
+  }
+  .hero__neofetch {
+    flex-direction: row;
+    align-items: flex-start;
+    gap: 3.5rem;
+  }
+  .hero__ascii {
+    font-size: 1.25rem;
+  }
+  .hero__summary {
+    font-size: 1.25rem;
+  }
+}

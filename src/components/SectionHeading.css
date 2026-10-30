@@ -1,0 +1,42 @@
+.section-heading {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.section-heading__path {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.75rem;
+  line-height: 1rem;
+  letter-spacing: 0.05em;
+  color: var(--primary);
+}
+
+/* The dashed line that runs to the right of the path. */
+.section-heading__rule {
+  flex: 1;
+  height: 1px;
+  border-top: 1px dashed var(--border);
+}
+
+.section-heading__title {
+  font-family: var(--font-mono);
+  font-size: 1.5rem;
+  line-height: 2rem;
+  font-weight: 700;
+  letter-spacing: -0.025em;
+}
+
+.section-heading__dollar {
+  color: var(--muted-foreground);
+}
+
+@media (min-width: 768px) {
+  .section-heading__title {
+    font-size: 2.25rem;
+    line-height: 2.5rem;
+  }
+}

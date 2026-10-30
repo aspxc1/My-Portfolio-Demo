@@ -1,0 +1,76 @@
+.listing {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+}
+
+.listing__muted {
+  color: var(--muted-foreground);
+}
+
+.listing__accent {
+  color: var(--primary);
+}
+
+/* Permissions and owner columns, a bit dimmer than regular muted text. */
+.listing__faint {
+  color: color-mix(in oklab, var(--muted-foreground) 70%, transparent);
+}
+
+.listing__list {
+  display: flex;
+  flex-direction: column;
+  padding-block: 0.5rem;
+  border-top: 1px dashed var(--border);
+  border-bottom: 1px dashed var(--border);
+}
+
+.listing__row {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: baseline;
+  column-gap: 1rem;
+  padding: 0.375rem 0.5rem;
+  transition: background-color 150ms;
+}
+
+.listing__row:hover,
+.listing__row:focus-visible {
+  background: var(--card);
+}
+
+.listing__row:focus-visible {
+  outline: none;
+}
+
+.listing__owner {
+  display: none;
+}
+
+/* Cuts long names off with "..." instead of wrapping. */
+.listing__file {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.listing__name--dir {
+  font-weight: 700;
+}
+
+.listing__row:hover .listing__name {
+  color: var(--primary);
+}
+
+@media (min-width: 640px) {
+  .listing__row {
+    grid-template-columns: auto auto 1fr;
+  }
+  .listing__owner {
+    display: inline;
+  }
+}

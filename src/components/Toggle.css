@@ -1,0 +1,25 @@
+.toggle {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.25rem;
+  color: var(--muted-foreground);
+  transition: color 150ms;
+}
+
+.toggle:hover,
+.toggle--active {
+  color: var(--foreground);
+}
+
+.toggle:focus-visible {
+  outline: 2px solid var(--primary);
+}
+
+/* Keeps the space inside "[ ] " from collapsing. */
+.toggle__box {
+  white-space: pre;
+}
+
+.toggle--active .toggle__box {
+  color: var(--primary);
+}

@@ -1,0 +1,65 @@
+import { profile, sections } from "../content/site.js"
+import "./HomeListing.css"
+
+function stripProtocol(url) {
+  return url.replace(/^https?:\/\/(www\.)?/, "")
+}
+
+/** Sections show up as folders, links as symlinks, files (like a resume) as files. */
+const entries = [
+  ...Object.values(sections).map((section) => ({
+    perms: "drwxr-xr-x",
+    name: `${section.id}/`,
+    href: `#${section.id}`,
+    kind: "dir",
+  })),
+  ...profile.links.map((link) => ({
+    perms: link.kind === "file" ? "-rw-r--r--" : "lrwxrwxrwx",
+    name: link.label,
+    href: link.href,
+    kind: link.kind,
+    target: link.kind === "link" ? stripProtocol(link.href) : null,
+  })),
+]
+
+export default function HomeListing() {
+  return (
+    <nav aria-label="Site" className="listing">
+      <p className="listing__muted">
+        <span className="listing__accent">{"$ "}</span>
+        {"ls -la ~"}
+      </p>
+      <p aria-hidden="true" className="listing__muted">{`total ${entries.length}`}</p>
+
+      <ul className="listing__list">
+        {entries.map((entry) => {
+          const isExternal = entry.kind !== "dir"
+          const nameClass = entry.kind === "dir" ? "listing__name listing__name--dir" : "listing__name"
+
+          return (
+            <li key={entry.name}>
+              <a
+                href={entry.href}
+                className="listing__row"
+                target={isExternal ? "_blank" : undefined}
+                rel={isExternal ? "noreferrer" : undefined}
+              >
+                <span aria-hidden="true" className="listing__faint">
+                  {entry.perms}
+                </span>
+                <span aria-hidden="true" className="listing__faint listing__owner">
+                  {profile.handle}
+                </span>
+                <span className="listing__file">
+                  <span className={nameClass}>{entry.name}</span>
+                  {entry.target ? <span className="listing__muted">{` -> ${entry.target}`}</span> : null}
+                  {isExternal ? <span className="sr-only"> (opens in new tab)</span> : null}
+                </span>
+              </a>
+            </li>
+          )
+        })}
+      </ul>
+    </nav>
+  )
+}
