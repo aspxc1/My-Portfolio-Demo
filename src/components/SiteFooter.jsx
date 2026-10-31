@@ -8,7 +8,7 @@ export default function SiteFooter() {
     <footer className="site-footer">
       <div className="container site-footer__inner">
         <p>{`© ${year} ${profile.name}`}</p>
-        <p>{`${site.footer} · ${profile.location}`}</p>
+        <p>{`${profile.location}`}</p>
       </div>
     </footer>
   )

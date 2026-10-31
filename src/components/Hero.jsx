@@ -2,7 +2,7 @@ import { hero, profile } from "../content/site.js"
 import HomeListing from "./HomeListing.jsx"
 import "./Hero.css"
 
-/** The little color blocks under the neofetch info, like a real terminal shows. */
+
 const swatchColors = ["var(--foreground)", "var(--primary)", "var(--muted-foreground)", "var(--card)"]
 
 export default function Hero() {
