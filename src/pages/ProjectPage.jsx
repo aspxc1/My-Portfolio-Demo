@@ -68,15 +68,6 @@ export default function ProjectPage() {
         ) : null}
       </header>
 
-      <figure className="project-page__figure">
-        <div className="project-page__diagram-box">
-          <pre className="project-page__diagram">{project.diagram}</pre>
-        </div>
-        <figcaption className="project-page__caption">
-          {`fig. ${index + 1} · ${project.name} · architecture`}
-        </figcaption>
-      </figure>
-
       <div className="project-page__columns">
         <div className="project-page__main">
           <section aria-labelledby="overview" className="project-page__section">

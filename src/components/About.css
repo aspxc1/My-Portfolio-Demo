@@ -10,7 +10,18 @@
   gap: 1.25rem;
 }
 
-/* Short present-tense notes, separate from the introduction in the hero. */
+.about__summary {
+  font-size: 1.125rem;
+  line-height: 1.625;
+  color: var(--muted-foreground);
+  text-wrap: pretty;
+}
+
+.about__summary-lead {
+  color: var(--foreground);
+}
+
+/* Short present-tense notes beneath the introduction. */
 .about__now {
   display: flex;
   flex-direction: column;

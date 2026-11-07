@@ -1,6 +1,6 @@
 /**
  * Personal info and site copy. Edit this file to make the site yours.
- * Projects live in content/projects.js, extracurriculars in content/extracurriculars.js.
+ * Projects live in projects.json, experience in experience.json. See README.md here for examples.
  */
 
 export const profile = {
@@ -10,7 +10,6 @@ export const profile = {
   role: "Computer & AI Engineering student",
   school: "Ain Shams University",
   location: "Cairo, Egypt",
-  status: "Open to summer 2027 tech internships",
   summary:
     "Placeholder, imma do it later",
   email: "aaserzanaty@gmail.com",
@@ -45,7 +44,7 @@ export const sections = {
   projects: { id: "projects", path: "~/projects", command: "ls ~/projects", nav: "projects" },
   extracurriculars: {
     id: "extracurriculars",
-    path: "~/extracurriculars",
+    path: "~/experience",
     command: "git log --activities",
     nav: "activities",
   },
@@ -55,14 +54,13 @@ export const sections = {
 export const about = {
   currently: [
     { label: "learning", description: "Full-stack development, with a focus on the backend." },
-    { label: "exploring", description: "Applied AI and machine learning." },
   ],
   skills: [
     { group: "Languages", items: ["JavaScript", "Python", "Java", "C++", "SQL"] },
     { group: "Web", items: ["Node.js", "React", "HTML", "CSS"] },
     { group: "Databases", items: ["PostgreSQL", "SQLite"] },
     { group: "ML / AI", items: ["PyTorch", "scikit-learn", "NumPy"] },
-    { group: "Environment", items: ["Linux", "GitHub"] },
+    { group: "Tools", items: ["Linux", "GitHub"] },
   ],
 }
 

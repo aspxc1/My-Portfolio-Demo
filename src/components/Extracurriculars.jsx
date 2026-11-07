@@ -1,4 +1,4 @@
-import { extracurriculars } from "../content/extracurriculars.js"
+import experience from "../content/experience.json"
 import { sections } from "../content/site.js"
 import TerminalSection from "./TerminalSection.jsx"
 import "./Extracurriculars.css"
@@ -16,9 +16,9 @@ export default function Extracurriculars() {
   return (
     <TerminalSection section={section} roomy>
       <ol className="activities">
-        {extracurriculars.map((item, i) => {
+        {experience.map((item, i) => {
           const isCurrent = item.end.toLowerCase() === "present"
-          const isLast = i === extracurriculars.length - 1
+          const isLast = i === experience.length - 1
 
           return (
             <li key={item.org + item.role} className="activity">

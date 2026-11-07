@@ -34,17 +34,6 @@
   color: var(--muted-foreground);
 }
 
-/* A small, faded preview of the architecture diagram. */
-.project-card__diagram {
-  height: 8rem;
-  overflow: hidden;
-  font-size: 9px;
-  line-height: 1.25;
-  color: color-mix(in oklab, var(--muted-foreground) 80%, transparent);
-  -webkit-mask-image: linear-gradient(to bottom, black 70%, transparent);
-  mask-image: linear-gradient(to bottom, black 70%, transparent);
-}
-
 .project-card__body {
   display: flex;
   flex-direction: column;

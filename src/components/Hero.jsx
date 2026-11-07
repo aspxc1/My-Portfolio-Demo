@@ -6,7 +6,6 @@ import { hero, profile } from "../content/site.js"
 import HomeListing from "./HomeListing.jsx"
 import "./Hero.css"
 
-
 const swatchColors = ["var(--foreground)", "var(--primary)", "var(--muted-foreground)", "var(--card)"]
 
 const COMMAND = "neofetch"
@@ -44,7 +43,6 @@ const DELAYS = {
   [STAGE.prompt]: TIMING.hold,
 }
 
-
 /** Tracks whether the block is on screen, so the loop pauses off-screen. */
 function useInView(ref) {
   const [inView, setInView] = useState(true)
@@ -59,7 +57,6 @@ function useInView(ref) {
 
   return inView
 }
-
 
 export default function Hero() {
   const title = `${profile.handle}@portfolio`
@@ -112,75 +109,64 @@ export default function Hero() {
 
   return (
     <section aria-labelledby="hero-title" className="container hero">
-      <div className="hero__top">
-        <div ref={runRef} className={runClassName} style={runStyle}>
-          <p className="hero__command">
-            <span aria-hidden="true" className="hero__prompt">
-              {"$ "}
-            </span>
-            {/* Width is animated, not the text, so the command stays intact for screen readers. */}
-            <span className="hero__command-text">{COMMAND}</span>
-            <span aria-hidden="true" className="hero__caret" />
-          </p>
+      <div ref={runRef} className={runClassName} style={runStyle}>
+        <p className="hero__command">
+          <span aria-hidden="true" className="hero__prompt">
+            {"$ "}
+          </span>
+          {/* Width is animated, not the text, so the command stays intact for screen readers. */}
+          <span className="hero__command-text">{COMMAND}</span>
+          <span aria-hidden="true" className="hero__caret" />
+        </p>
 
-          <div className="hero__neofetch">
-            <div aria-hidden="true" className="hero__art">
-              <Ascii
-                piece={synthwave}
-                className="hero__ascii"
-                options={{ fps: inView && stage >= STAGE.output ? synthwave.meta.fps : 0 }}
-              />
-            </div>
-
-            <div className="hero__info">
-              <div className="hero__title-group">
-                <p className="hero__muted">
-                  <span className="hero__accent">{profile.handle}</span>@portfolio
-                </p>
-                <h1 id="hero-title" className="hero__name">
-                  {profile.name}
-                  <span aria-hidden="true" className="hero__accent cursor">
-                    _
-                  </span>
-                </h1>
-                <p aria-hidden="true" className="hero__dashes">
-                  {"-".repeat(title.length + 8)}
-                </p>
-              </div>
-
-              <dl className="hero__facts">
-                {hero.neofetch.map((row) => (
-                  <div key={row.key} className="hero__fact">
-                    <dt>{row.key}</dt>
-                    <dd>{row.value}</dd>
-                  </div>
-                ))}
-              </dl>
-
-              <div aria-hidden="true" className="hero__swatches">
-                {swatchColors.map((color) => (
-                  <span key={color} className="hero__swatch" style={{ background: color }} />
-                ))}
-              </div>
-            </div>
+        <div className="hero__neofetch">
+          <div aria-hidden="true" className="hero__art">
+            <Ascii
+              piece={synthwave}
+              className="hero__ascii"
+              options={{ fps: inView && stage >= STAGE.output ? synthwave.meta.fps : 0 }}
+            />
           </div>
 
-          {/* The next prompt, printed after the output like a real shell would. */}
-          <p aria-hidden="true" className="hero__prompt-line">
-            <span className="hero__muted">{profile.handle}@portfolio</span>
-            <span className="hero__accent">:~$ </span>
-            <span className="hero__block-caret" />
-          </p>
+          <div className="hero__info">
+            <div className="hero__title-group">
+              <p className="hero__muted">
+                <span className="hero__accent">{profile.handle}</span>@portfolio
+              </p>
+              <h1 id="hero-title" className="hero__name">
+                {profile.name}
+                <span aria-hidden="true" className="hero__accent cursor">
+                  _
+                </span>
+              </h1>
+              <p aria-hidden="true" className="hero__dashes">
+                {"-".repeat(title.length + 8)}
+              </p>
+            </div>
+
+            <dl className="hero__facts">
+              {hero.neofetch.map((row) => (
+                <div key={row.key} className="hero__fact">
+                  <dt>{row.key}</dt>
+                  <dd>{row.value}</dd>
+                </div>
+              ))}
+            </dl>
+
+            <div aria-hidden="true" className="hero__swatches">
+              {swatchColors.map((color) => (
+                <span key={color} className="hero__swatch" style={{ background: color }} />
+              ))}
+            </div>
+          </div>
         </div>
 
-        <div className="hero__intro boot" style={{ animationDelay: "300ms" }}>
-          <p className="hero__summary">
-            <span className="hero__summary-lead">
-              {profile.role} at {profile.school}.
-            </span>{" "}
-            {profile.summary}
-          </p>
-        </div>
+        {/* The next prompt, printed after the output like a real shell would. */}
+        <p aria-hidden="true" className="hero__prompt-line">
+          <span className="hero__muted">{profile.handle}@portfolio</span>
+          <span className="hero__accent">:~$ </span>
+          <span className="hero__block-caret" />
+        </p>
       </div>
 
       <div className="boot" style={{ animationDelay: "450ms" }}>

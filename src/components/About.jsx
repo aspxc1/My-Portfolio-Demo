@@ -1,4 +1,4 @@
-import { about, sections } from "../content/site.js"
+import { about, profile, sections } from "../content/site.js"
 import TerminalSection from "./TerminalSection.jsx"
 import "./About.css"
 
@@ -9,6 +9,13 @@ export default function About() {
     <TerminalSection section={section} roomy>
       <div className="about__columns">
         <div className="about__block">
+          <p className="about__summary">
+            <span className="about__summary-lead">
+              {profile.role} at {profile.school}.
+            </span>{" "}
+            {profile.summary}
+          </p>
+
           <h3 className="label">Currently</h3>
           <dl className="about__now">
             {about.currently.map((item) => (

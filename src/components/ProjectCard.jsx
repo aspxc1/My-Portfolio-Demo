@@ -11,9 +11,6 @@ export default function ProjectCard({ project }) {
           <span className="project-card__category">{`~/${project.category}`}</span>
           <StatusBadge status={project.status} />
         </div>
-        <pre aria-hidden="true" className="project-card__diagram">
-          {project.diagram}
-        </pre>
         <div className="project-card__body">
           <h3 className="project-card__name">{project.name}</h3>
           <p className="project-card__tagline">{project.tagline}</p>

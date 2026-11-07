@@ -1,4 +1,4 @@
-import { projects } from "../content/projects.js"
+import projects from "../content/projects.json"
 
 export { projects }
 

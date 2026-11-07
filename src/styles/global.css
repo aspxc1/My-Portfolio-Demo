@@ -79,14 +79,6 @@ button {
   background: transparent;
 }
 
-table {
-  border-collapse: collapse;
-}
-
-pre {
-  font-family: var(--font-mono);
-}
-
 ::selection {
   background: var(--primary);
   color: var(--primary-foreground);
@@ -100,10 +92,6 @@ pre {
   max-width: 72rem;
   margin-inline: auto;
   padding-inline: 1.25rem;
-}
-
-.mono {
-  font-family: var(--font-mono);
 }
 
 /* Text that's only read by screen readers. */
@@ -137,7 +125,7 @@ pre {
   gap: 3rem;
 }
 
-/* Small amber uppercase labels like "INFO", "STACK", "OVERVIEW". */
+/* Small amber uppercase labels like "CURRENTLY", "STACK", "OVERVIEW". */
 .label {
   font-family: var(--font-mono);
   font-size: 0.75rem;
@@ -147,7 +135,7 @@ pre {
   color: var(--primary);
 }
 
-/* A bordered key/value list (About > Info, project page > Details). */
+/* A bordered key/value list for project details. */
 .kv-list {
   border: 1px solid var(--border);
   border-radius: var(--radius);

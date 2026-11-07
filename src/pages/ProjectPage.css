@@ -95,36 +95,6 @@
   color: var(--primary-foreground);
 }
 
-/* ---------- Architecture diagram ---------- */
-
-.project-page__figure {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.project-page__diagram-box {
-  overflow-x: auto;
-  padding: 1.5rem;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: var(--card);
-}
-
-.project-page__diagram {
-  width: max-content;
-  font-size: 0.75rem;
-  line-height: 1.375;
-}
-
-.project-page__caption {
-  font-family: var(--font-mono);
-  font-size: 10px;
-  text-transform: uppercase;
-  letter-spacing: 0.25em;
-  color: var(--muted-foreground);
-}
-
 /* ---------- Overview / Features / Details ---------- */
 
 .project-page__columns {
@@ -175,7 +145,7 @@
 
 /* ---------- Prev / next ---------- */
 
-/* Same trick as the About > Stack grid: the 1px gap shows the border color. */
+/* The 1px gap separates the previous and next project links. */
 .project-page__pager {
   display: grid;
   gap: 1px;
@@ -234,12 +204,6 @@
   }
   .project-page__tagline {
     font-size: 1.25rem;
-  }
-  .project-page__diagram-box {
-    padding: 2.5rem;
-  }
-  .project-page__diagram {
-    font-size: 0.875rem;
   }
   .project-page__description {
     font-size: 1.125rem;

@@ -9,7 +9,7 @@ import "./Projects.css"
 
 const section = sections.projects
 
-/** "all" plus every category used in content/projects.js, without duplicates. */
+/** "all" plus every category used in content/projects.json, without duplicates. */
 const categories = ["all", ...new Set(projects.map((project) => project.category))]
 
 export default function Projects() {

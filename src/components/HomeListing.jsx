@@ -9,7 +9,7 @@ function stripProtocol(url) {
 const entries = [
   ...Object.values(sections).map((section) => ({
     perms: "drwxr-xr-x",
-    name: `${section.id}/`,
+    name: `${section.path.replace(/^~\//, "")}/`,
     href: `#${section.id}`,
     kind: "dir",
   })),
