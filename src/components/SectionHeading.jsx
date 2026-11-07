@@ -16,7 +16,7 @@ export default function SectionHeading({ path, command, id }) {
         <span aria-hidden="true" className="section-heading__dollar">
           {"$ "}
         </span>
-        {command}
+        <span className="section-heading__command">{command}</span>
       </h2>
     </header>
   )

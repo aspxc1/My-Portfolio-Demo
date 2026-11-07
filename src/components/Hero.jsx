@@ -1,4 +1,7 @@
 import { useEffect, useRef, useState } from "react"
+import { Ascii } from "ascii.rest/react"
+import * as synthwave from "ascii.rest/pieces/synthwave"
+import useReducedMotion from "../lib/useReducedMotion.js"
 import { hero, profile } from "../content/site.js"
 import HomeListing from "./HomeListing.jsx"
 import "./Hero.css"
@@ -55,24 +58,6 @@ function useInView(ref) {
   }, [ref])
 
   return inView
-}
-
-
-/** Follows the OS "reduce motion" setting, including live changes. */
-function useReducedMotion() {
-  const [reduced, setReduced] = useState(
-    () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-  )
-
-  useEffect(() => {
-    const query = window.matchMedia("(prefers-reduced-motion: reduce)")
-    const onChange = (event) => setReduced(event.matches)
-
-    query.addEventListener("change", onChange)
-    return () => query.removeEventListener("change", onChange)
-  }, [])
-
-  return reduced
 }
 
 
@@ -139,9 +124,13 @@ export default function Hero() {
           </p>
 
           <div className="hero__neofetch">
-            <pre aria-hidden="true" className="hero__ascii">
-              {hero.asciiArt}
-            </pre>
+            <div aria-hidden="true" className="hero__art">
+              <Ascii
+                piece={synthwave}
+                className="hero__ascii"
+                options={{ fps: inView && stage >= STAGE.output ? synthwave.meta.fps : 0 }}
+              />
+            </div>
 
             <div className="hero__info">
               <div className="hero__title-group">

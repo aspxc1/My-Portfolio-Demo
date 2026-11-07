@@ -72,6 +72,16 @@
   color: var(--primary);
 }
 
+@media (max-width: 359px) {
+  .site-header__inner {
+    gap: 0.5rem;
+  }
+  .site-header__nav {
+    gap: 0.5rem;
+    font-size: 0.6875rem;
+  }
+}
+
 @media (min-width: 640px) {
   .site-header__handle,
   .site-header__dot-slash {

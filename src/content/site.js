@@ -5,7 +5,7 @@
 
 export const profile = {
   name: "Aaser Mohamed",
-  /** Short lowercase username, shown in the header prompt and terminal output. */
+
   handle: "aasermo",
   role: "Computer & AI Engineering student",
   school: "Ain Shams University",
@@ -30,12 +30,6 @@ export const site = {
 
 export const hero = {
 
-  asciiArt: String.raw`       __   
-   / / / (_)
-  / /_/ / / 
- / __  / /  
-/_/ /_/_/`,
-
   neofetch: [
     { key: "OS", value: `Computer Engineering @ ${profile.school}` },
     { key: "Uptime", value: "2nd year, graduating May 2029" },
@@ -48,7 +42,7 @@ export const hero = {
 
 export const sections = {
   about: { id: "about", path: "~/about", command: "whoami", nav: "about" },
-  projects: { id: "projects", path: "~/projects", command: "ls ./projects", nav: "projects" },
+  projects: { id: "projects", path: "~/projects", command: "ls ~/projects", nav: "projects" },
   extracurriculars: {
     id: "extracurriculars",
     path: "~/extracurriculars",

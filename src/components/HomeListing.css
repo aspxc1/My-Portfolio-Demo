@@ -52,6 +52,7 @@
 
 /* Cuts long names off with "..." instead of wrapping. */
 .listing__file {
+  position: relative;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
