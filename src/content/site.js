@@ -53,29 +53,17 @@ export const sections = {
 }
 
 export const about = {
-  facts: [
-    { key: "Program", value: "B.S. Computer Engineering" },
-    { key: "Expected grad", value: "May 2029" },
-    { key: "Interests", value: "" },
-    { key: "Currently", value: "Student" },
-    { key: "Learning", value: "Fullstack dev" },
+  currently: [
+    { label: "learning", description: "Full-stack development, with a focus on the backend." },
+    { label: "exploring", description: "Applied AI and machine learning." },
   ],
   skills: [
-    { group: "Languages", items: ["JavaScript", "Python", "Java", "SQL", "C++", "HTML", "CSS"] },
-    { group: "Frameworks/Tools", items: ["Node.js", "SQLite", "PostgreSQL", "React"] },
-    { group: "Platforms", items: ["Linux", "Github"] },
+    { group: "Languages", items: ["JavaScript", "Python", "Java", "C++", "SQL"] },
+    { group: "Web", items: ["Node.js", "React", "HTML", "CSS"] },
+    { group: "Databases", items: ["PostgreSQL", "SQLite"] },
     { group: "ML / AI", items: ["PyTorch", "scikit-learn", "NumPy"] },
+    { group: "Environment", items: ["Linux", "GitHub"] },
   ],
-  /** A tongue-in-cheek table. Delete the rows array contents to hide it. */
-  rateLimits: {
-    rows: [
-      { resource: "coffee", limit: "3", window: "per day" },
-      { resource: "open browser tabs", limit: "214", window: "per session" },
-      { resource: "side projects in flight", limit: "4", window: "concurrent" },
-      { resource: "meetings before 10am", limit: "0", window: "per day" },
-    ],
-
-  },
 }
 
 export const contact = {
