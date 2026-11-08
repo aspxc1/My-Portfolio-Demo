@@ -1,6 +1,6 @@
 /*
  * Phones: status | name | year, with the description and stack wrapping underneath.
- * Tablets and up: one line with the same columns as the table header in Projects.css.
+ * Laptops and up: one line with the same columns as the table header in Projects.css.
  */
 .project-row {
   display: grid;
@@ -83,7 +83,7 @@
   color: var(--primary);
 }
 
-@media (min-width: 768px) {
+@media (min-width: 1024px) {
   .project-row {
     grid-template-columns: 2.5rem 12rem 1fr 14rem 4rem 1.5rem;
   }

@@ -11,8 +11,18 @@
   color: var(--muted-foreground);
 }
 
-.listing__accent {
-  color: var(--primary);
+.listing__output {
+  display: flex;
+  flex-direction: column;
+  gap: inherit;
+  visibility: hidden;
+  opacity: 0;
+}
+
+.listing.terminal-run--output .listing__output {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity 180ms ease-out;
 }
 
 /* Permissions and owner columns, a bit dimmer than regular muted text. */
@@ -73,5 +83,13 @@
   }
   .listing__owner {
     display: inline;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .listing__output {
+    visibility: visible;
+    opacity: 1;
+    transition: none;
   }
 }

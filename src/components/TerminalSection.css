@@ -11,43 +11,10 @@
   min-width: 0;
 }
 
-.terminal-section--output .terminal-section__output {
+.terminal-run--output .terminal-section__output {
   visibility: visible;
   opacity: 1;
   transition: opacity 180ms ease-out;
-}
-
-.terminal-section .section-heading__command {
-  display: inline-block;
-  width: 0;
-  overflow: hidden;
-  vertical-align: bottom;
-  white-space: nowrap;
-  letter-spacing: 0;
-}
-
-.terminal-section--typing .section-heading__command {
-  width: var(--command-width);
-  transition: width var(--type-duration) steps(var(--command-steps), end);
-}
-
-.terminal-section--output .section-heading__command {
-  width: auto;
-}
-
-.terminal-section .section-heading__title::after {
-  content: "";
-  display: inline-block;
-  width: 0.5ch;
-  height: 0.9em;
-  margin-left: 0.15ch;
-  vertical-align: baseline;
-  background: var(--primary);
-  animation: blink 1s steps(1) infinite;
-}
-
-.terminal-section--output .section-heading__title::after {
-  display: none;
 }
 
 /* Keep the longest command on one line even on a narrow phone. */
@@ -58,13 +25,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .terminal-section .section-heading__command {
-    width: auto;
-    transition: none;
-  }
-  .terminal-section .section-heading__title::after {
-    display: none;
-  }
   .terminal-section__output {
     visibility: visible;
     opacity: 1;

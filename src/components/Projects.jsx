@@ -11,60 +11,63 @@ const section = sections.projects
 
 /** "all" plus every category used in content/projects.json, without duplicates. */
 const categories = ["all", ...new Set(projects.map((project) => project.category))]
+const showControls = projects.length >= 6
+const showFilters = showControls && categories.length > 2
 
 export default function Projects() {
   const [view, setView] = useState("list") // "list" or "grid"
   const [category, setCategory] = useState("all")
 
-  const visible = category === "all" ? projects : projects.filter((project) => project.category === category)
+  const activeCategory = showFilters && categories.includes(category) ? category : "all"
+  const layout = showControls ? view : "grid"
+  const visible = activeCategory === "all" ? projects : projects.filter((project) => project.category === activeCategory)
 
   return (
     <TerminalSection section={section}>
-      <div className="projects__controls">
-        <div role="group" aria-label="Filter by category" className="projects__filters">
-          {categories.map((c) => (
-            <Toggle key={c} active={category === c} onClick={() => setCategory(c)}>
-              {c}
-            </Toggle>
-          ))}
-        </div>
-        <div role="group" aria-label="Layout" className="projects__views">
-          <span className="projects__view-label">view:</span>
-          <Toggle active={view === "list"} onClick={() => setView("list")}>
-            list
-          </Toggle>
-          <Toggle active={view === "grid"} onClick={() => setView("grid")}>
-            grid
-          </Toggle>
-        </div>
-      </div>
-
-      <p className="projects__total" aria-live="polite">
-        {`total ${visible.length}`}
-      </p>
-
-      {view === "list" ? (
-        <div className="projects__table">
-          <div aria-hidden="true" className="projects__table-head">
-            <span>Stat</span>
-            <span>Name</span>
-            <span>Description</span>
-            <span>Stack</span>
-            <span>Year</span>
-            <span />
+      {showControls ? (
+        <div className="projects__controls">
+          {showFilters ? (
+            <div role="group" aria-label="Filter by category" className="projects__filters">
+              {categories.map((c) => (
+                <Toggle key={c} active={activeCategory === c} onClick={() => setCategory(c)}>
+                  {c}
+                </Toggle>
+              ))}
+            </div>
+          ) : null}
+          <div role="group" aria-label="Layout" className="projects__views">
+            <span className="projects__view-label">view:</span>
+            <Toggle active={view === "list"} onClick={() => setView("list")}>list</Toggle>
+            <Toggle active={view === "grid"} onClick={() => setView("grid")}>grid</Toggle>
           </div>
-          <ul className="projects__rows">
-            {visible.map((project) => (
-              <ProjectRow key={project.slug} project={project} />
-            ))}
-          </ul>
         </div>
+      ) : null}
+
+      {projects.length === 0 ? (
+        <p className="projects__empty">No projects listed yet.</p>
       ) : (
-        <ul className="projects__grid">
-          {visible.map((project) => (
-            <ProjectCard key={project.slug} project={project} />
-          ))}
-        </ul>
+        <>
+          <p className="projects__total" aria-live="polite">{`total ${visible.length}`}</p>
+          {layout === "list" ? (
+            <div className="projects__table">
+              <div aria-hidden="true" className="projects__table-head">
+                <span>Stat</span>
+                <span>Name</span>
+                <span>Description</span>
+                <span>Stack</span>
+                <span>Year</span>
+                <span />
+              </div>
+              <ul className="projects__rows">
+                {visible.map((project) => <ProjectRow key={project.slug} project={project} />)}
+              </ul>
+            </div>
+          ) : (
+            <ul className="projects__grid">
+              {visible.map((project) => <ProjectCard key={project.slug} project={project} />)}
+            </ul>
+          )}
+        </>
       )}
     </TerminalSection>
   )

@@ -33,7 +33,7 @@ export default function About() {
         <div className="about__block">
           <h3 className="label">Stack</h3>
           <dl className="about__stack">
-            {about.skills.map((group) => (
+            {about.skills.filter((group) => !group.hidden).map((group) => (
               <div key={group.group} className="about__stack-row">
                 <dt>{group.group}</dt>
                 <dd>

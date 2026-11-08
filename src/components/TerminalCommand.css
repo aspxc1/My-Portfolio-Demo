@@ -1,0 +1,51 @@
+.terminal-command {
+  display: inline-flex;
+  align-items: baseline;
+  vertical-align: bottom;
+  letter-spacing: 0;
+}
+
+.terminal-command__prompt {
+  white-space: pre;
+  color: var(--terminal-prompt-color, var(--primary));
+}
+
+.terminal-command__text {
+  display: inline-block;
+  width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+}
+
+.terminal-run--typing .terminal-command__text {
+  width: var(--command-width);
+  transition: width var(--type-duration) steps(var(--command-steps), end);
+}
+
+.terminal-run--output .terminal-command__text {
+  width: auto;
+}
+
+.terminal-command__caret {
+  flex-shrink: 0;
+  align-self: center;
+  width: 0.5ch;
+  height: 0.9em;
+  margin-left: 0.15ch;
+  background: var(--primary);
+  animation: blink 1s steps(1) infinite;
+}
+
+.terminal-run--output .terminal-command__caret {
+  display: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .terminal-run .terminal-command__text {
+    width: auto;
+    transition: none;
+  }
+  .terminal-command__caret {
+    display: none;
+  }
+}

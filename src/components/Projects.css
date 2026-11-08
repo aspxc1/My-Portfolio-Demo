@@ -38,6 +38,12 @@
   color: var(--muted-foreground);
 }
 
+.projects__empty {
+  color: var(--muted-foreground);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+}
+
 /* ---------- List view ---------- */
 
 .projects__table {
@@ -83,12 +89,12 @@
     align-items: center;
     justify-content: space-between;
   }
-  .projects__table-head {
-    display: grid;
-  }
 }
 
 @media (min-width: 1024px) {
+  .projects__table-head {
+    display: grid;
+  }
   .projects__grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }

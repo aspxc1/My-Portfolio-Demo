@@ -1,4 +1,6 @@
 import { profile, sections } from "../content/site.js"
+import useTerminalRun from "../lib/useTerminalRun.js"
+import TerminalCommand from "./TerminalCommand.jsx"
 import "./HomeListing.css"
 
 function stripProtocol(url) {
@@ -23,43 +25,46 @@ const entries = [
 ]
 
 export default function HomeListing() {
+  const run = useTerminalRun("ls -la ~")
+
   return (
-    <nav aria-label="Site" className="listing">
-      <p className="listing__muted">
-        <span className="listing__accent">{"$ "}</span>
-        {"ls -la ~"}
+    <nav ref={run.ref} aria-label="Site" className={`listing terminal-run terminal-run--${run.stage}`} style={run.style}>
+      <p className="listing__command">
+        <TerminalCommand command="ls -la ~" />
       </p>
-      <p aria-hidden="true" className="listing__muted">{`total ${entries.length}`}</p>
+      <div className="listing__output" inert={!run.finished}>
+        <p aria-hidden="true" className="listing__muted">{`total ${entries.length}`}</p>
 
-      <ul className="listing__list">
-        {entries.map((entry) => {
-          const isExternal = entry.kind !== "dir"
-          const nameClass = entry.kind === "dir" ? "listing__name listing__name--dir" : "listing__name"
+        <ul className="listing__list">
+          {entries.map((entry) => {
+            const isExternal = entry.kind !== "dir"
+            const nameClass = entry.kind === "dir" ? "listing__name listing__name--dir" : "listing__name"
 
-          return (
-            <li key={entry.name}>
-              <a
-                href={entry.href}
-                className="listing__row"
-                target={isExternal ? "_blank" : undefined}
-                rel={isExternal ? "noreferrer" : undefined}
-              >
-                <span aria-hidden="true" className="listing__faint">
-                  {entry.perms}
-                </span>
-                <span aria-hidden="true" className="listing__faint listing__owner">
-                  {profile.handle}
-                </span>
-                <span className="listing__file">
-                  <span className={nameClass}>{entry.name}</span>
-                  {entry.target ? <span className="listing__muted">{` -> ${entry.target}`}</span> : null}
-                  {isExternal ? <span className="sr-only"> (opens in new tab)</span> : null}
-                </span>
-              </a>
-            </li>
-          )
-        })}
-      </ul>
+            return (
+              <li key={entry.name}>
+                <a
+                  href={entry.href}
+                  className="listing__row"
+                  target={isExternal ? "_blank" : undefined}
+                  rel={isExternal ? "noreferrer" : undefined}
+                >
+                  <span aria-hidden="true" className="listing__faint">
+                    {entry.perms}
+                  </span>
+                  <span aria-hidden="true" className="listing__faint listing__owner">
+                    {profile.handle}
+                  </span>
+                  <span className="listing__file">
+                    <span className={nameClass}>{entry.name}</span>
+                    {entry.target ? <span className="listing__muted">{` -> ${entry.target}`}</span> : null}
+                    {isExternal ? <span className="sr-only"> (opens in new tab)</span> : null}
+                  </span>
+                </a>
+              </li>
+            )
+          })}
+        </ul>
+      </div>
     </nav>
   )
 }

@@ -23,15 +23,12 @@
 }
 
 .section-heading__title {
+  --terminal-prompt-color: var(--muted-foreground);
   font-family: var(--font-mono);
   font-size: 1.5rem;
   line-height: 2rem;
   font-weight: 700;
   letter-spacing: -0.025em;
-}
-
-.section-heading__dollar {
-  color: var(--muted-foreground);
 }
 
 @media (min-width: 768px) {

@@ -1,9 +1,9 @@
 .hero {
   display: flex;
   flex-direction: column;
-  gap: 4rem;
-  padding-top: 3rem;
-  padding-bottom: 5rem;
+  gap: 2.5rem;
+  padding-top: 2rem;
+  padding-bottom: 3rem;
 }
 
 .hero__accent {
@@ -29,46 +29,6 @@
   font-size: 0.875rem;
   line-height: 1.25rem;
   color: var(--foreground);
-}
-
-.hero__prompt {
-  white-space: pre; /* keeps the space after the $ */
-  color: var(--primary);
-}
-
-/*
- * The command text is always in the DOM; only its width is animated, in
- * steps, so it reads as characters being typed. The caret sits after it.
- */
-.hero__command-text {
-  width: 0;
-  overflow: hidden;
-  white-space: nowrap;
-  transition: width 180ms ease-out; /* clears the line when a new run starts */
-}
-
-.hero__run--typing .hero__command-text {
-  width: var(--command-width);
-  transition: width var(--type-duration) steps(var(--command-steps), end);
-}
-
-.hero__run--typed .hero__command-text {
-  width: var(--command-width);
-}
-
-/* Block cursor on the command line. Hidden once the command is submitted. */
-.hero__caret {
-  flex-shrink: 0;
-  align-self: center;
-  width: 0.5ch;
-  height: 1.05em;
-  margin-left: 2px;
-  background: var(--primary);
-  animation: blink 1s steps(1) infinite;
-}
-
-.hero__run--typed .hero__caret {
-  visibility: hidden;
 }
 
 /* Next prompt, printed once the output has landed. */
@@ -139,10 +99,11 @@
 }
 
 .hero__name {
+  font-family: var(--font-mono);
   font-size: 2.25rem;
   line-height: 1;
-  font-weight: 800;
-  letter-spacing: -0.05em;
+  font-weight: 700;
+  letter-spacing: 0;
   text-wrap: balance;
 }
 
@@ -189,20 +150,22 @@
 .hero__prompt-line {
   opacity: 0;
   transform: translateY(2px);
-  /* Fading out (not snapping) is what makes the loop read as a terminal clear. */
+  visibility: hidden;
   transition: opacity 300ms ease-out, transform 300ms ease-out;
 }
 
-.hero__run--output .hero__neofetch {
+.hero__run.terminal-run--output .hero__neofetch {
+  visibility: visible;
   opacity: 1;
   transform: none;
   transition: opacity 160ms ease-out, transform 160ms ease-out;
 }
 
-.hero__run--prompt .hero__prompt-line {
+.hero__run.terminal-run--output .hero__prompt-line {
+  visibility: visible;
   opacity: 1;
   transform: none;
-  transition: opacity 200ms ease-out;
+  transition: opacity 200ms ease-out 350ms;
 }
 
 @media (min-width: 640px) {
@@ -213,7 +176,7 @@
 
 @media (min-width: 768px) {
   .hero {
-    padding-top: 5rem;
+    padding-top: 3rem;
   }
 }
 
@@ -228,16 +191,13 @@
 /* Show the finished run immediately, with no typing or blinking, when asked. */
 @media (prefers-reduced-motion: reduce) {
   /* Same specificity as the stage rules above, so this wins by coming last. */
-  .hero__run .hero__command-text,
-  .hero__run .hero__neofetch,
-  .hero__run .hero__prompt-line {
+  .hero__run.terminal-run--output .hero__neofetch,
+  .hero__run.terminal-run--output .hero__prompt-line {
     width: auto;
+    visibility: visible;
     opacity: 1;
     transform: none;
     transition: none;
-  }
-  .hero__run .hero__caret {
-    display: none;
   }
   .hero__run .hero__block-caret {
     animation: none;

@@ -1,3 +1,4 @@
+import TerminalCommand from "./TerminalCommand.jsx"
 import "./SectionHeading.css"
 
 /**
@@ -13,10 +14,7 @@ export default function SectionHeading({ path, command, id }) {
         <span aria-hidden="true" className="section-heading__rule" />
       </div>
       <h2 id={id} className="section-heading__title">
-        <span aria-hidden="true" className="section-heading__dollar">
-          {"$ "}
-        </span>
-        <span className="section-heading__command">{command}</span>
+        <TerminalCommand command={command} />
       </h2>
     </header>
   )

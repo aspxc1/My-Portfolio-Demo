@@ -50,6 +50,8 @@ Keep a file as `[]` if you have no entries yet.
   or `links` when you have no items to add. No diagram is needed.
 
 Adding an entry updates the project list, grid, category filters and detail page.
+Collections of fewer than six projects use a simple grid. At six projects,
+list/grid controls appear; category filters appear when there are also multiple categories.
 
 ## Experience
 
@@ -87,3 +89,5 @@ For the live site, commit the JSON changes and run your usual build/deployment
 workflow; these files are bundled into the site at build time.
 
 Your name, summary, contact links and stack still live in `site.js`.
+Stack groups can use `hidden: true` to hide them without deleting their contents.
+To restore the ML / AI group, change its `hidden` value to `false` in `site.js`.

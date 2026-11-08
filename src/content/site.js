@@ -17,6 +17,7 @@ export const profile = {
   links: [
     { label: "github", href: "https://github.com/aspxc1", kind: "link" },
     { label: "linkedin", href: "https://www.linkedin.com/in/aaser-mohamed-695611352/", kind: "link" },
+    { label: "codeforces", href: "https://codeforces.com/profile/Aspxc1", kind: "link" },
     { label: "resume.pdf", href: "/resume.pdf", kind: "file" },
   ],
 }
@@ -45,8 +46,8 @@ export const sections = {
   extracurriculars: {
     id: "extracurriculars",
     path: "~/experience",
-    command: "git log --activities",
-    nav: "activities",
+    command: "git log --oneline",
+    nav: "history",
   },
   contact: { id: "contact", path: "~/contact", command: `ping ${profile.handle}`, nav: "contact" },
 }
@@ -57,10 +58,11 @@ export const about = {
   ],
   skills: [
     { group: "Languages", items: ["JavaScript", "Python", "Java", "C++", "SQL"] },
-    { group: "Web", items: ["Node.js", "React", "HTML", "CSS"] },
+    { group: "Web", items: ["Node.js", "Express.js", "React", "HTML", "CSS"] },
     { group: "Databases", items: ["PostgreSQL", "SQLite"] },
-    { group: "ML / AI", items: ["PyTorch", "scikit-learn", "NumPy"] },
-    { group: "Tools", items: ["Linux", "GitHub"] },
+    // Set hidden to false to show this group again.
+    { group: "ML / AI", hidden: true, items: ["PyTorch", "scikit-learn", "NumPy"] },
+    { group: "Tools", items: ["Linux", "Git/GitHub"] },
   ],
 }
 

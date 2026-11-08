@@ -1,122 +1,22 @@
-import { useEffect, useRef, useState } from "react"
 import { Ascii } from "ascii.rest/react"
 import * as synthwave from "ascii.rest/pieces/synthwave"
-import useReducedMotion from "../lib/useReducedMotion.js"
+import useTerminalRun from "../lib/useTerminalRun.js"
 import { hero, profile } from "../content/site.js"
 import HomeListing from "./HomeListing.jsx"
+import TerminalCommand from "./TerminalCommand.jsx"
 import "./Hero.css"
 
 const swatchColors = ["var(--foreground)", "var(--primary)", "var(--muted-foreground)", "var(--card)"]
 
-const COMMAND = "neofetch"
-
-/**
- * Pacing for the fake shell session, in milliseconds.
- * Change these to retune the feel.
- */
-const TIMING = {
-  startDelay: 600, // let the page's fade-in finish, then a beat before typing again
-  typeChar: 95, // per character of `neofetch`
-  afterCommand: 1200, // hold on the entered command so it can be read
-  beforePrompt: 900, // let the output land before the next prompt appears
-  hold: 2600, // sit on the finished output before the next run
-}
-
-/**
- * Stages of the run, repeated forever. Numbers let the JSX read as
- * `stage >= STAGE.output`: keep showing a stage until the next one begins.
- */
-const STAGE = {
-  idle: 0, // empty prompt; the previous output has faded away
-  typing: 1, // `neofetch` typing out
-  entered: 2, // command submitted, cursor moves on
-  output: 3, // ASCII art + header + every info row, all at once
-  prompt: 4, // fresh shell prompt, held for a moment
-}
-
-/** How long each stage stays on screen before advancing. */
-const DELAYS = {
-  [STAGE.idle]: TIMING.startDelay,
-  [STAGE.typing]: COMMAND.length * TIMING.typeChar,
-  [STAGE.entered]: TIMING.afterCommand,
-  [STAGE.output]: TIMING.beforePrompt,
-  [STAGE.prompt]: TIMING.hold,
-}
-
-/** Tracks whether the block is on screen, so the loop pauses off-screen. */
-function useInView(ref) {
-  const [inView, setInView] = useState(true)
-
-  useEffect(() => {
-    if (typeof IntersectionObserver === "undefined" || !ref.current) return
-
-    const observer = new IntersectionObserver(([entry]) => setInView(entry.isIntersecting))
-    observer.observe(ref.current)
-    return () => observer.disconnect()
-  }, [ref])
-
-  return inView
-}
-
 export default function Hero() {
   const title = `${profile.handle}@portfolio`
-  const runRef = useRef(null)
-  const inView = useInView(runRef)
-  const reducedMotion = useReducedMotion()
-  const [stage, setStage] = useState(reducedMotion ? STAGE.prompt : STAGE.idle)
-
-  // The loop only runs while the block is visible and motion is allowed.
-  const running = inView && !reducedMotion
-
-  useEffect(() => {
-    if (!running) return
-
-    let current = STAGE.idle
-    let timer = window.setTimeout(next, DELAYS[current])
-
-    setStage(current)
-
-    function next() {
-      current = current === STAGE.prompt ? STAGE.idle : current + 1
-      setStage(current)
-      timer = window.setTimeout(next, DELAYS[current])
-    }
-
-    return () => window.clearTimeout(timer)
-  }, [running])
-
-  // Show the finished output as-is when motion is reduced.
-  useEffect(() => {
-    if (reducedMotion) setStage(STAGE.prompt)
-  }, [reducedMotion])
-
-  const runClassName = [
-    "hero__run boot",
-    stage === STAGE.typing && "hero__run--typing",
-    stage >= STAGE.entered && "hero__run--typed",
-    stage >= STAGE.output && "hero__run--output",
-    stage >= STAGE.prompt && "hero__run--prompt",
-  ]
-    .filter(Boolean)
-    .join(" ")
-
-  const runStyle = {
-    animationDelay: "150ms",
-    "--command-width": `${COMMAND.length}ch`,
-    "--command-steps": String(COMMAND.length),
-    "--type-duration": `${COMMAND.length * TIMING.typeChar}ms`,
-  }
+  const run = useTerminalRun("neofetch")
 
   return (
     <section aria-labelledby="hero-title" className="container hero">
-      <div ref={runRef} className={runClassName} style={runStyle}>
+      <div ref={run.ref} className={`hero__run terminal-run terminal-run--${run.stage}`} style={run.style}>
         <p className="hero__command">
-          <span aria-hidden="true" className="hero__prompt">
-            {"$ "}
-          </span>
-          {/* Width is animated, not the text, so the command stays intact for screen readers. */}
-          <span className="hero__command-text">{COMMAND}</span>
-          <span aria-hidden="true" className="hero__caret" />
+          <TerminalCommand command="neofetch" />
         </p>
 
         <div className="hero__neofetch">
@@ -124,7 +24,7 @@ export default function Hero() {
             <Ascii
               piece={synthwave}
               className="hero__ascii"
-              options={{ fps: inView && stage >= STAGE.output ? synthwave.meta.fps : 0 }}
+              options={{ fps: run.inView && run.finished ? synthwave.meta.fps : 0 }}
             />
           </div>
 
@@ -169,9 +69,7 @@ export default function Hero() {
         </p>
       </div>
 
-      <div className="boot" style={{ animationDelay: "450ms" }}>
-        <HomeListing />
-      </div>
+      <HomeListing />
     </section>
   )
 }

@@ -1,6 +1,14 @@
 .contact__columns {
   display: grid;
-  gap: 2.5rem;
+  gap: 2rem;
+}
+
+.contact__intro {
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1rem;
 }
 
 .contact__blurb {
@@ -11,32 +19,80 @@
   text-wrap: pretty;
 }
 
-/* The fake terminal window with the ping output. */
+.contact__copy {
+  min-height: 2.75rem;
+  padding: 0.5rem 0.75rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  cursor: pointer;
+}
+
+.contact__copy:hover {
+  border-color: var(--primary);
+  color: var(--primary);
+}
+
+.contact__copy:focus-visible,
+.contact__reply:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 4px;
+}
+
+.contact__copy-status {
+  min-height: 1.25rem;
+  font-size: 0.875rem;
+  color: var(--primary);
+}
+
 .contact__terminal {
-  overflow-x: auto;
-  padding: 1.25rem;
+  min-width: 0;
+  padding: 1rem;
   border: 1px solid var(--border);
   border-radius: var(--radius);
   background: var(--card);
   font-family: var(--font-mono);
-  font-size: 0.875rem;
-  line-height: 1.25rem;
+  font-size: 0.8125rem;
+  line-height: 1.5;
   color: var(--muted-foreground);
 }
 
 .contact__replies {
-  display: flex;
-  flex-direction: column;
-  gap: 0.375rem;
   margin-top: 0.75rem;
 }
 
-.contact__replies li {
+.contact__replies li + li {
+  border-top: 1px solid var(--border);
+}
+
+/* The whole reply is a link; long addresses wrap within the terminal. */
+.contact__reply {
+  position: relative;
+  display: grid;
+  gap: 0.375rem;
+  padding-block: 0.875rem;
+}
+
+.contact__reply-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
   white-space: nowrap;
 }
 
-.contact__link {
+.contact__timing {
+  color: var(--muted-foreground);
+}
+
+.contact__address {
+  min-width: 0;
+  overflow-wrap: anywhere;
   color: var(--foreground);
+}
+
+.contact__reply:hover .contact__address {
+  color: var(--primary);
 }
 
 .contact__summary {
@@ -47,8 +103,20 @@
   color: var(--primary);
 }
 
+@media (min-width: 640px) {
+  .contact__terminal {
+    padding: 1.25rem;
+  }
+  .contact__reply {
+    grid-template-columns: 11rem minmax(0, 1fr);
+    gap: 1.25rem;
+    align-items: baseline;
+  }
+}
+
 @media (min-width: 1024px) {
   .contact__columns {
-    grid-template-columns: 1fr 1.4fr;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1.4fr);
+    gap: 2.5rem;
   }
 }
