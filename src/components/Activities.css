@@ -3,6 +3,12 @@
   flex-direction: column;
 }
 
+.activities__empty {
+  color: var(--muted-foreground);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+}
+
 /* Two columns: the "*" and vertical line on the left, the entry on the right. */
 .activity {
   display: grid;

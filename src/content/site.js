@@ -1,6 +1,6 @@
 /**
  * Personal info and site copy. Edit this file to make the site yours.
- * Projects live in projects.json, experience in experience.json. See README.md here for examples.
+ * Projects live in projects.json, activities in activities.json. See README.md here for examples.
  */
 
 export const profile = {
@@ -43,11 +43,11 @@ export const hero = {
 export const sections = {
   about: { id: "about", path: "~/about", command: "whoami", nav: "about" },
   projects: { id: "projects", path: "~/projects", command: "ls ~/projects", nav: "projects" },
-  extracurriculars: {
-    id: "extracurriculars",
-    path: "~/experience",
+  activities: {
+    id: "activities",
+    path: "~/activities",
     command: "git log --oneline",
-    nav: "history",
+    nav: "activities",
   },
   contact: { id: "contact", path: "~/contact", command: `ping ${profile.handle}`, nav: "contact" },
 }

@@ -1,5 +1,6 @@
 import { Link, useParams } from "react-router"
 import StatusBadge from "../components/StatusBadge.jsx"
+import ProjectGallery from "../components/ProjectGallery.jsx"
 import { profile } from "../content/site.js"
 import { getProject, projects } from "../lib/projects.js"
 import NotFoundPage from "./NotFoundPage.jsx"
@@ -67,6 +68,8 @@ export default function ProjectPage() {
           </ul>
         ) : null}
       </header>
+
+      <ProjectGallery key={project.slug} images={project.images} name={project.name} />
 
       <div className="project-page__columns">
         <div className="project-page__main">

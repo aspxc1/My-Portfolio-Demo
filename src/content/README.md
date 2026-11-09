@@ -1,9 +1,9 @@
 # Editing portfolio content
 
-Edit `projects.json` to add projects and `experience.json` to add experience.
+Edit `projects.json` to add projects and `activities.json` to add activities.
 Each file is a JSON array: copy an example below into the matching file, replace
 the sample text, then add more objects separated by commas. Entries display in
-the order you write them, so put your preferred projects and newest experience first.
+the order you write them, so put your preferred projects and newest activities first.
 
 The examples below are templates; they are not displayed on the site.
 Keep a file as `[]` if you have no entries yet.
@@ -20,6 +20,15 @@ Keep a file as `[]` if you have no entries yet.
     "status": "in-progress",
     "category": "web",
     "stack": ["React", "Node.js", "PostgreSQL"],
+    "images": [
+      {
+        "src": "/images/my-project/dashboard.webp",
+        "alt": "The project dashboard showing recent tasks",
+        "caption": "The main dashboard",
+        "width": 1600,
+        "height": 1000
+      }
+    ],
     "description": [
       "Explain the problem this project solves and who it is for.",
       "Describe your contribution and any interesting technical decisions."
@@ -53,7 +62,20 @@ Adding an entry updates the project list, grid, category filters and detail page
 Collections of fewer than six projects use a simple grid. At six projects,
 list/grid controls appear; category filters appear when there are also multiple categories.
 
-## Experience
+### Optional project images
+
+Put image files in `public/images/my-project/`, then reference them with a path
+starting at `/images/` as above. HTTPS image URLs work too. WebP, PNG, JPEG,
+AVIF and GIF files are supported by the browser.
+
+`images` is optional. Omit it or use `"images": []` to hide the entire screenshots
+section, including its heading and spacing. Each image needs a `src`; add a
+descriptive `alt` for accessibility. `caption`, `width` and `height` are optional;
+supplying the original dimensions reserves the correct space while loading.
+Images retain their proportions. An image that fails to load is removed, and
+the gallery disappears if none remain.
+
+## Activities
 
 ```json
 [

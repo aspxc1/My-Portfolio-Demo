@@ -1,0 +1,29 @@
+.project-gallery {
+  display: grid;
+  gap: 1.5rem;
+  min-width: 0;
+}
+
+.project-gallery figure {
+  display: grid;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.project-gallery img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-height: 42rem;
+  object-fit: contain;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+}
+
+.project-gallery figcaption {
+  max-width: 70ch;
+  color: var(--muted-foreground);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}

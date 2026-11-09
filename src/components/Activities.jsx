@@ -1,9 +1,9 @@
-import experience from "../content/experience.json"
+import activities from "../content/activities.json"
 import { sections } from "../content/site.js"
 import TerminalSection from "./TerminalSection.jsx"
-import "./Extracurriculars.css"
+import "./Activities.css"
 
-const section = sections.extracurriculars
+const section = sections.activities
 
 /** Turns any text into a short, stable, git-looking hash like "6314932". */
 function shortHash(input) {
@@ -12,13 +12,14 @@ function shortHash(input) {
   return hash.toString(16).padStart(8, "0").slice(0, 7)
 }
 
-export default function Extracurriculars() {
+export default function Activities() {
   return (
     <TerminalSection section={section} roomy>
       <ol className="activities">
-        {experience.map((item, i) => {
+        {activities.length === 0 ? <li className="activities__empty">No activities listed yet.</li> : null}
+        {activities.map((item, i) => {
           const isCurrent = item.end.toLowerCase() === "present"
-          const isLast = i === experience.length - 1
+          const isLast = i === activities.length - 1
 
           return (
             <li key={item.org + item.role} className="activity">

@@ -1,6 +1,6 @@
 import About from "../components/About.jsx"
 import Contact from "../components/Contact.jsx"
-import Extracurriculars from "../components/Extracurriculars.jsx"
+import Activities from "../components/Activities.jsx"
 import Hero from "../components/Hero.jsx"
 import Projects from "../components/Projects.jsx"
 import { site } from "../content/site.js"
@@ -15,7 +15,7 @@ export default function HomePage() {
       <Hero />
       <About />
       <Projects />
-      <Extracurriculars />
+      <Activities />
       <Contact />
     </main>
   )
