@@ -120,3 +120,13 @@ test("home and section menus name destinations clearly without shell commands or
     assert.doesNotMatch(menu, /ls -la|whoami|git log|ping aasermo|cd ~|drwx|lrwx/)
   }
 })
+
+test("the opening profile offers direct email and personal links without opening Contact", () => {
+  const html = render("/")
+  const contacts = html.match(/<nav[^>]+aria-label="Quick contact links"[\s\S]*?<\/nav>/)?.[0]
+  assert.ok(contacts, "Direct contact links are present on the opening profile")
+  assert.match(contacts, /href="mailto:aaserzanaty@gmail.com"/)
+  assert.match(contacts, /href="https:\/\/github.com\/aspxc1"/)
+  assert.match(contacts, /href="https:\/\/www.linkedin.com\/in\/aaser-mohamed-695611352\/"/)
+  assert.match(contacts, /href="https:\/\/codeforces.com\/profile\/Aspxc1"/)
+})

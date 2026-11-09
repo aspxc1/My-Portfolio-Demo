@@ -41,6 +41,20 @@ export default function Hero() {
               </p>
             </div>
 
+            <nav aria-label="Quick contact links" className="hero__contacts">
+              <a href={`mailto:${profile.email}`} className="text-link">{profile.email}</a>
+              <ul>
+                {profile.links.map((link) => (
+                  <li key={link.href}>
+                    <a href={link.href} target="_blank" rel="noreferrer" className="text-link">
+                      {{ github: "GitHub", linkedin: "LinkedIn", codeforces: "Codeforces" }[link.label] || link.label}
+                      <span className="sr-only"> (opens in new tab)</span>
+                    </a>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+
             <dl className="hero__facts">
               {hero.neofetch.map((row) => (
                 <div key={row.key} className="hero__fact">

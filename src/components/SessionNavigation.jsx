@@ -11,7 +11,7 @@ export default function SessionNavigation({ current }) {
         <span className="session-navigation__path">:{path}$ </span>
         <span className="terminal-cursor session-navigation__caret" />
       </p>
-      {current !== "home" ? <TerminalMenu current={current} /> : null}
+      {current !== "home" ? <TerminalMenu key={current} current={current} /> : null}
     </div>
   )
 }

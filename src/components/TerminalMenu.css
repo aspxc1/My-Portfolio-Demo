@@ -49,20 +49,24 @@
 }
 
 .terminal-menu__option[aria-current="page"] .terminal-menu__marker,
+.terminal-menu__option[data-selected="true"] .terminal-menu__marker,
 .terminal-menu__option:hover .terminal-menu__marker,
 .terminal-menu__option:focus-visible .terminal-menu__marker {
   visibility: visible;
 }
 
 .terminal-menu__option:hover,
+.terminal-menu__option[data-selected="true"],
 .terminal-menu__option:focus-visible {
   color: var(--primary-foreground);
   background: var(--primary);
 }
 
 .terminal-menu__option:hover .terminal-menu__marker,
+.terminal-menu__option[data-selected="true"] .terminal-menu__marker,
 .terminal-menu__option:focus-visible .terminal-menu__marker,
 .terminal-menu__option:hover .terminal-menu__description,
+.terminal-menu__option[data-selected="true"] .terminal-menu__description,
 .terminal-menu__option:focus-visible .terminal-menu__description {
   color: var(--primary-foreground);
 }

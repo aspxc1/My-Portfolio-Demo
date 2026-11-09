@@ -80,6 +80,27 @@
   gap: 0.25rem;
 }
 
+.hero__contacts {
+  display: grid;
+  justify-items: start;
+  gap: 0.75rem;
+  font-size: 0.8125rem;
+  line-height: 1.5;
+  overflow-wrap: anywhere;
+}
+
+.hero__contacts ul {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.25rem;
+}
+
+.hero__contacts a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+}
+
 .hero__name {
   font-family: var(--font-mono);
   font-size: clamp(1.75rem, 8vw, 2.25rem);
