@@ -116,12 +116,19 @@ To restore the ML / AI group, change its `hidden` value to `false` in `site.js`.
 
 ## Terminal navigation
 
-The home view runs `neofetch` and then reveals a TUI-style navigation menu.
-Visitors choose About, Projects, Activities or Contact; later sections never
-open automatically. Each section offers the same named destinations plus Home.
-The menu supports mouse/touch, Tab, arrow keys, Home/End and Enter. The current
-section is highlighted, and command typing remains in the section headers.
-Menu labels and descriptions live in `sections` in `site.js`. Links such as
+The home view runs `neofetch`, then types `./menu.sh` and prints a compact,
+numbered navigation menu. Other views print the same menu after their section
+output. Destinations are Home, About, Projects, Activities and Contact; later
+sections never open automatically. The current page is marked `current`,
+including Home. Opening email/profile links are next to your name in neofetch.
+
+Arrow keys and Enter work from the page without first clicking a menu option.
+Keys 1–5 open the numbered destinations directly. Tab and mouse/touch also work;
+Home/End move to the first/last item when the menu has focus. Shortcuts leave
+ordinary links, buttons, text fields and browser key combinations alone, and
+activate only when the menu command has finished. Keyboard selection starts on
+About on the home page and Home in other sections. Menu labels live in
+`sections` in `site.js`. Links such as
 `/#projects`, `/#about`, `/#activities` and `/#contact` open a view directly and
 work with browser Back/Forward. The old `/#experience` and `/#extracurriculars`
 links still open activities. Refresh preserves the chosen view and resets its

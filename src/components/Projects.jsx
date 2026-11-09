@@ -14,7 +14,7 @@ const categories = ["all", ...new Set(projects.map((project) => project.category
 const showControls = projects.length >= 6
 const showFilters = showControls && categories.length > 2
 
-export default function Projects() {
+export default function Projects({ onReady }) {
   const [view, setView] = useState("list") // "list" or "grid"
   const [category, setCategory] = useState("all")
 
@@ -23,7 +23,7 @@ export default function Projects() {
   const visible = activeCategory === "all" ? projects : projects.filter((project) => project.category === activeCategory)
 
   return (
-    <TerminalSection section={section}>
+    <TerminalSection section={section} onReady={onReady}>
       {showControls ? (
         <div className="projects__controls">
           {showFilters ? (

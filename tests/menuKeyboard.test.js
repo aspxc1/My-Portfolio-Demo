@@ -19,7 +19,15 @@ test("shortcuts leave links, editable fields and browser shortcuts alone", () =>
   assert.equal(getMenuKeyAction({ key: "Enter" }, { ...context, interactive: true }), null)
   assert.equal(getMenuKeyAction({ key: "ArrowDown" }, { ...context, editing: true }), null)
   assert.equal(getMenuKeyAction({ key: "1", ctrlKey: true }, context), null)
+  assert.equal(getMenuKeyAction({ key: "ArrowDown", shiftKey: true }, context), null)
+  assert.equal(getMenuKeyAction({ key: "Enter", shiftKey: true }, context), null)
   assert.equal(getMenuKeyAction({ key: "Enter", repeat: true }, context), null)
   assert.equal(getMenuKeyAction({ key: "Home" }, context), null)
   assert.deepEqual(getMenuKeyAction({ key: "Home" }, { ...context, insideMenu: true, selectedIndex: 2 }), { type: "select", index: 0 })
+})
+
+test("a focused menu link wins over a different hovered selection", () => {
+  const hovered = { ...context, selectedIndex: 3, focusedIndex: 0, insideMenu: true }
+  assert.deepEqual(getMenuKeyAction({ key: "Enter" }, hovered), { type: "open", index: 0 })
+  assert.deepEqual(getMenuKeyAction({ key: "ArrowDown" }, hovered), { type: "select", index: 1 })
 })

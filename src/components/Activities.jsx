@@ -12,9 +12,9 @@ function shortHash(input) {
   return hash.toString(16).padStart(8, "0").slice(0, 7)
 }
 
-export default function Activities() {
+export default function Activities({ onReady }) {
   return (
-    <TerminalSection section={section} roomy>
+    <TerminalSection section={section} roomy onReady={onReady}>
       <ol className="activities">
         {activities.length === 0 ? <li className="activities__empty">No activities listed yet.</li> : null}
         {activities.map((item, i) => {

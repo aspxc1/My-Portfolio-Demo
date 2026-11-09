@@ -4,9 +4,9 @@ import "./About.css"
 
 const section = sections.about
 
-export default function About() {
+export default function About({ onReady }) {
   return (
-    <TerminalSection section={section} roomy>
+    <TerminalSection section={section} roomy onReady={onReady}>
       <div className="about__columns">
         <div className="about__block">
           <p className="about__summary">

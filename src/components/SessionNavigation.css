@@ -11,7 +11,7 @@
   flex-wrap: wrap;
   align-items: center;
   color: var(--muted-foreground);
-  margin-bottom: 1.25rem;
+  margin-top: 1.25rem;
   overflow-wrap: anywhere;
 }
 

@@ -2,15 +2,18 @@ import { Ascii } from "ascii.rest/react"
 import * as synthwave from "ascii.rest/pieces/synthwave"
 import useTerminalRun from "../lib/useTerminalRun.js"
 import { hero, profile } from "../content/site.js"
-import TerminalMenu from "./TerminalMenu.jsx"
+import { useEffect } from "react"
 import TerminalCommand from "./TerminalCommand.jsx"
 import "./Hero.css"
 
 const swatchColors = ["var(--foreground)", "var(--primary)", "var(--muted-foreground)", "var(--card)"]
 
-export default function Hero() {
+export default function Hero({ onReady }) {
   const title = `${profile.handle}@portfolio`
   const run = useTerminalRun("neofetch")
+  useEffect(() => {
+    if (run.finished) onReady?.()
+  }, [run.finished, onReady])
 
   return (
     <section aria-labelledby="hero-title" className="container hero">
@@ -74,9 +77,6 @@ export default function Hero() {
 
       </div>
 
-      <div className={`hero__navigation${run.finished ? " hero__navigation--ready" : ""}`} inert={!run.finished}>
-        <TerminalMenu current="home" />
-      </div>
     </section>
   )
 }

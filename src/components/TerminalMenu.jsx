@@ -1,25 +1,27 @@
-import { useCallback, useEffect, useId, useRef, useState } from "react"
+import { useCallback, useEffect, useRef, useState } from "react"
 import { Link } from "react-router"
 import { sections } from "../content/site.js"
 import { getMenuKeyAction } from "../lib/menuKeyboard.js"
+import useTerminalRun from "../lib/useTerminalRun.js"
+import TerminalCommand from "./TerminalCommand.jsx"
 import "./TerminalMenu.css"
 
 const destinations = [
-  { id: "home", label: "Home", description: "Profile & navigation", href: "/" },
+  { id: "home", label: "Home", href: "/" },
   ...Object.values(sections).map((section) => ({
     id: section.id,
     label: section.nav,
-    description: section.description,
     href: `/#${section.id}`,
   })),
 ]
 
-export default function TerminalMenu({ current }) {
-  const menuId = useId()
+export default function TerminalMenu({ current, enabled = true }) {
+  const run = useTerminalRun("./menu.sh", { enabled })
   const menuRef = useRef(null)
-  const selectedRef = useRef(0)
-  const [selected, setSelected] = useState(0)
-  const items = destinations.filter((item) => current !== "home" || item.id !== "home")
+  const initialChoice = current === "home" ? 1 : 0
+  const selectedRef = useRef(initialChoice)
+  const [selected, setSelected] = useState(initialChoice)
+  const items = destinations
 
   const select = useCallback((index) => {
     selectedRef.current = index
@@ -27,12 +29,15 @@ export default function TerminalMenu({ current }) {
   }, [])
 
   useEffect(() => {
+    if (!run.finished) return
     function onKeyDown(event) {
       const menu = menuRef.current
       if (!menu || menu.closest("[inert]") || getComputedStyle(menu).visibility === "hidden") return
       const target = event.target instanceof Element ? event.target : null
+      const links = Array.from(menu.querySelectorAll("a"))
       const action = getMenuKeyAction(event, {
         selectedIndex: selectedRef.current,
+        focusedIndex: links.indexOf(target?.closest("a")),
         count: items.length,
         insideMenu: menu.contains(target),
         editing: !!target?.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="textbox"]'),
@@ -40,42 +45,44 @@ export default function TerminalMenu({ current }) {
       })
       if (!action) return
       event.preventDefault()
-      const links = menu.querySelectorAll("a")
       select(action.index)
       if (action.type === "open") links[action.index]?.click()
       else links[action.index]?.focus()
     }
     document.addEventListener("keydown", onKeyDown)
     return () => document.removeEventListener("keydown", onKeyDown)
-  }, [items.length, select])
+  }, [items.length, run.finished, select])
 
   return (
-    <nav ref={menuRef} aria-label="Portfolio navigation" className="terminal-menu">
-      <p className="terminal-menu__heading">Where to?</p>
-      <ul className="terminal-menu__options">
-        {items.map((item, index) => (
-          <li key={item.id}>
-            <Link
-              to={item.href}
-              aria-label={item.label}
-              aria-describedby={`${menuId}-${item.id}`}
-              aria-current={current === item.id ? "page" : undefined}
-              className="terminal-menu__option"
-              data-selected={selected === index ? "true" : undefined}
-              onFocus={() => select(index)}
-              onPointerEnter={() => select(index)}
-            >
-              <span aria-hidden="true" className="terminal-menu__marker">{">"}</span>
-              <span className="terminal-menu__label">{item.label}</span>
-              <span id={`${menuId}-${item.id}`} className="terminal-menu__description">{item.description}</span>
-            </Link>
-          </li>
-        ))}
-      </ul>
-      <p className="terminal-menu__help">
-        <span><kbd>↑</kbd> <kbd>↓</kbd> move</span>
-        <span><kbd>Enter</kbd> open</span>
-      </p>
-    </nav>
+    <div ref={run.ref} className={`terminal-menu terminal-run terminal-run--${run.stage}`} style={run.style}>
+      <p className="terminal-menu__command"><TerminalCommand command="./menu.sh" /></p>
+      <nav ref={menuRef} aria-label="Portfolio navigation" className="terminal-menu__output" inert={!run.finished}>
+        <h2 className="terminal-menu__heading">Navigate</h2>
+        <ol className="terminal-menu__options">
+          {items.map((item, index) => (
+            <li key={item.id}>
+              <Link
+                to={item.href}
+                aria-label={item.label}
+                aria-current={current === item.id ? "page" : undefined}
+                className="terminal-menu__option"
+                data-selected={selected === index ? "true" : undefined}
+                onFocus={() => select(index)}
+                onPointerEnter={() => select(index)}
+              >
+                <span aria-hidden="true" className="terminal-menu__number">{index + 1}.</span>
+                <span aria-hidden="true" className="terminal-menu__marker">{">"}</span>
+                <span className="terminal-menu__label">{item.label}</span>
+                {current === item.id ? <span className="terminal-menu__current">current</span> : null}
+              </Link>
+            </li>
+          ))}
+        </ol>
+        <p className="terminal-menu__help">
+          <span><kbd>↑↓</kbd> select</span>
+          <span><kbd>Enter</kbd> / <kbd>1–{items.length}</kbd> open</span>
+        </p>
+      </nav>
+    </div>
   )
 }

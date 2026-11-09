@@ -1,9 +1,13 @@
 import useTerminalRun from "../lib/useTerminalRun.js"
+import { useEffect } from "react"
 import SectionHeading from "./SectionHeading.jsx"
 import "./TerminalSection.css"
 
-export default function TerminalSection({ section, roomy = false, children }) {
+export default function TerminalSection({ section, roomy = false, onReady, children }) {
   const run = useTerminalRun(section.command)
+  useEffect(() => {
+    if (run.finished) onReady?.()
+  }, [run.finished, onReady])
 
   return (
     <section

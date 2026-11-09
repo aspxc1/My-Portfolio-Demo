@@ -6,8 +6,9 @@ const START_DELAY_MS = 100
 const SUBMIT_DELAY_MS = 120
 
 /** Only the selected view mounts. A new visit replays its command once. */
-export default function useTerminalRun(command) {
+export default function useTerminalRun(command, { enabled = true } = {}) {
   const ref = useRef(null)
+  const completedCommand = useRef(null)
   const reducedMotion = useReducedMotion()
   const [stage, setStage] = useState("waiting")
   const [inView, setInView] = useState(false)
@@ -16,20 +17,28 @@ export default function useTerminalRun(command) {
 
   useEffect(() => {
     setStage("waiting")
-    if (reducedMotion) {
+    if (!enabled) {
+      completedCommand.current = null
+      return
+    }
+    if (reducedMotion || completedCommand.current === command) {
+      completedCommand.current = command
       setStage("output")
       return
     }
     const startTimer = window.setTimeout(() => setStage("typing"), START_DELAY_MS)
     const outputTimer = window.setTimeout(
-      () => setStage("output"),
+      () => {
+        completedCommand.current = command
+        setStage("output")
+      },
       START_DELAY_MS + duration + SUBMIT_DELAY_MS,
     )
     return () => {
       window.clearTimeout(startTimer)
       window.clearTimeout(outputTimer)
     }
-  }, [command, reducedMotion, duration])
+  }, [command, enabled, reducedMotion, duration])
 
   useEffect(() => {
     const updateVisibility = () => setPageVisible(document.visibilityState !== "hidden")
@@ -49,12 +58,12 @@ export default function useTerminalRun(command) {
     }
   }, [])
 
-  const finished = reducedMotion || stage === "output"
+  const finished = enabled && (reducedMotion || stage === "output")
   return {
     ref,
     inView: inView && pageVisible && !reducedMotion,
     finished,
-    stage: finished ? "output" : stage,
+    stage: !enabled ? "queued" : finished ? "output" : stage,
     style: {
       "--command-width": `${command.length}ch`,
       "--command-steps": command.length,

@@ -1,9 +1,6 @@
 .hero {
-  display: flex;
-  flex-direction: column;
-  gap: 2.5rem;
   padding-top: 2rem;
-  padding-bottom: 3rem;
+  padding-bottom: 1rem;
 }
 
 .hero__accent {
@@ -98,7 +95,11 @@
 .hero__contacts a {
   display: inline-flex;
   align-items: center;
-  min-height: 2.75rem;
+  padding-block: 0.125rem;
+}
+
+@media (max-width: 639px), (pointer: coarse) {
+  .hero__contacts a { min-height: 2.75rem; }
 }
 
 .hero__name {
@@ -163,17 +164,6 @@
   transition: opacity 160ms ease-out, transform 160ms ease-out;
 }
 
-.hero__navigation {
-  opacity: 0;
-  visibility: hidden;
-}
-
-.hero__navigation--ready {
-  opacity: 1;
-  visibility: visible;
-  transition: opacity 180ms ease-out;
-}
-
 @media (min-width: 640px) {
   .hero__name {
     font-size: 3.75rem;
@@ -196,7 +186,6 @@
 
 /* Show the finished run immediately, with no typing or blinking, when asked. */
 @media (prefers-reduced-motion: reduce) {
-  .hero__navigation--ready { transition: none; }
   /* Same specificity as the stage rules above, so this wins by coming last. */
   .hero__run.terminal-run--output .hero__neofetch {
     width: auto;

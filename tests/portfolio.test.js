@@ -130,3 +130,16 @@ test("the opening profile offers direct email and personal links without opening
   assert.match(contacts, /href="https:\/\/www.linkedin.com\/in\/aaser-mohamed-695611352\/"/)
   assert.match(contacts, /href="https:\/\/codeforces.com\/profile\/Aspxc1"/)
 })
+
+test("Home is listed as the current page in its own menu", () => {
+  const html = render("/")
+  assert.match(html, /<a[^>]+aria-label="Home"[^>]+aria-current="page"/)
+})
+
+test("the menu is a queued script command following neofetch", () => {
+  const html = render("/")
+  assert.ok(html.indexOf("neofetch") < html.indexOf("./menu.sh"))
+  assert.match(html, /terminal-menu terminal-run terminal-run--queued/)
+  const menu = html.match(/<nav[^>]+aria-label="Portfolio navigation"[^>]*>/)?.[0]
+  assert.match(menu, /inert=""/)
+})
