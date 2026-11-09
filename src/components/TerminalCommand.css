@@ -31,6 +31,7 @@
   animation: none;
 }
 
+.terminal-run--waiting .terminal-command__caret,
 .terminal-run--typing .terminal-command__caret {
   display: inline-block;
   animation: blink 1s steps(1) infinite;
@@ -41,6 +42,7 @@
     width: auto;
     transition: none;
   }
+  .terminal-run--waiting .terminal-command__caret,
   .terminal-run--typing .terminal-command__caret {
     display: none;
   }

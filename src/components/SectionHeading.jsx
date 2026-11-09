@@ -13,9 +13,9 @@ export default function SectionHeading({ path, command, id }) {
         <span>{path}</span>
         <span aria-hidden="true" className="section-heading__rule" />
       </div>
-      <h2 id={id} className="section-heading__title">
+      <h1 id={id} className="section-heading__title">
         <TerminalCommand command={command} />
-      </h2>
+      </h1>
     </header>
   )
 }

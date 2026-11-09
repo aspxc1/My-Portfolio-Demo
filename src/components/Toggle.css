@@ -23,3 +23,11 @@
 .toggle--active .toggle__box {
   color: var(--primary);
 }
+
+@media (max-width: 639px), (pointer: coarse) {
+  .toggle {
+    display: inline-flex;
+    align-items: center;
+    min-height: 2.75rem;
+  }
+}

@@ -10,7 +10,7 @@ export default function TerminalSection({ section, roomy = false, children }) {
       ref={run.ref}
       aria-labelledby={`${section.id}-title`}
       id={section.id}
-      className={`section terminal-section terminal-run terminal-run--${run.stage}`}
+      className={`terminal-section terminal-run terminal-run--${run.stage}`}
       style={run.style}
     >
       <div className={`container section-inner${roomy ? " section-inner--roomy" : ""}`}>

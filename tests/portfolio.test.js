@@ -14,12 +14,15 @@ const fixtureProjects = [
   { ...baseProject, images: [{ src: "/images/project.webp", alt: "Project dashboard", caption: "The main view" }] },
   { ...baseProject, slug: "without-images" },
   { ...baseProject, slug: "empty-images", images: [] },
+  { ...baseProject, slug: "null-images", images: null },
+  { ...baseProject, slug: "blank-images", images: [{ src: "" }, null, { src: "   " }] },
 ]
 let server
 let App
 
 before(async () => {
   server = await createServer({
+    cacheDir: "node_modules/.vite-tests",
     server: { middlewareMode: true },
     plugins: [{
       name: "portfolio-test-content",
@@ -46,8 +49,9 @@ test("project details display supplied images with alt text and an optional capt
 })
 
 test("projects without images have no gallery, gallery heading or reserved image area", () => {
-  for (const slug of ["without-images", "empty-images"]) {
-    const html = render(`/projects/${slug}`)
+  for (const slug of ["without-images", "empty-images", "null-images", "blank-images"]) {
+    let html
+    assert.doesNotThrow(() => { html = render(`/projects/${slug}`) })
     assert.doesNotMatch(html, /project-gallery|<img|Screenshots/)
   }
 })
@@ -66,6 +70,7 @@ test("a section deep link renders only that section with commands to navigate el
   for (const id of ["about", "projects", "activities", "contact"]) {
     const html = render(`/#${id}`)
     assert.match(html, new RegExp(`id="${id}"`))
+    assert.match(html, new RegExp(`<h1[^>]+id="${id}-title"`))
     assert.doesNotMatch(html, /id="hero-title"/)
     for (const other of ["about", "projects", "activities", "contact"].filter((other) => other !== id)) {
       assert.doesNotMatch(html, new RegExp(`id="${other}"`))
@@ -80,5 +85,26 @@ test("legacy experience and extracurriculars links open the activities view", ()
     const html = render(`/#${oldHash}`)
     assert.match(html, /id="activities"/)
     assert.doesNotMatch(html, /id="hero-title"/)
+  }
+})
+
+test("unknown fragments, including inherited object keys, safely return to the home terminal", () => {
+  for (const hash of ["random", "constructor", "toString", "__proto__"]) {
+    let html
+    assert.doesNotThrow(() => { html = render(`/#${hash}`) })
+    assert.match(html, /id="hero-title"/)
+  }
+})
+
+test("reduced motion renders the selected output and home directory immediately", () => {
+  globalThis.window = { matchMedia: () => ({ matches: true }) }
+  try {
+    for (const path of ["/", "/#about", "/#projects", "/#activities", "/#contact"]) {
+      const html = render(path)
+      assert.doesNotMatch(html, /terminal-run--waiting|terminal-run--typing|terminal-run--queued| inert=""/)
+      assert.match(html, /terminal-run--output/)
+    }
+  } finally {
+    delete globalThis.window
   }
 })

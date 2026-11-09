@@ -47,6 +47,13 @@
   transition: background-color 150ms;
 }
 
+@media (max-width: 639px) {
+  .listing__row {
+    min-height: 2.75rem;
+    align-items: center;
+  }
+}
+
 .listing__row:hover,
 .listing__row:focus-visible {
   background: var(--card);

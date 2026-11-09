@@ -12,7 +12,7 @@ export default function ProjectCard({ project }) {
           <StatusBadge status={project.status} />
         </div>
         <div className="project-card__body">
-          <h3 className="project-card__name">{project.name}</h3>
+          <h2 className="project-card__name">{project.name}</h2>
           <p className="project-card__tagline">{project.tagline}</p>
         </div>
         <p className="project-card__meta">

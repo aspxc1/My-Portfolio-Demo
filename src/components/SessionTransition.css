@@ -7,6 +7,13 @@
   transform-origin: top;
 }
 
+/* Route focus announces the page without drawing a control outline around prose. */
+.session__screen h1[tabindex="-1"]:focus,
+.session__screen h2[tabindex="-1"]:focus,
+.session__screen main[tabindex="-1"]:focus {
+  outline: none;
+}
+
 .session__screen--leaving {
   opacity: 0;
   clip-path: inset(0 0 100% 0);

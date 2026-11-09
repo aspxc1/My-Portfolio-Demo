@@ -37,9 +37,12 @@ export default function SessionTransition({ children }) {
     }
     window.scrollTo({ top: 0, left: 0, behavior: "instant" })
     const heading = screenRef.current?.querySelector("h1, h2")
-    if (heading) {
-      heading.setAttribute("tabindex", "-1")
-      heading.focus({ preventScroll: true })
+    const target = heading && getComputedStyle(heading).visibility !== "hidden"
+      ? heading
+      : screenRef.current?.querySelector("main")
+    if (target) {
+      target.setAttribute("tabindex", "-1")
+      target.focus({ preventScroll: true })
     }
   }, [displayed])
 

@@ -4,7 +4,9 @@ import "./ProjectGallery.css"
 /** Optional media disappears entirely when omitted, empty, or unavailable. */
 export default function ProjectGallery({ images = [], name }) {
   const [failed, setFailed] = useState([])
-  const visible = images.filter((image) => image?.src?.trim() && !failed.includes(image.src))
+  const visible = (Array.isArray(images) ? images : []).filter(
+    (image) => typeof image?.src === "string" && image.src.trim() && !failed.includes(image.src),
+  )
   if (visible.length === 0) return null
 
   return (

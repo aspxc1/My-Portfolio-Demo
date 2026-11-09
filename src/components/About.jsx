@@ -16,7 +16,7 @@ export default function About() {
             {profile.summary}
           </p>
 
-          <h3 className="label">Currently</h3>
+          <h2 className="label">Currently</h2>
           <dl className="about__now">
             {about.currently.map((item) => (
               <div key={item.label} className="about__now-item">
@@ -31,7 +31,7 @@ export default function About() {
         </div>
 
         <div className="about__block">
-          <h3 className="label">Stack</h3>
+          <h2 className="label">Stack</h2>
           <dl className="about__stack">
             {about.skills.filter((group) => !group.hidden).map((group) => (
               <div key={group.group} className="about__stack-row">

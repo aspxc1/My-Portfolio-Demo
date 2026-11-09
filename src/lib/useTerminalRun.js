@@ -55,7 +55,7 @@ export default function useTerminalRun(command, { enabled = true } = {}) {
     ref,
     inView: inView && pageVisible && !reducedMotion,
     finished,
-    stage: finished ? "output" : stage,
+    stage: !enabled ? "queued" : finished ? "output" : stage,
     style: {
       "--command-width": `${command.length}ch`,
       "--command-steps": command.length,

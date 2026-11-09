@@ -13,7 +13,9 @@ const legacy = { experience: "activities", extracurriculars: "activities" }
 export default function HomePage() {
   const { hash } = useLocation()
   const selected = hash.slice(1)
-  const view = legacy[selected] || (Object.hasOwn(views, selected) ? selected : "home")
+  const view = Object.hasOwn(legacy, selected)
+    ? legacy[selected]
+    : Object.hasOwn(views, selected) ? selected : "home"
   const View = views[view]
   return (
     <main className="terminal-home">

@@ -131,11 +131,6 @@ button {
   border-width: 0;
 }
 
-/* The blocks below the hero: a top border and roomy padding. */
-.section {
-  min-height: 24rem;
-}
-
 .section-inner {
   display: flex;
   flex-direction: column;

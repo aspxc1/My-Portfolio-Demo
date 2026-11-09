@@ -34,7 +34,7 @@ export default function Activities() {
                   {isCurrent ? <span className="activity__muted">{"(HEAD -> current)"}</span> : null}
                 </p>
 
-                <h3 className="activity__title">
+                <h2 className="activity__title">
                   {item.role} <span className="activity__muted">@</span>{" "}
                   {item.orgUrl ? (
                     <a href={item.orgUrl} target="_blank" rel="noreferrer" className="text-link">
@@ -44,7 +44,7 @@ export default function Activities() {
                   ) : (
                     item.org
                   )}
-                </h3>
+                </h2>
 
                 <p className="activity__date">{`Date:   ${item.start} - ${item.end}`}</p>
 

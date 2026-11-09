@@ -55,7 +55,7 @@ Keep a file as `[]` if you have no entries yet.
 - `description` contains paragraphs; `highlights` contains feature bullets.
 - The first `links` entry is the primary button. Add more entries for a live demo,
   documentation, or other links.
-- Include all the fields shown. Use `[]` for `stack`, `description`, `highlights`,
+- Include all the fields shown except the optional `images`. Use `[]` for `stack`, `description`, `highlights`,
   or `links` when you have no items to add. No diagram is needed.
 
 Adding an entry updates the project list, grid, category filters and detail page.
