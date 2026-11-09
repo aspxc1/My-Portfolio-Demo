@@ -2,6 +2,7 @@ import { profile, sections } from "../content/site.js"
 import useTerminalRun from "../lib/useTerminalRun.js"
 import TerminalCommand from "./TerminalCommand.jsx"
 import "./HomeListing.css"
+import { Link } from "react-router"
 
 function stripProtocol(url) {
   return url.replace(/^https?:\/\/(www\.)?/, "")
@@ -12,7 +13,7 @@ const entries = [
   ...Object.values(sections).map((section) => ({
     perms: "drwxr-xr-x",
     name: `${section.path.replace(/^~\//, "")}/`,
-    href: `#${section.id}`,
+    href: `/#${section.id}`,
     kind: "dir",
   })),
   ...profile.links.map((link) => ({
@@ -24,8 +25,8 @@ const entries = [
   })),
 ]
 
-export default function HomeListing() {
-  const run = useTerminalRun("ls -la ~")
+export default function HomeListing({ enabled = true }) {
+  const run = useTerminalRun("ls -la ~", { enabled })
 
   return (
     <nav ref={run.ref} aria-label="Site" className={`listing terminal-run terminal-run--${run.stage}`} style={run.style}>
@@ -39,11 +40,12 @@ export default function HomeListing() {
           {entries.map((entry) => {
             const isExternal = entry.kind !== "dir"
             const nameClass = entry.kind === "dir" ? "listing__name listing__name--dir" : "listing__name"
+            const Row = isExternal ? "a" : Link
 
             return (
               <li key={entry.name}>
-                <a
-                  href={entry.href}
+                <Row
+                  {...(isExternal ? { href: entry.href } : { to: entry.href })}
                   className="listing__row"
                   target={isExternal ? "_blank" : undefined}
                   rel={isExternal ? "noreferrer" : undefined}
@@ -59,7 +61,7 @@ export default function HomeListing() {
                     {entry.target ? <span className="listing__muted">{` -> ${entry.target}`}</span> : null}
                     {isExternal ? <span className="sr-only"> (opens in new tab)</span> : null}
                   </span>
-                </a>
+                </Row>
               </li>
             )
           })}

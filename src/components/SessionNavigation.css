@@ -1,0 +1,55 @@
+.session-navigation {
+  padding-top: 1.5rem;
+  padding-bottom: 3rem;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.session-navigation__prompt {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  color: var(--muted-foreground);
+  margin-bottom: 1.25rem;
+  overflow-wrap: anywhere;
+}
+
+.session-navigation__path {
+  color: var(--primary);
+  white-space: pre-wrap;
+}
+
+.session-navigation__hint {
+  color: var(--muted-foreground);
+  margin-bottom: 0.5rem;
+}
+
+.session-navigation__commands {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1.5rem;
+}
+
+.session-navigation__commands a {
+  display: inline-flex;
+  align-items: center;
+  min-height: 2.75rem;
+  padding-block: 0.5rem;
+  color: var(--muted-foreground);
+  text-decoration: underline;
+  text-underline-offset: 5px;
+  text-decoration-color: var(--border);
+}
+
+.session-navigation__commands a:hover,
+.session-navigation__commands a[aria-current="page"] {
+  color: var(--primary);
+  text-decoration-color: var(--primary);
+}
+
+/* The cursor belongs to the running command, then returns to this prompt. */
+.session:has(.terminal-run:not(.terminal-run--output)) .session-navigation__caret {
+  visibility: hidden;
+  animation: none;
+}

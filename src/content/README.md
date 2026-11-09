@@ -113,3 +113,14 @@ workflow; these files are bundled into the site at build time.
 Your name, summary, contact links and stack still live in `site.js`.
 Stack groups can use `hidden: true` to hide them without deleting their contents.
 To restore the ML / AI group, change its `hidden` value to `false` in `site.js`.
+
+## Terminal navigation
+
+The home view runs `neofetch` followed by its directory listing. Visitors choose
+a section from that directory; later sections never open automatically. Each
+section offers commands to return home or choose another section. Links such as
+`/#projects`, `/#about`, `/#activities` and `/#contact` open a view directly and
+work with browser Back/Forward. The old `/#experience` and `/#extracurriculars`
+links still open activities. Refresh preserves the chosen view and resets its
+scroll position. Reduced-motion preferences skip typing and the clear/reveal
+transition, and pause the ASCII animation.

@@ -26,18 +26,14 @@
   width: auto;
 }
 
-.terminal-command__caret {
-  flex-shrink: 0;
-  align-self: center;
-  width: 0.5ch;
-  height: 0.9em;
-  margin-left: 0.15ch;
-  background: var(--primary);
-  animation: blink 1s steps(1) infinite;
+.terminal-command .terminal-command__caret {
+  display: none;
+  animation: none;
 }
 
-.terminal-run--output .terminal-command__caret {
-  display: none;
+.terminal-run--typing .terminal-command__caret {
+  display: inline-block;
+  animation: blink 1s steps(1) infinite;
 }
 
 @media (prefers-reduced-motion: reduce) {
@@ -45,7 +41,7 @@
     width: auto;
     transition: none;
   }
-  .terminal-command__caret {
+  .terminal-run--typing .terminal-command__caret {
     display: none;
   }
 }

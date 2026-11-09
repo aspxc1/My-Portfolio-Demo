@@ -35,9 +35,6 @@ export default function Hero() {
               </p>
               <h1 id="hero-title" className="hero__name">
                 {profile.name}
-                <span aria-hidden="true" className="hero__accent cursor">
-                  _
-                </span>
               </h1>
               <p aria-hidden="true" className="hero__dashes">
                 {"-".repeat(title.length + 8)}
@@ -61,15 +58,9 @@ export default function Hero() {
           </div>
         </div>
 
-        {/* The next prompt, printed after the output like a real shell would. */}
-        <p aria-hidden="true" className="hero__prompt-line">
-          <span className="hero__muted">{profile.handle}@portfolio</span>
-          <span className="hero__accent">:~$ </span>
-          <span className="hero__block-caret" />
-        </p>
       </div>
 
-      <HomeListing />
+      <HomeListing enabled={run.finished} />
     </section>
   )
 }

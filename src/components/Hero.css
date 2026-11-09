@@ -31,24 +31,6 @@
   color: var(--foreground);
 }
 
-/* Next prompt, printed once the output has landed. */
-.hero__prompt-line {
-  display: flex;
-  align-items: center;
-  font-family: var(--font-mono);
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-  white-space: pre;
-}
-
-.hero__block-caret {
-  width: 0.55ch;
-  height: 1.05em;
-  margin-left: 1px;
-  background: var(--primary);
-  animation: blink 1s steps(1) infinite;
-}
-
 /* ---------- ASCII art + info, side by side on wider screens ---------- */
 
 .hero__neofetch {
@@ -146,8 +128,7 @@
 /* ---------- The run, stage by stage ---------- */
 
 /* Hidden until the command is submitted, then all of neofetch's output lands together. */
-.hero__neofetch,
-.hero__prompt-line {
+.hero__neofetch {
   opacity: 0;
   transform: translateY(2px);
   visibility: hidden;
@@ -159,13 +140,6 @@
   opacity: 1;
   transform: none;
   transition: opacity 160ms ease-out, transform 160ms ease-out;
-}
-
-.hero__run.terminal-run--output .hero__prompt-line {
-  visibility: visible;
-  opacity: 1;
-  transform: none;
-  transition: opacity 200ms ease-out 350ms;
 }
 
 @media (min-width: 640px) {
@@ -191,15 +165,11 @@
 /* Show the finished run immediately, with no typing or blinking, when asked. */
 @media (prefers-reduced-motion: reduce) {
   /* Same specificity as the stage rules above, so this wins by coming last. */
-  .hero__run.terminal-run--output .hero__neofetch,
-  .hero__run.terminal-run--output .hero__prompt-line {
+  .hero__run.terminal-run--output .hero__neofetch {
     width: auto;
     visibility: visible;
     opacity: 1;
     transform: none;
     transition: none;
-  }
-  .hero__run .hero__block-caret {
-    animation: none;
   }
 }

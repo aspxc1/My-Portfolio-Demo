@@ -1,21 +1,20 @@
 import { Route, Routes } from "react-router"
-import ScrollToHash from "./components/ScrollToHash.jsx"
-import SiteHeader from "./components/SiteHeader.jsx"
+import SessionTransition from "./components/SessionTransition.jsx"
 import HomePage from "./pages/HomePage.jsx"
 import NotFoundPage from "./pages/NotFoundPage.jsx"
 import ProjectPage from "./pages/ProjectPage.jsx"
 
-/** Every page shares the header. Routes decide what goes below it. */
+/** A single terminal surface; navigation clears one view before revealing another. */
 export default function App() {
   return (
-    <>
-      <ScrollToHash />
-      <SiteHeader />
-      <Routes>
-        <Route path="/" element={<HomePage />} />
-        <Route path="/projects/:slug" element={<ProjectPage />} />
-        <Route path="*" element={<NotFoundPage />} />
-      </Routes>
-    </>
+    <SessionTransition>
+      {(location) => (
+        <Routes location={location}>
+          <Route path="/" element={<HomePage />} />
+          <Route path="/projects/:slug" element={<ProjectPage />} />
+          <Route path="*" element={<NotFoundPage />} />
+        </Routes>
+      )}
+    </SessionTransition>
   )
 }

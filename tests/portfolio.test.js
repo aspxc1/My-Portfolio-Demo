@@ -51,3 +51,34 @@ test("projects without images have no gallery, gallery heading or reserved image
     assert.doesNotMatch(html, /project-gallery|<img|Screenshots/)
   }
 })
+
+test("the initial terminal shows the identity and directory without loading later sections", () => {
+  const html = render("/")
+  assert.match(html, /id="hero-title"/)
+  for (const id of ["about", "projects", "activities", "contact"]) {
+    assert.doesNotMatch(html, new RegExp(`id="${id}"`))
+    assert.match(html, new RegExp(`href="/#${id}"`))
+  }
+  assert.doesNotMatch(html, /site-header|hero__block-caret|class="hero__accent cursor"/)
+})
+
+test("a section deep link renders only that section with commands to navigate elsewhere", () => {
+  for (const id of ["about", "projects", "activities", "contact"]) {
+    const html = render(`/#${id}`)
+    assert.match(html, new RegExp(`id="${id}"`))
+    assert.doesNotMatch(html, /id="hero-title"/)
+    for (const other of ["about", "projects", "activities", "contact"].filter((other) => other !== id)) {
+      assert.doesNotMatch(html, new RegExp(`id="${other}"`))
+    }
+    assert.match(html, /aria-label="Run a command"/)
+    assert.match(html, /cd ~/)
+  }
+})
+
+test("legacy experience and extracurriculars links open the activities view", () => {
+  for (const oldHash of ["experience", "extracurriculars"]) {
+    const html = render(`/#${oldHash}`)
+    assert.match(html, /id="activities"/)
+    assert.doesNotMatch(html, /id="hero-title"/)
+  }
+})

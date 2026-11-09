@@ -65,7 +65,6 @@
 
 html {
   line-height: 1.5;
-  scroll-behavior: smooth;
   font-variant-ligatures: none;
   -webkit-text-size-adjust: 100%;
 }
@@ -134,9 +133,7 @@ button {
 
 /* The blocks below the hero: a top border and roomy padding. */
 .section {
-  border-top: 1px solid var(--border);
-  /* Leaves room for the sticky header when jumping to #about etc. */
-  scroll-margin-top: 5rem;
+  min-height: 24rem;
 }
 
 .section-inner {
@@ -205,8 +202,25 @@ button {
 /* ---------- Animations ---------- */
 
 /* Blinking terminal cursor. */
-.cursor {
+.terminal-cursor {
+  display: inline-block;
+  flex-shrink: 0;
+  align-self: center;
+  width: 0.55ch;
+  height: 1.05em;
+  margin-left: 0.15ch;
+  background: var(--primary);
   animation: blink 1s steps(1) infinite;
+}
+
+:focus-visible {
+  outline: 2px solid var(--primary);
+  outline-offset: 5px;
+}
+
+html {
+  scrollbar-color: var(--muted-foreground) var(--background);
+  scrollbar-width: thin;
 }
 
 @keyframes blink {
@@ -219,7 +233,7 @@ button {
   html {
     scroll-behavior: auto;
   }
-  .cursor {
+  .terminal-cursor {
     animation: none;
   }
 }

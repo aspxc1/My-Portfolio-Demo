@@ -53,7 +53,8 @@
 }
 
 .listing__row:focus-visible {
-  outline: none;
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
 }
 
 .listing__owner {
