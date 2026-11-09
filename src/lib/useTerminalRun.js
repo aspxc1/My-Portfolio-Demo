@@ -6,7 +6,7 @@ const START_DELAY_MS = 100
 const SUBMIT_DELAY_MS = 120
 
 /** Only the selected view mounts. A new visit replays its command once. */
-export default function useTerminalRun(command, { enabled = true } = {}) {
+export default function useTerminalRun(command) {
   const ref = useRef(null)
   const reducedMotion = useReducedMotion()
   const [stage, setStage] = useState("waiting")
@@ -16,7 +16,6 @@ export default function useTerminalRun(command, { enabled = true } = {}) {
 
   useEffect(() => {
     setStage("waiting")
-    if (!enabled) return
     if (reducedMotion) {
       setStage("output")
       return
@@ -30,7 +29,7 @@ export default function useTerminalRun(command, { enabled = true } = {}) {
       window.clearTimeout(startTimer)
       window.clearTimeout(outputTimer)
     }
-  }, [command, enabled, reducedMotion, duration])
+  }, [command, reducedMotion, duration])
 
   useEffect(() => {
     const updateVisibility = () => setPageVisible(document.visibilityState !== "hidden")
@@ -50,12 +49,12 @@ export default function useTerminalRun(command, { enabled = true } = {}) {
     }
   }, [])
 
-  const finished = enabled && (reducedMotion || stage === "output")
+  const finished = reducedMotion || stage === "output"
   return {
     ref,
     inView: inView && pageVisible && !reducedMotion,
     finished,
-    stage: !enabled ? "queued" : finished ? "output" : stage,
+    stage: finished ? "output" : stage,
     style: {
       "--command-width": `${command.length}ch`,
       "--command-steps": command.length,

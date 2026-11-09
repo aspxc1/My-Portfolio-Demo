@@ -116,9 +116,12 @@ To restore the ML / AI group, change its `hidden` value to `false` in `site.js`.
 
 ## Terminal navigation
 
-The home view runs `neofetch` followed by its directory listing. Visitors choose
-a section from that directory; later sections never open automatically. Each
-section offers commands to return home or choose another section. Links such as
+The home view runs `neofetch` and then reveals a TUI-style navigation menu.
+Visitors choose About, Projects, Activities or Contact; later sections never
+open automatically. Each section offers the same named destinations plus Home.
+The menu supports mouse/touch, Tab, arrow keys, Home/End and Enter. The current
+section is highlighted, and command typing remains in the section headers.
+Menu labels and descriptions live in `sections` in `site.js`. Links such as
 `/#projects`, `/#about`, `/#activities` and `/#contact` open a view directly and
 work with browser Back/Forward. The old `/#experience` and `/#extracurriculars`
 links still open activities. Refresh preserves the chosen view and resets its

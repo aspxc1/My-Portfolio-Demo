@@ -142,6 +142,17 @@
   transition: opacity 160ms ease-out, transform 160ms ease-out;
 }
 
+.hero__navigation {
+  opacity: 0;
+  visibility: hidden;
+}
+
+.hero__navigation--ready {
+  opacity: 1;
+  visibility: visible;
+  transition: opacity 180ms ease-out;
+}
+
 @media (min-width: 640px) {
   .hero__name {
     font-size: 3.75rem;
@@ -164,6 +175,7 @@
 
 /* Show the finished run immediately, with no typing or blinking, when asked. */
 @media (prefers-reduced-motion: reduce) {
+  .hero__navigation--ready { transition: none; }
   /* Same specificity as the stage rules above, so this wins by coming last. */
   .hero__run.terminal-run--output .hero__neofetch {
     width: auto;

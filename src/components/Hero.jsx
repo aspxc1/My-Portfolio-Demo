@@ -2,7 +2,7 @@ import { Ascii } from "ascii.rest/react"
 import * as synthwave from "ascii.rest/pieces/synthwave"
 import useTerminalRun from "../lib/useTerminalRun.js"
 import { hero, profile } from "../content/site.js"
-import HomeListing from "./HomeListing.jsx"
+import TerminalMenu from "./TerminalMenu.jsx"
 import TerminalCommand from "./TerminalCommand.jsx"
 import "./Hero.css"
 
@@ -60,7 +60,9 @@ export default function Hero() {
 
       </div>
 
-      <HomeListing enabled={run.finished} />
+      <div className={`hero__navigation${run.finished ? " hero__navigation--ready" : ""}`} inert={!run.finished}>
+        <TerminalMenu current="home" />
+      </div>
     </section>
   )
 }

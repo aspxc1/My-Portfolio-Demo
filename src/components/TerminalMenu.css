@@ -1,0 +1,110 @@
+.terminal-menu {
+  width: 100%;
+  max-width: 40rem;
+  border: 1px solid var(--border);
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.5;
+}
+
+.terminal-menu__heading {
+  padding: 0.875rem 1rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--foreground);
+}
+
+.terminal-menu__options {
+  padding: 0.5rem;
+}
+
+.terminal-menu__option {
+  display: grid;
+  grid-template-columns: 1ch 8rem minmax(0, 1fr);
+  align-items: center;
+  gap: 0.75rem;
+  min-height: 3rem;
+  padding: 0.625rem 0.75rem;
+  transition: color 100ms, background-color 100ms;
+}
+
+.terminal-menu__marker {
+  visibility: hidden;
+  color: var(--primary);
+}
+
+.terminal-menu__label {
+  font-weight: 700;
+}
+
+.terminal-menu__description {
+  min-width: 0;
+  color: var(--muted-foreground);
+  font-size: 0.8125rem;
+  overflow-wrap: anywhere;
+}
+
+.terminal-menu__option[aria-current="page"] {
+  color: var(--primary);
+  background: color-mix(in oklab, var(--primary) 7%, var(--background));
+}
+
+.terminal-menu__option[aria-current="page"] .terminal-menu__marker,
+.terminal-menu__option:hover .terminal-menu__marker,
+.terminal-menu__option:focus-visible .terminal-menu__marker {
+  visibility: visible;
+}
+
+.terminal-menu__option:hover,
+.terminal-menu__option:focus-visible {
+  color: var(--primary-foreground);
+  background: var(--primary);
+}
+
+.terminal-menu__option:hover .terminal-menu__marker,
+.terminal-menu__option:focus-visible .terminal-menu__marker,
+.terminal-menu__option:hover .terminal-menu__description,
+.terminal-menu__option:focus-visible .terminal-menu__description {
+  color: var(--primary-foreground);
+}
+
+.terminal-menu__option:focus-visible {
+  outline: 2px solid var(--foreground);
+  outline-offset: -2px;
+}
+
+.terminal-menu__help {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1.5rem;
+  padding: 0.625rem 1rem;
+  border-top: 1px solid var(--border);
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+}
+
+.terminal-menu kbd {
+  color: var(--foreground);
+  font: inherit;
+}
+
+@media (max-width: 479px) {
+  .terminal-menu__option {
+    grid-template-columns: 1ch minmax(0, 1fr);
+    gap: 0.125rem 0.75rem;
+    min-height: 4rem;
+  }
+  .terminal-menu__marker {
+    grid-row: span 2;
+  }
+  .terminal-menu__description {
+    grid-column: 2;
+  }
+}
+
+@media (pointer: coarse) {
+  .terminal-menu__help { display: none; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .terminal-menu__option { transition: none; }
+}

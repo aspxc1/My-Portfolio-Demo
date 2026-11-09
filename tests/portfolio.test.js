@@ -56,7 +56,7 @@ test("projects without images have no gallery, gallery heading or reserved image
   }
 })
 
-test("the initial terminal shows the identity and directory without loading later sections", () => {
+test("the initial terminal shows the identity and navigation without loading later sections", () => {
   const html = render("/")
   assert.match(html, /id="hero-title"/)
   for (const id of ["about", "projects", "activities", "contact"]) {
@@ -66,7 +66,7 @@ test("the initial terminal shows the identity and directory without loading late
   assert.doesNotMatch(html, /site-header|hero__block-caret|class="hero__accent cursor"/)
 })
 
-test("a section deep link renders only that section with commands to navigate elsewhere", () => {
+test("a section deep link renders only that section with named destinations to navigate elsewhere", () => {
   for (const id of ["about", "projects", "activities", "contact"]) {
     const html = render(`/#${id}`)
     assert.match(html, new RegExp(`id="${id}"`))
@@ -75,8 +75,8 @@ test("a section deep link renders only that section with commands to navigate el
     for (const other of ["about", "projects", "activities", "contact"].filter((other) => other !== id)) {
       assert.doesNotMatch(html, new RegExp(`id="${other}"`))
     }
-    assert.match(html, /aria-label="Run a command"/)
-    assert.match(html, /cd ~/)
+    assert.match(html, /aria-label="Portfolio navigation"/)
+    assert.match(html, /aria-label="Home"/)
   }
 })
 
@@ -96,7 +96,7 @@ test("unknown fragments, including inherited object keys, safely return to the h
   }
 })
 
-test("reduced motion renders the selected output and home directory immediately", () => {
+test("reduced motion renders the selected output and home navigation immediately", () => {
   globalThis.window = { matchMedia: () => ({ matches: true }) }
   try {
     for (const path of ["/", "/#about", "/#projects", "/#activities", "/#contact"]) {
@@ -106,5 +106,17 @@ test("reduced motion renders the selected output and home directory immediately"
     }
   } finally {
     delete globalThis.window
+  }
+})
+
+test("home and section menus name destinations clearly without shell commands or file permissions", () => {
+  for (const path of ["/", "/#about", "/#projects", "/#activities", "/#contact"]) {
+    const html = render(path)
+    const menu = html.match(/<nav[^>]+aria-label="Portfolio navigation"[\s\S]*?<\/nav>/)?.[0]
+    assert.ok(menu, `A portfolio navigation menu is present at ${path}`)
+    for (const label of ["About", "Projects", "Activities", "Contact"]) {
+      assert.match(menu, new RegExp(`aria-label="${label}"`))
+    }
+    assert.doesNotMatch(menu, /ls -la|whoami|git log|ping aasermo|cd ~|drwx|lrwx/)
   }
 })

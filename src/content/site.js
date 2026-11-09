@@ -41,15 +41,16 @@ export const hero = {
 
 
 export const sections = {
-  about: { id: "about", path: "~/about", command: "whoami", nav: "about" },
-  projects: { id: "projects", path: "~/projects", command: "ls ~/projects", nav: "projects" },
+  about: { id: "about", path: "~/about", command: "whoami", nav: "About", description: "Introduction & stack" },
+  projects: { id: "projects", path: "~/projects", command: "ls ~/projects", nav: "Projects", description: "Selected work" },
   activities: {
     id: "activities",
     path: "~/activities",
     command: "git log --oneline",
-    nav: "activities",
+    nav: "Activities",
+    description: "Roles & involvement",
   },
-  contact: { id: "contact", path: "~/contact", command: `ping ${profile.handle}`, nav: "contact" },
+  contact: { id: "contact", path: "~/contact", command: `ping ${profile.handle}`, nav: "Contact", description: "Get in touch" },
 }
 
 export const about = {
