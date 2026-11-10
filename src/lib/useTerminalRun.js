@@ -30,7 +30,7 @@ export default function useTerminalRun(command, { enabled = true, immediate = fa
     const outputTimer = window.setTimeout(
       () => {
         completedCommand.current = command
-        history?.add(visitKey)
+        if (ref.current?.isConnected && !ref.current.closest("[inert]")) history?.add(visitKey)
         setStage("output")
       },
       start + duration + submit,

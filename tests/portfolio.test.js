@@ -173,3 +173,10 @@ test("project neighbours never link to the same project or duplicate the only ot
   assert.deepEqual(getProjectNeighbours([a, b, c], a.slug), { prev: c, next: b })
   assert.deepEqual(getProjectNeighbours([a, b, c], "missing"), { prev: null, next: null })
 })
+
+test("the heading navigation control follows the routed h1 in keyboard order", () => {
+  for (const path of ["/", "/#about", "/#projects", "/#activities", "/#contact"]) {
+    const html = render(path)
+    assert.ok(html.indexOf('class="navigation-jump"') > html.indexOf("</h1>"), `Tab after the heading reaches Navigate at ${path}`)
+  }
+})

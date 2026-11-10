@@ -1,11 +1,12 @@
 .hero { padding-top: 1.25rem; padding-bottom: 0.5rem; }
 .hero__accent { color: var(--primary); }
 .hero__muted { color: var(--muted-foreground); }
-.hero__run { display: flex; flex-direction: column; gap: 1.25rem; }
+.hero__run { position: relative; display: flex; flex-direction: column; gap: 1.25rem; }
 .hero__command {
   display: flex;
   align-items: center;
   justify-content: space-between;
+  min-height: 2.75rem;
   font: 0.875rem/1.25rem var(--font-mono);
 }
 .hero__neofetch {
@@ -15,16 +16,19 @@
   align-items: start;
   gap: 1rem;
   font: 0.8125rem/1.5 var(--font-mono);
+}
+.hero__neofetch > :not(.navigation-jump) {
   visibility: hidden;
   opacity: 0;
   transform: translateY(2px);
 }
-.hero__run.terminal-run--output .hero__neofetch {
+.hero__run.terminal-run--output .hero__neofetch > :not(.navigation-jump) {
   visibility: visible;
   opacity: 1;
   transform: none;
   transition: opacity 160ms ease-out, transform 160ms ease-out;
 }
+.hero__neofetch > .navigation-jump { position: absolute; top: 0; right: 0; }
 .hero__title-group { grid-area: identity; display: grid; gap: 0.5rem; min-width: 0; }
 .hero__name {
   font-family: var(--font-mono);
@@ -88,5 +92,5 @@
   .hero__name { font-size: 3.75rem; }
 }
 @media (prefers-reduced-motion: reduce) {
-  .hero__run.terminal-run--output .hero__neofetch { transform: none; transition: none; }
+  .hero__run.terminal-run--output .hero__neofetch > :not(.navigation-jump) { transform: none; transition: none; }
 }

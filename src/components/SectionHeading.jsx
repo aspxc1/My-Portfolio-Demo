@@ -13,11 +13,11 @@ export default function SectionHeading({ path, command, id, onNavigate }) {
       <div className="section-heading__path">
         <span>{path}</span>
         <span aria-hidden="true" className="section-heading__rule" />
-        {onNavigate ? <NavigationJump onClick={onNavigate} /> : null}
       </div>
       <h1 id={id} className="section-heading__title">
         <TerminalCommand command={command} />
       </h1>
+      {onNavigate ? <NavigationJump onClick={onNavigate} /> : null}
     </header>
   )
 }

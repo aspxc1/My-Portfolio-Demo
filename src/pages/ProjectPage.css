@@ -21,6 +21,8 @@
   gap: 0.25rem;
 }
 
+.project-page__breadcrumb li { min-width: 0; overflow-wrap: anywhere; }
+
 .project-page__breadcrumb a:hover,
 .project-page__breadcrumb-current {
   color: var(--foreground);
@@ -68,6 +70,7 @@
 .project-page__button {
   display: inline-flex;
   align-items: center;
+  min-height: 2.75rem;
   gap: 0.5rem;
   padding: 0.5rem 1rem;
   border: 1px solid var(--border);
@@ -163,6 +166,7 @@
 }
 
 .project-page__pager-link {
+  min-width: 0;
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
@@ -190,6 +194,7 @@
 }
 
 .project-page__pager-name {
+  overflow-wrap: anywhere;
   font-family: var(--font-mono);
   font-weight: 700;
 }

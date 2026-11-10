@@ -22,7 +22,6 @@ export default function Hero({ onReady, onNavigate }) {
       <div ref={run.ref} className={`hero__run terminal-run terminal-run--${run.stage}`} style={run.style}>
         <p className="hero__command">
           <TerminalCommand command="neofetch" />
-          <NavigationJump onClick={onNavigate} />
         </p>
 
         <div className="hero__neofetch">
@@ -30,6 +29,7 @@ export default function Hero({ onReady, onNavigate }) {
             <p className="hero__muted"><span className="hero__accent">{profile.handle}</span>@portfolio</p>
             <h1 id="hero-title" className="hero__name">{profile.name}</h1>
           </div>
+          <NavigationJump onClick={onNavigate} />
 
           <div aria-hidden="true" className="hero__art">
             <Ascii piece={synthwave} className="hero__ascii" options={{ fps: run.inView && run.finished ? synthwave.meta.fps : 0 }} />

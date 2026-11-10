@@ -61,6 +61,7 @@ Keep a file as `[]` if you have no entries yet.
   documentation, or other links.
 - `featured`, `problem`, `contribution`, `outcome`, and `images` are optional.
   The first featured project receives the single Start here cue; otherwise the first entry does.
+  The cue is shown for collections with more than one project, where there is a choice to make.
   Problem/contribution/outcome text appears before the overview and optional images.
 - Include all other fields shown. Use `[]` for `stack`, `description`, `highlights`,
   or `links` when you have no items to add. No diagram is needed.

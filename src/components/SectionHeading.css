@@ -1,10 +1,12 @@
 .section-heading {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  gap: 1rem 0.75rem;
 }
 
 .section-heading__path {
+  grid-column: 1;
+  grid-row: 1;
   display: flex;
   align-items: center;
   gap: 0.75rem;
@@ -23,6 +25,8 @@
 }
 
 .section-heading__title {
+  grid-column: 1 / -1;
+  grid-row: 2;
   --terminal-prompt-color: var(--muted-foreground);
   font-family: var(--font-mono);
   font-size: 1.5rem;
@@ -30,6 +34,8 @@
   font-weight: 700;
   letter-spacing: -0.025em;
 }
+
+.section-heading > .navigation-jump { grid-column: 2; grid-row: 1; }
 
 @media (min-width: 768px) {
   .section-heading__title {
