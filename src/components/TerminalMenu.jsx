@@ -47,6 +47,11 @@ export default function TerminalMenu({ current, enabled = true, request = 0 }) {
         focusedIndex: links.indexOf(target?.closest("a")),
         count: items.length,
         insideMenu: menu.contains(target),
+        menuVisible: links.some((link) => {
+          const bounds = link.getBoundingClientRect()
+          return bounds.top >= 0 && bounds.bottom <= window.innerHeight
+            && bounds.left < window.innerWidth && bounds.right > 0
+        }),
         editing: !!target?.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="textbox"]'),
         interactive: !!target?.closest('a, button, summary, [role="button"], [role="link"], [role="tab"]'),
       })
@@ -88,7 +93,7 @@ export default function TerminalMenu({ current, enabled = true, request = 0 }) {
           ))}
         </ol>
         <p className="terminal-menu__help">
-          <span><kbd>↑↓</kbd> in menu</span>
+          <span><kbd>↑↓</kbd> select</span>
           <span><kbd>Enter</kbd> / <kbd>1–{items.length}</kbd> open</span>
         </p>
       </nav>

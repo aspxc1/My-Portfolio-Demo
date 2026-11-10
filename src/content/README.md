@@ -134,8 +134,9 @@ sections never open automatically. The current page is marked `current`,
 including Home. Opening email/profile links are next to your name in neofetch.
 
 The Navigate button by the heading reveals and focuses the existing menu immediately,
-including during playback. Arrow keys and Enter select/open options while the menu
-has focus; outside it, they retain normal reading and control behavior.
+including during playback. Arrow keys and Enter select/open options when menu options
+are visible, without a click first, or while the menu has focus. With the menu
+offscreen they retain normal reading behavior. Ordinary controls retain their keys.
 Keys 1–5 open the numbered destinations directly. Tab and mouse/touch also work;
 Home/End move to the first/last item when the menu has focus. Shortcuts leave
 ordinary links, buttons, text fields and browser key combinations alone, and

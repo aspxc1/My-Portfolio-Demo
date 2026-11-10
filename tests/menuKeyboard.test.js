@@ -4,11 +4,19 @@ import { getMenuKeyAction } from "../src/lib/menuKeyboard.js"
 
 const context = { selectedIndex: 0, count: 4, insideMenu: false, interactive: false, editing: false }
 
-test("arrows and Enter leave reading alone until the menu has focus", () => {
+test("arrows and Enter leave reading alone while the menu is offscreen", () => {
   assert.equal(getMenuKeyAction({ key: "ArrowDown" }, context), null)
   assert.equal(getMenuKeyAction({ key: "ArrowUp" }, context), null)
   assert.equal(getMenuKeyAction({ key: "Enter" }, context), null)
   assert.deepEqual(getMenuKeyAction({ key: "Enter" }, { ...context, insideMenu: true }), { type: "open", index: 0 })
+})
+
+test("a visible menu supports arrows and Enter without a click or prior focus", () => {
+  const visible = { ...context, menuVisible: true }
+  assert.deepEqual(getMenuKeyAction({ key: "ArrowDown" }, visible), { type: "select", index: 1 })
+  assert.deepEqual(getMenuKeyAction({ key: "ArrowUp" }, visible), { type: "select", index: 3 })
+  assert.deepEqual(getMenuKeyAction({ key: "Enter" }, visible), { type: "open", index: 0 })
+  assert.equal(getMenuKeyAction({ key: "ArrowDown" }, { ...visible, interactive: true }), null)
 })
 
 test("selection wraps and numbered shortcuts activate only existing options", () => {
