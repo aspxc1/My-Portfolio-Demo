@@ -48,7 +48,7 @@ export default function Contact({ onReady, onNavigate }) {
         <div className="contact__terminal">
           <p>{`PING ${profile.handle}: ${replies.length} endpoints`}</p>
           <ul className="contact__replies">
-            {replies.map((reply) => (
+            {replies.map((reply, index) => (
               <li key={reply.href}>
                 <a
                   href={reply.href}
@@ -58,12 +58,17 @@ export default function Contact({ onReady, onNavigate }) {
                 >
                   <ContactIcon name={reply.icon} />
                   <span className="contact__reply-label">{reply.label}</span>
+                  <span className="contact__timing">{`${(0.4 + index * 0.3).toFixed(1)}ms`}</span>
                   <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
                   {reply.external ? <span className="sr-only"> (opens in new tab)</span> : null}
                 </a>
               </li>
             ))}
           </ul>
+          <p className="contact__summary">
+            {`${replies.length} transmitted / ${replies.length} received / `}
+            <span className="contact__accent">0% packet loss</span>
+          </p>
         </div>
       </div>
     </TerminalSection>

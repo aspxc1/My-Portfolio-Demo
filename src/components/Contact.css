@@ -24,6 +24,9 @@
 .contact__replies li + li { border-top: 1px solid var(--border); }
 .contact__reply { display: flex; align-items: center; gap: 0.75rem; min-height: 3rem; padding: 0.75rem 0.25rem; }
 .contact__reply-label { flex: 1; color: var(--foreground); }
+.contact__timing { color: var(--muted-foreground); font-variant-numeric: tabular-nums; }
+.contact__summary { margin-top: 0.75rem; overflow-wrap: anywhere; }
+.contact__accent { color: var(--primary); }
 .contact__reply:hover, .contact__reply:focus-visible, .contact__reply:hover .contact__reply-label { color: var(--primary); }
 .contact__copy:focus-visible, .contact__reply:focus-visible { outline: 2px solid var(--primary); outline-offset: 4px; }
 @media (min-width: 640px) { .contact__terminal { padding: 1.25rem; } }
