@@ -45,9 +45,9 @@ export const sections = {
   projects: { id: "projects", path: "~/projects", command: "ls ~/projects", nav: "Projects" },
   activities: {
     id: "activities",
-    path: "~/activities",
+    path: "~/experience",
     command: "git log --oneline",
-    nav: "Activities",
+    nav: "Experience & clubs",
   },
   contact: { id: "contact", path: "~/contact", command: `ping ${profile.handle}`, nav: "Contact" },
 }

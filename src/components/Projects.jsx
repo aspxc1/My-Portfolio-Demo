@@ -1,4 +1,5 @@
-import { useState } from "react"
+import { useContext } from "react"
+import { ProjectBrowsing } from "./PortfolioSession.jsx"
 import { sections } from "../content/site.js"
 import { projects } from "../lib/projects.js"
 import ProjectCard from "./ProjectCard.jsx"
@@ -13,13 +14,15 @@ const section = sections.projects
 const categories = ["all", ...new Set(projects.map((project) => project.category))]
 const showControls = projects.length >= 6
 const showFilters = showControls && categories.length > 2
+const startProject = projects.find((project) => project.featured) || projects[0]
 
 export default function Projects({ onReady, onNavigate }) {
-  const [view, setView] = useState("list") // "list" or "grid"
-  const [category, setCategory] = useState("all")
+  const [{ view, category }, setBrowsing] = useContext(ProjectBrowsing)
+  const setView = (view) => setBrowsing((previous) => ({ ...previous, view }))
+  const setCategory = (category) => setBrowsing((previous) => ({ ...previous, category }))
 
   const activeCategory = showFilters && categories.includes(category) ? category : "all"
-  const layout = showControls ? view : "grid"
+  const layout = showControls ? view : "list"
   const visible = activeCategory === "all" ? projects : projects.filter((project) => project.category === activeCategory)
 
   return (
@@ -59,12 +62,12 @@ export default function Projects({ onReady, onNavigate }) {
                 <span />
               </div>
               <ul className="projects__rows">
-                {visible.map((project) => <ProjectRow key={project.slug} project={project} />)}
+                {visible.map((project) => <ProjectRow key={project.slug} project={project} startHere={projects.length > 1 && project === startProject} />)}
               </ul>
             </div>
           ) : (
             <ul className="projects__grid">
-              {visible.map((project) => <ProjectCard key={project.slug} project={project} />)}
+              {visible.map((project) => <ProjectCard key={project.slug} project={project} startHere={projects.length > 1 && project === startProject} />)}
             </ul>
           )}
         </>

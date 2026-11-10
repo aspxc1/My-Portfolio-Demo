@@ -11,7 +11,7 @@ const baseProject = {
   description: ["Project overview."], highlights: [], links: [],
 }
 const fixtureProjects = [
-  { ...baseProject, images: [{ src: "/images/project.webp", alt: "Project dashboard", caption: "The main view" }] },
+  { ...baseProject, problem: "The problem to solve.", contribution: "My specific contribution.", outcome: "The measured outcome.", images: [{ src: "/images/project.webp", alt: "Project dashboard", caption: "The main view" }] },
   { ...baseProject, slug: "without-images" },
   { ...baseProject, slug: "empty-images", images: [] },
   { ...baseProject, slug: "null-images", images: null },
@@ -19,6 +19,7 @@ const fixtureProjects = [
 ]
 let server
 let App
+let getProjectNeighbours
 
 before(async () => {
   server = await createServer({
@@ -35,6 +36,7 @@ before(async () => {
     }],
   })
   App = (await server.ssrLoadModule("/src/App.jsx")).default
+  getProjectNeighbours = (await server.ssrLoadModule("/src/lib/projects.js")).getProjectNeighbours
 })
 after(async () => { await server?.close() })
 
@@ -114,7 +116,7 @@ test("home and section menus name destinations clearly without shell commands or
     const html = render(path)
     const menu = html.match(/<nav[^>]+aria-label="Portfolio navigation"[\s\S]*?<\/nav>/)?.[0]
     assert.ok(menu, `A portfolio navigation menu is present at ${path}`)
-    for (const label of ["About", "Projects", "Activities", "Contact"]) {
+    for (const label of ["About", "Projects", "Experience &amp; clubs", "Contact"]) {
       assert.match(menu, new RegExp(`aria-label="${label}"`))
     }
     assert.doesNotMatch(menu, /ls -la|whoami|git log|ping aasermo|cd ~|drwx|lrwx/)
@@ -142,4 +144,32 @@ test("the menu is a queued script command following neofetch", () => {
   assert.match(html, /terminal-menu terminal-run terminal-run--queued/)
   const menu = html.match(/<nav[^>]+aria-label="Portfolio navigation"[^>]*>/)?.[0]
   assert.match(menu, /inert=""/)
+})
+
+test("project context and overview precede the optional gallery, with clear return actions", () => {
+  const html = render("/projects/with-images")
+  for (const text of ["The problem to solve.", "My specific contribution.", "The measured outcome.", "Project overview."]) {
+    assert.ok(html.includes(text), `${text} is rendered`)
+    assert.ok(html.indexOf(text) < html.indexOf("project-gallery"), `${text} precedes images`)
+  }
+  assert.doesNotMatch(html, /id="features"/)
+  assert.match(html, /href="\/#projects"[^>]*>All projects/)
+  assert.match(html, /href="\/#contact"/)
+})
+
+test("small project collections default to the directory list with one starting cue", () => {
+  const html = render("/#projects")
+  assert.match(html, /projects__rows/)
+  assert.doesNotMatch(html, /projects__views/)
+  assert.equal((html.match(/Start here/g) || []).length, 1)
+})
+
+test("project neighbours never link to the same project or duplicate the only other project", () => {
+  const [a, b, c] = fixtureProjects
+  assert.deepEqual(getProjectNeighbours([], "missing"), { prev: null, next: null })
+  assert.deepEqual(getProjectNeighbours([a], a.slug), { prev: null, next: null })
+  assert.deepEqual(getProjectNeighbours([a, b], a.slug), { prev: null, next: b })
+  assert.deepEqual(getProjectNeighbours([a, b], b.slug), { prev: null, next: a })
+  assert.deepEqual(getProjectNeighbours([a, b, c], a.slug), { prev: c, next: b })
+  assert.deepEqual(getProjectNeighbours([a, b, c], "missing"), { prev: null, next: null })
 })

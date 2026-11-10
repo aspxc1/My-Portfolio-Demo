@@ -48,20 +48,6 @@
   color: var(--muted-foreground);
 }
 
-.activity__commit {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  column-gap: 0.75rem;
-  font-family: var(--font-mono);
-  font-size: 0.875rem;
-  line-height: 1.5rem;
-}
-
-.activity__hash {
-  color: var(--primary);
-}
-
 .activity__title {
   font-family: var(--font-mono);
   font-size: 1.25rem;
@@ -71,11 +57,19 @@
 }
 
 .activity__date {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem 1rem;
   font-family: var(--font-mono);
   font-size: 0.875rem;
   line-height: 1.25rem;
   color: var(--muted-foreground);
 }
+
+.activity__current { color: var(--primary); }
+.terminal-run--output .activity__rail { animation: activity-rail 220ms ease-out both; }
+@keyframes activity-rail { from { clip-path: inset(0 0 100%); } to { clip-path: inset(0); } }
+@media (prefers-reduced-motion: reduce) { .terminal-run--output .activity__rail { animation: none; } }
 
 .activity__details {
   display: flex;

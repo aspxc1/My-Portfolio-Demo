@@ -9,15 +9,15 @@ import PortfolioSession from "./components/PortfolioSession.jsx"
 export default function App() {
   return (
     <PortfolioSession>
-    <SessionTransition>
-      {(location) => (
-        <Routes location={location}>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/projects/:slug" element={<ProjectPage />} />
-          <Route path="*" element={<NotFoundPage />} />
-        </Routes>
-      )}
-    </SessionTransition>
+      <SessionTransition>
+        {(location) => (
+          <Routes location={location}>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/projects/:slug" element={<ProjectPage />} />
+            <Route path="*" element={<NotFoundPage />} />
+          </Routes>
+        )}
+      </SessionTransition>
     </PortfolioSession>
   )
 }

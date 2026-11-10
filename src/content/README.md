@@ -19,6 +19,10 @@ Keep a file as `[]` if you have no entries yet.
     "year": "2026",
     "status": "in-progress",
     "category": "web",
+    "featured": true,
+    "problem": "The problem and who needs it solved.",
+    "contribution": "Your specific contribution and an important decision.",
+    "outcome": "An honest result or what you learned.",
     "stack": ["React", "Node.js", "PostgreSQL"],
     "images": [
       {
@@ -55,12 +59,16 @@ Keep a file as `[]` if you have no entries yet.
 - `description` contains paragraphs; `highlights` contains feature bullets.
 - The first `links` entry is the primary button. Add more entries for a live demo,
   documentation, or other links.
-- Include all the fields shown except the optional `images`. Use `[]` for `stack`, `description`, `highlights`,
+- `featured`, `problem`, `contribution`, `outcome`, and `images` are optional.
+  The first featured project receives the single Start here cue; otherwise the first entry does.
+  Problem/contribution/outcome text appears before the overview and optional images.
+- Include all other fields shown. Use `[]` for `stack`, `description`, `highlights`,
   or `links` when you have no items to add. No diagram is needed.
 
 Adding an entry updates the project list, grid, category filters and detail page.
-Collections of fewer than six projects use a simple grid. At six projects,
+Collections default to a directory list. At six projects,
 list/grid controls appear; category filters appear when there are also multiple categories.
+Filter and view choices survive section/detail navigation until refresh.
 
 ### Optional project images
 
@@ -75,7 +83,9 @@ supplying the original dimensions reserves the correct space while loading.
 Images retain their proportions. An image that fails to load is removed, and
 the gallery disappears if none remain.
 
-## Activities
+## Experience and clubs
+
+Keep using `activities.json` for both work experience and club roles.
 
 ```json
 [
@@ -118,11 +128,13 @@ To restore the ML / AI group, change its `hidden` value to `false` in `site.js`.
 
 The home view runs `neofetch`, then types `./menu.sh` and prints a compact,
 numbered navigation menu. Other views print the same menu after their section
-output. Destinations are Home, About, Projects, Activities and Contact; later
+output. Destinations are Home, About, Projects, Experience & clubs and Contact; later
 sections never open automatically. The current page is marked `current`,
 including Home. Opening email/profile links are next to your name in neofetch.
 
-Arrow keys and Enter work from the page without first clicking a menu option.
+The Navigate button by the heading reveals and focuses the existing menu immediately,
+including during playback. Arrow keys and Enter select/open options while the menu
+has focus; outside it, they retain normal reading and control behavior.
 Keys 1–5 open the numbered destinations directly. Tab and mouse/touch also work;
 Home/End move to the first/last item when the menu has focus. Shortcuts leave
 ordinary links, buttons, text fields and browser key combinations alone, and
@@ -133,4 +145,6 @@ About on the home page and Home in other sections. Menu labels live in
 work with browser Back/Forward. The old `/#experience` and `/#extracurriculars`
 links still open activities. Refresh preserves the chosen view and resets its
 scroll position. Reduced-motion preferences skip typing and the clear/reveal
-transition, and pause the ASCII animation.
+transition, and pause the ASCII animation. Each view and its menu retain their original
+first-play timing; subsequent completed visits use shorter typed replays. Refresh
+starts a fresh session. Interrupted commands keep their full first play next time.

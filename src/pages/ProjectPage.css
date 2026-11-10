@@ -39,7 +39,7 @@
   font-size: 2.25rem;
   line-height: 1.111;
   font-weight: 800;
-  letter-spacing: -0.05em;
+  letter-spacing: -0.03em;
   text-wrap: balance;
 }
 
@@ -56,6 +56,13 @@
   flex-wrap: wrap;
   gap: 0.75rem;
 }
+
+.project-page__context { display: grid; gap: 1rem; max-width: 65ch; }
+.project-page__context > div { display: grid; gap: 0.25rem; }
+.project-page__context dt { color: var(--primary); font: 0.8125rem/1.5 var(--font-mono); }
+.project-page__context dd { color: var(--muted-foreground); line-height: 1.625; overflow-wrap: anywhere; }
+.project-page__ending { display: grid; gap: 1.5rem; }
+.project-page__return { display: flex; flex-wrap: wrap; gap: 0.75rem; }
 
 /* Outlined button. Add --primary for the filled amber version. */
 .project-page__button {
@@ -166,6 +173,9 @@
 .project-page__pager-link:hover {
   background: var(--card);
 }
+
+.project-page__pager-link:focus-visible { outline: 2px solid var(--primary); outline-offset: -3px; background: var(--card); }
+.project-page__pager:has(> :only-child) { grid-template-columns: 1fr; }
 
 .project-page__pager-link--next {
   align-items: flex-end;
