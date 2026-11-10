@@ -16,7 +16,7 @@ const replies = [
   })),
 ]
 
-export default function Contact({ onReady }) {
+export default function Contact({ onReady, onNavigate }) {
   const [copyStatus, setCopyStatus] = useState("")
   const copyTimer = useRef(null)
 
@@ -34,7 +34,7 @@ export default function Contact({ onReady }) {
   }
 
   return (
-    <TerminalSection section={section} onReady={onReady}>
+    <TerminalSection section={section} onReady={onReady} onNavigate={onNavigate}>
       <div className="contact__columns">
         <div className="contact__intro">
           <p className="contact__blurb">{contact.blurb}</p>

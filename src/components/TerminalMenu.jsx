@@ -15,8 +15,8 @@ const destinations = [
   })),
 ]
 
-export default function TerminalMenu({ current, enabled = true }) {
-  const run = useTerminalRun("./menu.sh", { enabled })
+export default function TerminalMenu({ current, enabled = true, request = 0 }) {
+  const run = useTerminalRun("./menu.sh", { enabled, immediate: request > 0 })
   const menuRef = useRef(null)
   const initialChoice = current === "home" ? 1 : 0
   const selectedRef = useRef(initialChoice)
@@ -27,6 +27,13 @@ export default function TerminalMenu({ current, enabled = true }) {
     selectedRef.current = index
     setSelected(index)
   }, [])
+
+  useEffect(() => {
+    if (!request || !run.finished) return
+    const link = menuRef.current?.querySelectorAll("a")[selectedRef.current]
+    link?.focus({ preventScroll: true })
+    menuRef.current?.scrollIntoView({ block: "center", behavior: "instant" })
+  }, [request, run.finished])
 
   useEffect(() => {
     if (!run.finished) return
@@ -79,7 +86,7 @@ export default function TerminalMenu({ current, enabled = true }) {
           ))}
         </ol>
         <p className="terminal-menu__help">
-          <span><kbd>↑↓</kbd> select</span>
+          <span><kbd>↑↓</kbd> in menu</span>
           <span><kbd>Enter</kbd> / <kbd>1–{items.length}</kbd> open</span>
         </p>
       </nav>

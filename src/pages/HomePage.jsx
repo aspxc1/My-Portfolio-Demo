@@ -26,15 +26,17 @@ function HomeSession({ view }) {
   const View = views[view]
   const reducedMotion = useReducedMotion()
   const [ready, setReady] = useState(false)
+  const [navigationRequest, setNavigationRequest] = useState(0)
   const onReady = useCallback(() => setReady(true), [])
+  const onNavigate = useCallback(() => setNavigationRequest((request) => request + 1), [])
   return (
     <main className="terminal-home">
       {/* React moves <title> and <meta> tags into the page <head> automatically. */}
       <title>{site.title}</title>
       <meta name="description" content={site.description} />
 
-      <View key={view} onReady={onReady} />
-      <SessionNavigation current={view} enabled={reducedMotion || ready} />
+      <View key={view} onReady={onReady} onNavigate={onNavigate} />
+      <SessionNavigation current={view} enabled={reducedMotion || ready || navigationRequest > 0} request={navigationRequest} />
     </main>
   )
 }

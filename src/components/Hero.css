@@ -26,6 +26,7 @@
   font-size: 0.875rem;
   line-height: 1.25rem;
   color: var(--foreground);
+  justify-content: space-between;
 }
 
 /* ---------- ASCII art + info, side by side on wider screens ---------- */

@@ -18,7 +18,8 @@
 }
 
 .project-row:focus-visible {
-  outline: none;
+  outline: 2px solid var(--primary);
+  outline-offset: -2px;
 }
 
 .project-row__status {
@@ -37,7 +38,8 @@
   font-weight: 700;
 }
 
-.project-row:hover .project-row__name {
+.project-row:hover .project-row__name,
+.project-row:focus-visible .project-row__name {
   color: var(--primary);
 }
 
@@ -78,7 +80,8 @@
   transition: transform 150ms;
 }
 
-.project-row:hover .project-row__arrow {
+.project-row:hover .project-row__arrow,
+.project-row:focus-visible .project-row__arrow {
   transform: translateX(0.25rem);
   color: var(--primary);
 }

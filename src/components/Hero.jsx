@@ -4,11 +4,12 @@ import useTerminalRun from "../lib/useTerminalRun.js"
 import { hero, profile } from "../content/site.js"
 import { useEffect } from "react"
 import TerminalCommand from "./TerminalCommand.jsx"
+import NavigationJump from "./NavigationJump.jsx"
 import "./Hero.css"
 
 const swatchColors = ["var(--foreground)", "var(--primary)", "var(--muted-foreground)", "var(--card)"]
 
-export default function Hero({ onReady }) {
+export default function Hero({ onReady, onNavigate }) {
   const title = `${profile.handle}@portfolio`
   const run = useTerminalRun("neofetch")
   useEffect(() => {
@@ -20,6 +21,7 @@ export default function Hero({ onReady }) {
       <div ref={run.ref} className={`hero__run terminal-run terminal-run--${run.stage}`} style={run.style}>
         <p className="hero__command">
           <TerminalCommand command="neofetch" />
+          <NavigationJump onClick={onNavigate} />
         </p>
 
         <div className="hero__neofetch">

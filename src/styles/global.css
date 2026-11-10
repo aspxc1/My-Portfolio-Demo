@@ -194,6 +194,22 @@ button {
   color: var(--primary);
 }
 
+.navigation-jump {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 2.75rem;
+  padding: 0.5rem 0.625rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--foreground);
+  font: 0.75rem/1.25 var(--font-mono);
+  cursor: pointer;
+}
+
+.navigation-jump:hover { color: var(--primary); border-color: var(--primary); }
+
 /* ---------- Animations ---------- */
 
 /* Blinking terminal cursor. */

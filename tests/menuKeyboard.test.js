@@ -4,13 +4,15 @@ import { getMenuKeyAction } from "../src/lib/menuKeyboard.js"
 
 const context = { selectedIndex: 0, count: 4, insideMenu: false, interactive: false, editing: false }
 
-test("fresh-page arrow and Enter keys work without focusing a menu link", () => {
-  assert.deepEqual(getMenuKeyAction({ key: "ArrowDown" }, context), { type: "select", index: 1 })
-  assert.deepEqual(getMenuKeyAction({ key: "Enter" }, context), { type: "open", index: 0 })
+test("arrows and Enter leave reading alone until the menu has focus", () => {
+  assert.equal(getMenuKeyAction({ key: "ArrowDown" }, context), null)
+  assert.equal(getMenuKeyAction({ key: "ArrowUp" }, context), null)
+  assert.equal(getMenuKeyAction({ key: "Enter" }, context), null)
+  assert.deepEqual(getMenuKeyAction({ key: "Enter" }, { ...context, insideMenu: true }), { type: "open", index: 0 })
 })
 
 test("selection wraps and numbered shortcuts activate only existing options", () => {
-  assert.deepEqual(getMenuKeyAction({ key: "ArrowUp" }, context), { type: "select", index: 3 })
+  assert.deepEqual(getMenuKeyAction({ key: "ArrowUp" }, { ...context, insideMenu: true }), { type: "select", index: 3 })
   assert.deepEqual(getMenuKeyAction({ key: "4" }, context), { type: "open", index: 3 })
   assert.equal(getMenuKeyAction({ key: "5" }, context), null)
 })
