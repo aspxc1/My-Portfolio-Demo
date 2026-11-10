@@ -15,10 +15,10 @@ export const profile = {
   email: "aaserzanaty@gmail.com",
 
   links: [
-    { label: "github", href: "https://github.com/aspxc1", kind: "link" },
-    { label: "linkedin", href: "https://www.linkedin.com/in/aaser-mohamed-695611352/", kind: "link" },
-    { label: "codeforces", href: "https://codeforces.com/profile/Aspxc1", kind: "link" },
-    { label: "resume.pdf", href: "/resume.pdf", kind: "file" },
+    { label: "GitHub", icon: "github", href: "https://github.com/aspxc1", kind: "link" },
+    { label: "LinkedIn", icon: "linkedin", href: "https://www.linkedin.com/in/aaser-mohamed-695611352/", kind: "link" },
+    { label: "Codeforces", icon: "codeforces", href: "https://codeforces.com/profile/Aspxc1", kind: "link" },
+    { label: "Resume", icon: "resume", href: "/resume.pdf", kind: "file" },
   ],
 }
 

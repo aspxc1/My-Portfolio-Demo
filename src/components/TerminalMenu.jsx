@@ -16,7 +16,7 @@ const destinations = [
 ]
 
 export default function TerminalMenu({ current, enabled = true, request = 0 }) {
-  const run = useTerminalRun("./menu.sh", { enabled, immediate: request > 0 })
+  const run = useTerminalRun("./menu.sh", { enabled, immediate: request > 0, visitKey: `menu:${current}` })
   const menuRef = useRef(null)
   const initialChoice = current === "home" ? 1 : 0
   const selectedRef = useRef(initialChoice)
@@ -75,7 +75,9 @@ export default function TerminalMenu({ current, enabled = true, request = 0 }) {
                 className="terminal-menu__option"
                 data-selected={selected === index ? "true" : undefined}
                 onFocus={() => select(index)}
-                onPointerEnter={() => select(index)}
+                onPointerEnter={() => {
+                  if (!menuRef.current?.contains(document.activeElement)) select(index)
+                }}
               >
                 <span aria-hidden="true" className="terminal-menu__number">{index + 1}.</span>
                 <span aria-hidden="true" className="terminal-menu__marker">{">"}</span>

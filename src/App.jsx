@@ -3,10 +3,12 @@ import SessionTransition from "./components/SessionTransition.jsx"
 import HomePage from "./pages/HomePage.jsx"
 import NotFoundPage from "./pages/NotFoundPage.jsx"
 import ProjectPage from "./pages/ProjectPage.jsx"
+import PortfolioSession from "./components/PortfolioSession.jsx"
 
 /** A single terminal surface; navigation clears one view before revealing another. */
 export default function App() {
   return (
+    <PortfolioSession>
     <SessionTransition>
       {(location) => (
         <Routes location={location}>
@@ -16,5 +18,6 @@ export default function App() {
         </Routes>
       )}
     </SessionTransition>
+    </PortfolioSession>
   )
 }

@@ -1,19 +1,19 @@
-import { useEffect, useRef, useState } from "react"
+import { useContext, useEffect, useRef, useState } from "react"
 import useReducedMotion from "./useReducedMotion.js"
-
-const TYPE_CHAR_MS = 42
-const START_DELAY_MS = 100
-const SUBMIT_DELAY_MS = 120
+import { PlaybackHistory } from "../components/PortfolioSession.jsx"
+import { getRunTiming } from "./terminalPlayback.js"
 
 /** Only the selected view mounts. A new visit replays its command once. */
-export default function useTerminalRun(command, { enabled = true, immediate = false } = {}) {
+export default function useTerminalRun(command, { enabled = true, immediate = false, visitKey = command } = {}) {
+  const history = useContext(PlaybackHistory)
+  const [replay] = useState(() => history?.has(visitKey) || false)
   const ref = useRef(null)
   const completedCommand = useRef(null)
   const reducedMotion = useReducedMotion()
   const [stage, setStage] = useState("waiting")
   const [inView, setInView] = useState(false)
   const [pageVisible, setPageVisible] = useState(true)
-  const duration = Math.min(command.length * TYPE_CHAR_MS, 700)
+  const { start, type: duration, submit } = getRunTiming(command, replay)
 
   useEffect(() => {
     setStage("waiting")
@@ -26,19 +26,20 @@ export default function useTerminalRun(command, { enabled = true, immediate = fa
       setStage("output")
       return
     }
-    const startTimer = window.setTimeout(() => setStage("typing"), START_DELAY_MS)
+    const startTimer = window.setTimeout(() => setStage("typing"), start)
     const outputTimer = window.setTimeout(
       () => {
         completedCommand.current = command
+        history?.add(visitKey)
         setStage("output")
       },
-      START_DELAY_MS + duration + SUBMIT_DELAY_MS,
+      start + duration + submit,
     )
     return () => {
       window.clearTimeout(startTimer)
       window.clearTimeout(outputTimer)
     }
-  }, [command, enabled, immediate, reducedMotion, duration])
+  }, [command, enabled, immediate, reducedMotion, start, duration, submit, history, visitKey])
 
   useEffect(() => {
     const updateVisibility = () => setPageVisible(document.visibilityState !== "hidden")

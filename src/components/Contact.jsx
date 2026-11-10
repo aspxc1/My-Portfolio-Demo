@@ -1,16 +1,17 @@
 import { useEffect, useRef, useState } from "react"
 import { contact, profile, sections } from "../content/site.js"
 import TerminalSection from "./TerminalSection.jsx"
+import ContactIcon from "./ContactIcon.jsx"
 import "./Contact.css"
 
 const section = sections.contact
 
 /** Every endpoint comes from the shared profile links. */
 const replies = [
-  { via: "email", label: profile.email, href: `mailto:${profile.email}`, external: false },
+  { icon: "email", label: "Email", href: `mailto:${profile.email}`, external: false },
   ...profile.links.map((link) => ({
-    via: link.label.replace(/\.[a-z]+$/, ""),
-    label: link.kind === "file" ? link.label : link.href.replace(/^https?:\/\/(www\.)?/, ""),
+    icon: link.icon,
+    label: link.label,
     href: link.href,
     external: true,
   })),
@@ -47,28 +48,22 @@ export default function Contact({ onReady, onNavigate }) {
         <div className="contact__terminal">
           <p>{`PING ${profile.handle}: ${replies.length} endpoints`}</p>
           <ul className="contact__replies">
-            {replies.map((reply, i) => (
-              <li key={reply.via}>
+            {replies.map((reply) => (
+              <li key={reply.href}>
                 <a
                   href={reply.href}
                   className="contact__reply"
                   target={reply.external ? "_blank" : undefined}
                   rel={reply.external ? "noreferrer" : undefined}
                 >
-                  <span className="contact__reply-meta">
-                    <span><span aria-hidden="true">{`[${i}] `}</span>{reply.via}</span>
-                    <span aria-hidden="true" className="contact__timing">{`${(0.4 + i * 0.3).toFixed(1)}ms`}</span>
-                  </span>
-                  <span className="text-link contact__address">{reply.label}</span>
+                  <ContactIcon name={reply.icon} />
+                  <span className="contact__reply-label">{reply.label}</span>
+                  <svg aria-hidden="true" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.75" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14m-6-6 6 6-6 6" /></svg>
                   {reply.external ? <span className="sr-only"> (opens in new tab)</span> : null}
                 </a>
               </li>
             ))}
           </ul>
-          <p className="contact__summary">
-            {`${replies.length} transmitted / ${replies.length} received / `}
-            <span className="contact__accent">0% packet loss</span>
-          </p>
         </div>
       </div>
     </TerminalSection>

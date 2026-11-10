@@ -1,59 +1,50 @@
-.hero {
-  padding-top: 2rem;
-  padding-bottom: 1rem;
-}
-
-.hero__accent {
-  color: var(--primary);
-}
-
-.hero__muted {
-  color: var(--muted-foreground);
-}
-
-/* ---------- Fake shell session: command line ---------- */
-
-.hero__run {
-  display: flex;
-  flex-direction: column;
-  gap: 1rem;
-}
-
+.hero { padding-top: 1.25rem; padding-bottom: 0.5rem; }
+.hero__accent { color: var(--primary); }
+.hero__muted { color: var(--muted-foreground); }
+.hero__run { display: flex; flex-direction: column; gap: 1.25rem; }
 .hero__command {
   display: flex;
-  align-items: baseline;
-  font-family: var(--font-mono);
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-  color: var(--foreground);
+  align-items: center;
   justify-content: space-between;
+  font: 0.875rem/1.25rem var(--font-mono);
 }
-
-/* ---------- ASCII art + info, side by side on wider screens ---------- */
-
 .hero__neofetch {
-  display: flex;
-  flex-direction: column;
-  gap: 2rem;
+  display: grid;
+  grid-template-columns: 8rem minmax(0, 1fr);
+  grid-template-areas: "identity identity" "art facts" "contacts contacts" "details details" "swatches swatches";
+  align-items: start;
+  gap: 1rem;
+  font: 0.8125rem/1.5 var(--font-mono);
+  visibility: hidden;
+  opacity: 0;
+  transform: translateY(2px);
 }
-
-.hero__art {
-  flex-shrink: 0;
-  max-width: 100%;
+.hero__run.terminal-run--output .hero__neofetch {
+  visibility: visible;
+  opacity: 1;
+  transform: none;
+  transition: opacity 160ms ease-out, transform 160ms ease-out;
 }
-
-/* ascii.rest text pieces need fixed-width glyphs and tightly spaced rows. */
+.hero__title-group { grid-area: identity; display: grid; gap: 0.5rem; min-width: 0; }
+.hero__name {
+  font-family: var(--font-mono);
+  font-size: clamp(1.75rem, 8vw, 2.25rem);
+  line-height: 1.1;
+  font-weight: 700;
+  text-wrap: balance;
+}
+.hero__art { grid-area: art; min-width: 0; align-self: center; }
+/* Fixed-width glyphs and tightly spaced rows preserve the supplied ASCII piece. */
 @font-face {
   font-family: "ascii.rest mono";
   src: url("/fonts/ascii-rest-mono.woff2") format("woff2");
   unicode-range: U+00B0, U+00B7, U+2022, U+2500-259F, U+25CF;
   font-display: swap;
 }
-
 .hero__ascii {
   margin: 0;
   font-family: "JetBrains Mono", "ascii.rest mono", monospace;
-  font-size: clamp(0.375rem, 1.5vw, 0.625rem);
+  font-size: 0.2rem;
   line-height: 1.2;
   letter-spacing: 0;
   font-variant-ligatures: none;
@@ -61,138 +52,41 @@
   font-weight: 400;
   color: var(--primary);
 }
-
-.hero__info {
-  display: flex;
-  min-width: 0;
-  flex-direction: column;
-  gap: 1rem;
-  font-family: var(--font-mono);
-  font-size: 0.875rem;
-  line-height: 1.25rem;
-}
-
-.hero__title-group {
-  display: flex;
-  flex-direction: column;
-  gap: 0.25rem;
-}
-
-.hero__contacts {
-  display: grid;
-  justify-items: start;
-  gap: 0.75rem;
-  font-size: 0.8125rem;
-  line-height: 1.5;
-  overflow-wrap: anywhere;
-}
-
-.hero__contacts ul {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem 1.25rem;
-}
-
-.hero__contacts a {
-  display: inline-flex;
-  align-items: center;
-  padding-block: 0.125rem;
-}
-
-@media (max-width: 639px), (pointer: coarse) {
-  .hero__contacts a { min-height: 2.75rem; }
-}
-
-.hero__name {
-  font-family: var(--font-mono);
-  font-size: clamp(1.75rem, 8vw, 2.25rem);
-  line-height: 1;
-  font-weight: 700;
-  letter-spacing: 0;
-  text-wrap: balance;
-}
-
-.hero__dashes {
-  overflow: hidden;
-  white-space: nowrap;
-  color: var(--muted-foreground);
-}
-
-/* Two columns: amber keys on the left, values on the right. */
-.hero__facts {
-  display: grid;
-  grid-template-columns: auto 1fr;
-  column-gap: 1rem;
-  row-gap: 0.25rem;
-}
-
-/* Lets the dt/dd inside each row sit directly in the grid above. */
-.hero__fact {
-  display: contents;
-}
-
-.hero__fact dt {
-  font-weight: 700;
-  color: var(--primary);
-}
-
-.hero__swatches {
-  display: flex;
-  gap: 0.25rem;
-  padding-top: 0.25rem;
-}
-
-.hero__swatch {
-  width: 1.75rem;
-  height: 1rem;
-  border: 1px solid var(--border);
-}
-
-/* ---------- The run, stage by stage ---------- */
-
-/* Hidden until the command is submitted, then all of neofetch's output lands together. */
-.hero__neofetch {
-  opacity: 0;
-  transform: translateY(2px);
-  visibility: hidden;
-  transition: opacity 300ms ease-out, transform 300ms ease-out;
-}
-
-.hero__run.terminal-run--output .hero__neofetch {
-  visibility: visible;
-  opacity: 1;
-  transform: none;
-  transition: opacity 160ms ease-out, transform 160ms ease-out;
-}
-
-@media (min-width: 640px) {
-  .hero__name {
-    font-size: 3.75rem;
-  }
-}
-
-@media (min-width: 768px) {
-  .hero {
-    padding-top: 3rem;
-  }
-}
-
-@media (min-width: 1024px) {
+.hero__facts { grid-area: facts; display: grid; gap: 0.75rem; min-width: 0; }
+.hero__fact { display: grid; gap: 0.125rem; min-width: 0; }
+.hero__fact dt { color: var(--primary); font-weight: 700; }
+.hero__fact dd { overflow-wrap: anywhere; }
+.hero__contacts { grid-area: contacts; min-width: 0; }
+.hero__contacts ul { display: flex; flex-wrap: wrap; gap: 0.25rem 1.25rem; }
+.hero__contacts a { display: inline-flex; align-items: center; gap: 0.5rem; min-height: 2.75rem; }
+.hero__contacts svg { flex-shrink: 0; color: var(--muted-foreground); }
+.hero__contacts a:hover svg { color: var(--primary); }
+.hero__details { grid-area: details; color: var(--muted-foreground); min-width: 0; }
+.hero__details summary { cursor: pointer; min-height: 2.75rem; align-content: center; width: fit-content; }
+.hero__details summary:hover { color: var(--primary); }
+.hero__details .hero__facts { margin-top: 0.5rem; color: var(--foreground); }
+.hero__swatches { grid-area: swatches; display: flex; gap: 0.25rem; }
+.hero__swatch { width: 1.75rem; height: 0.75rem; border: 1px solid var(--border); }
+@media (min-width: 700px) {
+  .hero { padding-top: 2rem; padding-bottom: 1rem; }
   .hero__neofetch {
-    flex-direction: row;
-    align-items: center;
-    gap: 2.5rem;
+    grid-template-columns: 15rem minmax(0, 1fr);
+    grid-template-areas: "art identity" "art facts" "art contacts" "art details" "art swatches";
+    column-gap: 2rem;
+    row-gap: 0.75rem;
+    font-size: 0.875rem;
   }
+  .hero__ascii { font-size: 0.375rem; }
+  .hero__name { font-size: 3rem; }
+  .hero__facts { gap: 0.25rem; }
+  .hero__fact { grid-template-columns: 5rem minmax(0, 1fr); gap: 1rem; }
+  .hero__contacts ul { gap: 0.25rem 1rem; }
 }
-
-/* Show the finished run immediately, with no typing or blinking, when asked. */
+@media (min-width: 1024px) {
+  .hero__neofetch { grid-template-columns: 24.375rem minmax(0, 1fr); column-gap: 2.5rem; }
+  .hero__ascii { font-size: 0.625rem; }
+  .hero__name { font-size: 3.75rem; }
+}
 @media (prefers-reduced-motion: reduce) {
-  /* Same specificity as the stage rules above, so this wins by coming last. */
-  .hero__run.terminal-run--output .hero__neofetch {
-    width: auto;
-    visibility: visible;
-    opacity: 1;
-    transform: none;
-    transition: none;
-  }
+  .hero__run.terminal-run--output .hero__neofetch { transform: none; transition: none; }
 }
