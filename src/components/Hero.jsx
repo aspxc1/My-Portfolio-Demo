@@ -1,6 +1,6 @@
 import { Ascii } from "ascii.rest/react"
 import * as synthwave from "ascii.rest/pieces/synthwave"
-import { useEffect } from "react"
+import { useEffect, useState } from "react"
 import useTerminalRun from "../lib/useTerminalRun.js"
 import { hero, profile } from "../content/site.js"
 import TerminalCommand from "./TerminalCommand.jsx"
@@ -10,9 +10,17 @@ import "./Hero.css"
 
 const swatchColors = ["var(--foreground)", "var(--primary)", "var(--muted-foreground)", "var(--card)"]
 const contacts = [{ label: "Email", icon: "email", href: `mailto:${profile.email}` }, ...profile.links]
+const desktopDetailsQuery = "(min-width: 1024px)"
 
 export default function Hero({ onReady, onNavigate }) {
   const run = useTerminalRun("neofetch")
+  const [detailsOpen, setDetailsOpen] = useState(() => typeof window !== "undefined" && window.matchMedia(desktopDetailsQuery).matches)
+  useEffect(() => {
+    const query = window.matchMedia(desktopDetailsQuery)
+    const onChange = (event) => setDetailsOpen(event.matches)
+    query.addEventListener("change", onChange)
+    return () => query.removeEventListener("change", onChange)
+  }, [])
   useEffect(() => {
     if (run.finished) onReady?.()
   }, [run.finished, onReady])
@@ -54,7 +62,7 @@ export default function Hero({ onReady, onNavigate }) {
             </ul>
           </nav>
 
-          <details className="hero__details">
+          <details className="hero__details" open={detailsOpen} onToggle={(event) => setDetailsOpen(event.currentTarget.open)}>
             <summary>System details</summary>
             <dl className="hero__facts">
               {hero.neofetch.filter((row) => row.key !== "Status" && row.key !== "Focus").map((row) => (
