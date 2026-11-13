@@ -14,7 +14,7 @@
   font-size: 0.75rem;
   line-height: 1rem;
   letter-spacing: 0.05em;
-  color: var(--primary);
+  color: var(--terminal-teal);
 }
 
 /* The dashed line that runs to the right of the path. */
@@ -27,7 +27,7 @@
 .section-heading__title {
   grid-column: 1 / -1;
   grid-row: 2;
-  --terminal-prompt-color: var(--muted-foreground);
+  --terminal-prompt-color: var(--terminal-blue);
   font-family: var(--font-mono);
   font-size: 1.5rem;
   line-height: 2rem;

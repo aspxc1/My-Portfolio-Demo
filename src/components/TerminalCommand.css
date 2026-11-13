@@ -7,7 +7,7 @@
 
 .terminal-command__prompt {
   white-space: pre;
-  color: var(--terminal-prompt-color, var(--primary));
+  color: var(--terminal-prompt-color, var(--terminal-blue));
 }
 
 .terminal-command__text {

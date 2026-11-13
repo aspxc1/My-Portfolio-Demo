@@ -70,10 +70,14 @@
   visibility: visible;
 }
 
-.terminal-menu__option[data-selected="true"],
 .terminal-menu__option:focus-visible {
-  outline: 2px solid var(--primary);
-  outline-offset: 2px;
+  outline: none;
+}
+
+.terminal-menu__option:focus-visible .terminal-menu__label {
+  text-decoration: underline;
+  text-decoration-thickness: 2px;
+  text-underline-offset: 5px;
 }
 
 .terminal-menu__help {

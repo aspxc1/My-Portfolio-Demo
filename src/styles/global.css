@@ -34,17 +34,20 @@
   font-display: swap;
 }
 
-/* Palette: terminal black, graphite, paper white, amber phosphor */
+/* Catppuccin Mocha: cool surfaces, mauve actions, blue/teal terminal accents. */
 :root {
   color-scheme: dark;
 
-  --background: #0f0f10;
-  --foreground: #e7e5e0;
-  --card: #18181a;
-  --primary: #e9a23b;
-  --primary-foreground: #0f0f10;
-  --muted-foreground: #8b8a87;
-  --border: color-mix(in oklab, #e7e5e0 13%, transparent);
+  --background: #1e1e2e;
+  --foreground: #cdd6f4;
+  --card: #313244;
+  --primary: #cba6f7;
+  --primary-foreground: #1e1e2e;
+  --muted-foreground: #a6adc8;
+  --border: #45475a;
+  --terminal-blue: #89b4fa;
+  --terminal-teal: #94e2d5;
+  --success: #a6e3a1;
 
   --font-sans: "IBM Plex Sans", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
@@ -142,7 +145,7 @@ button {
   gap: 2.25rem;
 }
 
-/* Small amber uppercase labels like "CURRENTLY", "STACK", "OVERVIEW". */
+/* Small accent labels like "CURRENTLY", "STACK", "OVERVIEW". */
 .label {
   font-family: var(--font-mono);
   font-size: 0.75rem;
@@ -184,7 +187,7 @@ button {
   text-align: right;
 }
 
-/* Underlined inline link with an amber underline. */
+/* Underlined inline link using the theme accent. */
 .text-link {
   text-decoration: underline;
   text-decoration-color: var(--primary);

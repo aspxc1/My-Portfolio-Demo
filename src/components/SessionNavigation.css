@@ -16,7 +16,7 @@
 }
 
 .session-navigation__path {
-  color: var(--primary);
+  color: var(--terminal-teal);
   white-space: pre-wrap;
 }
 

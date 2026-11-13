@@ -58,7 +58,7 @@
 }
 .hero__facts { grid-area: facts; display: grid; gap: 0.75rem; min-width: 0; }
 .hero__fact { display: grid; gap: 0.125rem; min-width: 0; }
-.hero__fact dt { color: var(--primary); font-weight: 700; }
+.hero__fact dt { color: var(--terminal-blue); font-weight: 700; }
 .hero__fact dd { overflow-wrap: anywhere; }
 .hero__contacts { grid-area: contacts; min-width: 0; }
 .hero__contacts ul { display: flex; flex-wrap: wrap; gap: 0.25rem 1.25rem; }
