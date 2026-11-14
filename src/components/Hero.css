@@ -38,20 +38,9 @@
   text-wrap: balance;
 }
 .hero__art {
-  position: relative;
   grid-area: art;
   min-width: 0;
   align-self: center;
-  padding: 0.5rem;
-  border: 1px solid color-mix(in oklab, var(--border) 65%, transparent);
-  border-radius: var(--radius);
-  background:
-    radial-gradient(
-      circle at 50% 34%,
-      color-mix(in oklab, var(--primary) 16%, transparent) 0%,
-      transparent 68%
-    ),
-    color-mix(in oklab, var(--mantle) 60%, transparent);
 }
 /* Fixed-width glyphs and tightly spaced rows preserve the supplied ASCII piece. */
 @font-face {
