@@ -1,19 +1,22 @@
 import { Ascii } from "ascii.rest/react"
 import * as synthwave from "ascii.rest/pieces/synthwave"
-import { useEffect, useState } from "react"
+import { useContext, useEffect, useState } from "react"
 import useTerminalRun from "../lib/useTerminalRun.js"
+import { ACCENTS } from "../lib/terminalTheme.js"
 import { hero, profile } from "../content/site.js"
+import { TerminalTheme } from "./PortfolioSession.jsx"
 import TerminalCommand from "./TerminalCommand.jsx"
 import NavigationJump from "./NavigationJump.jsx"
 import ContactIcon from "./ContactIcon.jsx"
 import "./Hero.css"
 
-const swatchColors = ["var(--foreground)", "var(--primary)", "var(--muted-foreground)", "var(--card)"]
 const contacts = [{ label: "Email", icon: "email", href: `mailto:${profile.email}` }, ...profile.links]
 const desktopDetailsQuery = "(min-width: 1024px)"
 
 export default function Hero({ onReady, onNavigate }) {
   const run = useTerminalRun("neofetch")
+  const theme = useContext(TerminalTheme)
+  const activeAccent = theme?.accent || "mauve"
   const [detailsOpen, setDetailsOpen] = useState(() => typeof window !== "undefined" && window.matchMedia(desktopDetailsQuery).matches)
   useEffect(() => {
     const query = window.matchMedia(desktopDetailsQuery)
@@ -71,8 +74,19 @@ export default function Hero({ onReady, onNavigate }) {
             </dl>
           </details>
 
-          <div aria-hidden="true" className="hero__swatches">
-            {swatchColors.map((color) => <span key={color} className="hero__swatch" style={{ background: color }} />)}
+          <div role="group" aria-label="Terminal accent colors" className="hero__swatches">
+            {ACCENTS.map((swatch) => (
+              <button
+                key={swatch.id}
+                type="button"
+                className="hero__swatch"
+                style={{ "--swatch-color": swatch.hex }}
+                aria-label={`Set terminal accent to ${swatch.label}`}
+                aria-pressed={activeAccent === swatch.id}
+                onClick={() => theme?.setAccent(swatch.id)}
+              />
+            ))}
+            <span aria-hidden="true" className="hero__swatch-hint">{`// ${activeAccent}`}</span>
           </div>
         </div>
       </div>

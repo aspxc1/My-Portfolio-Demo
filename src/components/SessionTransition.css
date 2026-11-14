@@ -1,10 +1,178 @@
 .session {
+  position: relative;
+  display: flex;
+  flex-direction: column;
   min-height: 100svh;
+  background: var(--backdrop);
+  isolation: isolate;
+  overflow-x: clip;
+}
+
+/* ---------- Ambient technical backgrounds ---------- */
+
+.session::before,
+.session::after {
+  content: "";
+  position: fixed;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Default "grid": 24px dot-matrix + subtle bottom horizon grid echoing the ASCII sun. */
+.session[data-bg="grid"]::before {
+  background-image: radial-gradient(
+    circle at 1px 1px,
+    color-mix(in oklab, var(--primary) 26%, var(--border)) 1px,
+    transparent 0
+  );
+  background-size: 24px 24px;
+  mask-image: radial-gradient(ellipse 85% 80% at 50% 42%, #000 30%, transparent 100%);
+  opacity: 0.65;
+}
+
+.session[data-bg="grid"]::after {
+  background:
+    linear-gradient(
+      to top,
+      color-mix(in oklab, var(--primary) 11%, transparent) 0%,
+      transparent 38%
+    ),
+    repeating-linear-gradient(
+      to right,
+      color-mix(in oklab, var(--primary) 10%, transparent) 0 1px,
+      transparent 1px 48px
+    );
+  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, transparent 36%);
+}
+
+/* "crt": scanline raster + phosphor edge vignette. */
+.session[data-bg="crt"]::before {
+  background:
+    repeating-linear-gradient(
+      to bottom,
+      transparent 0 2px,
+      rgba(0, 0, 0, 0.28) 2px 4px
+    );
+  z-index: 2;
+  opacity: 0.55;
+}
+
+.session[data-bg="crt"]::after {
+  background: radial-gradient(
+    ellipse 80% 70% at 50% 35%,
+    color-mix(in oklab, var(--primary) 10%, transparent) 0%,
+    transparent 65%,
+    rgba(0, 0, 0, 0.45) 100%
+  );
+}
+
+/* "circuit" (blueprint): major 96px + minor 24px coordinate grid. */
+.session[data-bg="circuit"]::before {
+  background-image:
+    linear-gradient(to right, color-mix(in oklab, var(--primary) 16%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--primary) 16%, transparent) 1px, transparent 1px),
+    linear-gradient(to right, color-mix(in oklab, var(--border) 35%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--border) 35%, transparent) 1px, transparent 1px);
+  background-size: 96px 96px, 96px 96px, 24px 24px, 24px 24px;
+  mask-image: radial-gradient(ellipse 92% 85% at 50% 45%, #000 20%, transparent 95%);
+  opacity: 0.7;
+}
+
+.session[data-bg="minimal"]::before,
+.session[data-bg="minimal"]::after {
+  display: none;
+}
+
+/* ---------- Riced terminal window ---------- */
+
+.session__window {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  width: 100%;
+  background: color-mix(in oklab, var(--background) 94%, var(--mantle));
+}
+
+.session__chrome {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.55rem 1rem;
+  border-bottom: 1px solid var(--border);
+  background: var(--mantle);
+  font: 0.75rem/1rem var(--font-mono);
+  color: var(--muted-foreground);
+  user-select: none;
+}
+
+.session__dots {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.session__dot {
+  width: 0.625rem;
+  height: 0.625rem;
+  border-radius: 999px;
+  background: var(--border);
+  transition: background-color 160ms ease;
+}
+
+.session__chrome:hover .session__dot--close { background: var(--window-close); }
+.session__chrome:hover .session__dot--minimize { background: var(--window-minimize); }
+.session__chrome:hover .session__dot--expand { background: var(--window-expand); }
+
+.session__title {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.session__cwd {
+  min-width: 3rem;
+  text-align: right;
+  color: var(--terminal-teal);
 }
 
 .session__screen {
   position: relative;
+  display: flex;
+  flex: 1;
+  flex-direction: column;
   transform-origin: top;
+}
+
+.session[data-bg="crt"] .terminal-command__prompt,
+.session[data-bg="crt"] .hero__ascii,
+.session[data-bg="crt"] .terminal-menu__marker {
+  text-shadow: 0 0 10px color-mix(in oklab, var(--primary) 45%, transparent);
+}
+
+@media (min-width: 840px) {
+  .session {
+    padding: clamp(0.75rem, 1.75vw, 1.5rem);
+  }
+
+  .session__window {
+    max-width: 75rem;
+    margin-inline: auto;
+    border: 1px solid var(--border);
+    border-top-color: color-mix(in oklab, var(--primary) 55%, var(--border));
+    border-radius: calc(var(--radius) * 1.75);
+    box-shadow:
+      0 24px 64px -16px rgba(0, 0, 0, 0.65),
+      0 0 0 1px rgba(0, 0, 0, 0.35);
+    overflow: hidden;
+  }
+
+  .session__chrome {
+    padding-inline: 1.5rem;
+  }
 }
 
 /* Route focus announces the page without drawing a control outline around prose. */
@@ -44,6 +212,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .session__dot,
   .session__screen--leaving,
   .session__screen--entering,
   .session__screen--entering::after {

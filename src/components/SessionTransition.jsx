@@ -1,6 +1,10 @@
-import { useEffect, useLayoutEffect, useRef, useState } from "react"
+import { useContext, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { useLocation } from "react-router"
+import { profile } from "../content/site.js"
+import { getSessionTask } from "../lib/terminalTheme.js"
 import useReducedMotion from "../lib/useReducedMotion.js"
+import { TerminalTheme } from "./PortfolioSession.jsx"
+import TerminalStatusBar from "./TerminalStatusBar.jsx"
 import "./SessionTransition.css"
 
 const address = (location) => location.pathname + location.search + location.hash
@@ -8,12 +12,14 @@ const address = (location) => location.pathname + location.search + location.has
 export default function SessionTransition({ children }) {
   const requested = useLocation()
   const reducedMotion = useReducedMotion()
+  const theme = useContext(TerminalTheme)
   const [displayed, setDisplayed] = useState(requested)
   const [phase, setPhase] = useState("idle")
   const displayedRef = useRef(displayed)
   const screenRef = useRef(null)
   const firstRender = useRef(true)
   displayedRef.current = displayed
+  const task = getSessionTask(displayed)
 
   useEffect(() => {
     if (address(requested) === address(displayedRef.current) || reducedMotion) {
@@ -47,16 +53,34 @@ export default function SessionTransition({ children }) {
   }, [displayed])
 
   return (
-    <div className="session">
-      <div
-        ref={screenRef}
-        className={`session__screen session__screen--${phase}`}
-        inert={phase === "leaving"}
-        onAnimationEnd={(event) => {
-          if (event.target === event.currentTarget && phase === "entering") setPhase("idle")
-        }}
-      >
-        {children(displayed)}
+    <div
+      className="session"
+      data-accent={theme?.accent || "mauve"}
+      data-bg={theme?.background || "grid"}
+    >
+      <div className="session__window">
+        <div aria-hidden="true" className="session__chrome">
+          <div className="session__dots">
+            <span className="session__dot session__dot--close" />
+            <span className="session__dot session__dot--minimize" />
+            <span className="session__dot session__dot--expand" />
+          </div>
+          <span className="session__title">{`${profile.handle}@portfolio — zsh`}</span>
+          <span className="session__cwd">{task.path}</span>
+        </div>
+
+        <div
+          ref={screenRef}
+          className={`session__screen session__screen--${phase}`}
+          inert={phase === "leaving"}
+          onAnimationEnd={(event) => {
+            if (event.target === event.currentTarget && phase === "entering") setPhase("idle")
+          }}
+        >
+          {children(displayed)}
+        </div>
+
+        <TerminalStatusBar location={displayed} />
       </div>
     </div>
   )

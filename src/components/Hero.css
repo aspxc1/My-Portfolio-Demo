@@ -37,7 +37,22 @@
   font-weight: 700;
   text-wrap: balance;
 }
-.hero__art { grid-area: art; min-width: 0; align-self: center; }
+.hero__art {
+  position: relative;
+  grid-area: art;
+  min-width: 0;
+  align-self: center;
+  padding: 0.5rem;
+  border: 1px solid color-mix(in oklab, var(--border) 65%, transparent);
+  border-radius: var(--radius);
+  background:
+    radial-gradient(
+      circle at 50% 34%,
+      color-mix(in oklab, var(--primary) 16%, transparent) 0%,
+      transparent 68%
+    ),
+    color-mix(in oklab, var(--mantle) 60%, transparent);
+}
 /* Fixed-width glyphs and tightly spaced rows preserve the supplied ASCII piece. */
 @font-face {
   font-family: "ascii.rest mono";
@@ -69,8 +84,37 @@
 .hero__details summary { cursor: pointer; min-height: 2.75rem; align-content: center; width: fit-content; }
 .hero__details summary:hover { color: var(--primary); }
 .hero__details .hero__facts { margin-top: 0.5rem; color: var(--foreground); }
-.hero__swatches { grid-area: swatches; display: flex; gap: 0.25rem; }
-.hero__swatch { width: 1.75rem; height: 0.75rem; border: 1px solid var(--border); }
+.hero__swatches {
+  grid-area: swatches;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.375rem;
+}
+.hero__swatch {
+  width: 1.875rem;
+  height: 0.875rem;
+  border: 1px solid color-mix(in oklab, var(--swatch-color) 55%, var(--border));
+  border-radius: 2px;
+  background: var(--swatch-color);
+  cursor: pointer;
+  transition: transform 120ms ease, box-shadow 120ms ease;
+}
+.hero__swatch:hover {
+  transform: translateY(-1px);
+}
+.hero__swatch[aria-pressed="true"] {
+  box-shadow: 0 0 0 2px var(--background), 0 0 0 3px var(--swatch-color);
+}
+.hero__swatch:focus-visible {
+  outline: 2px solid var(--swatch-color);
+  outline-offset: 3px;
+}
+.hero__swatch-hint {
+  margin-left: 0.375rem;
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
 @media (min-width: 700px) {
   .hero { padding-top: 2rem; padding-bottom: 1rem; }
   .hero__neofetch {

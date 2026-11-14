@@ -38,21 +38,51 @@
 :root {
   color-scheme: dark;
 
+  --backdrop: #11111b;
+  --mantle: #181825;
   --background: #1e1e2e;
   --foreground: #cdd6f4;
   --card: #313244;
   --primary: #cba6f7;
-  --primary-foreground: #1e1e2e;
+  --primary-foreground: #11111b;
   --muted-foreground: #a6adc8;
   --border: #45475a;
   --terminal-blue: #89b4fa;
   --terminal-teal: #94e2d5;
   --success: #a6e3a1;
+  --window-close: #f38ba8;
+  --window-minimize: #f9e2af;
+  --window-expand: #a6e3a1;
 
   --font-sans: "IBM Plex Sans", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
   --radius: 0.3rem;
+}
+
+:root[data-accent="mauve"],
+.session[data-accent="mauve"] {
+  --primary: #cba6f7;
+}
+
+:root[data-accent="green"],
+.session[data-accent="green"] {
+  --primary: #a6e3a1;
+}
+
+:root[data-accent="teal"],
+.session[data-accent="teal"] {
+  --primary: #94e2d5;
+}
+
+:root[data-accent="blue"],
+.session[data-accent="blue"] {
+  --primary: #89b4fa;
+}
+
+:root[data-accent="peach"],
+.session[data-accent="peach"] {
+  --primary: #fab387;
 }
 
 /* ---------- Reset ---------- */
@@ -73,7 +103,7 @@ html {
 }
 
 body {
-  background: var(--background);
+  background: var(--backdrop);
   color: var(--foreground);
   font-family: var(--font-sans);
   -webkit-font-smoothing: antialiased;
@@ -118,7 +148,7 @@ button {
   width: 100%;
   max-width: 72rem;
   margin-inline: auto;
-  padding-inline: 1.25rem;
+  padding-inline: clamp(1.25rem, 2.5vw, 2rem);
 }
 
 /* Text that's only read by screen readers. */
