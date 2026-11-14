@@ -33,7 +33,7 @@ export const hero = {
   neofetch: [
     { key: "OS", value: `Computer Engineering @ ${profile.school}` },
     { key: "Uptime", value: "2nd year, graduating May 2029" },
-    { key: "Focus", value: "Backend/Fullstack SWE, Applied AI/ML" },
+    { key: "Focus", value: "Backend SWE, Applied AI/ML" },
     { key: "Status", value: "Open to internships" },
     { key: "Location", value: profile.location },
   ],
@@ -54,11 +54,11 @@ export const sections = {
 
 export const about = {
   currently: [
-    { label: "learning", description: "Full-stack development, with a focus on the backend." },
+    { label: "learning", description: "Backend Development" },
   ],
   skills: [
-    { group: "Languages", items: ["JavaScript", "Python", "Java", "C++", "SQL"] },
-    { group: "Web", items: ["Node.js", "Express.js", "React", "HTML", "CSS"] },
+    { group: "Languages", items: ["TypeScript/JavaScript", "Python", "Java", "C++", "SQL"] },
+    { group: "Web", items: ["Node.js", "Express.js", "HTML", "CSS"] },
     { group: "Databases", items: ["PostgreSQL", "SQLite"] },
     // Set hidden to false to show this group again.
     { group: "ML / AI", hidden: true, items: ["PyTorch", "scikit-learn", "NumPy"] },

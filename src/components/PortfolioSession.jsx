@@ -1,5 +1,5 @@
 import { createContext, useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { ACCENTS, BACKGROUNDS } from "../lib/terminalTheme.js"
+import { ACCENTS, BACKGROUNDS, DEFAULT_BACKGROUND } from "../lib/terminalTheme.js"
 
 export const PlaybackHistory = createContext(null)
 export const ProjectBrowsing = createContext(null)
@@ -10,7 +10,7 @@ export default function PortfolioSession({ children }) {
   const completedRuns = useRef(new Set())
   const browsing = useState({ view: "list", category: "all" })
   const [accent, setAccent] = useState("mauve")
-  const [background, setBackground] = useState("grid")
+  const [background, setBackground] = useState(DEFAULT_BACKGROUND)
 
   const cycleAccent = useCallback(() => {
     setAccent((current) => {

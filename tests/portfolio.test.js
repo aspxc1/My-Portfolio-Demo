@@ -44,6 +44,14 @@ function render(path) {
   return renderToStaticMarkup(createElement(MemoryRouter, { initialEntries: [path] }, createElement(App)))
 }
 
+test("a fresh session starts with CRT in the window and background control", () => {
+  for (const path of ["/", "/#about", "/projects/with-images"]) {
+    const html = render(path)
+    assert.match(html, /class="session"[^>]+data-bg="crt"/)
+    assert.match(html, /aria-label="Background style: crt\. Activate to switch background"/)
+  }
+})
+
 test("project details display supplied images with alt text and an optional caption", () => {
   const html = render("/projects/with-images")
   assert.match(html, /<img[^>]+src="\/images\/project.webp"[^>]+alt="Project dashboard"/)

@@ -19,7 +19,7 @@
   z-index: 0;
 }
 
-/* Default "grid": 24px dot-matrix + subtle bottom horizon grid echoing the ASCII sun. */
+/* "grid": 24px dot-matrix + subtle bottom horizon grid echoing the ASCII sun. */
 .session[data-bg="grid"]::before {
   background-image: radial-gradient(
     circle at 1px 1px,

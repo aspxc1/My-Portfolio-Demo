@@ -1,7 +1,7 @@
 import { useContext, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { useLocation } from "react-router"
 import { profile } from "../content/site.js"
-import { getSessionTask } from "../lib/terminalTheme.js"
+import { DEFAULT_BACKGROUND, getSessionTask } from "../lib/terminalTheme.js"
 import useReducedMotion from "../lib/useReducedMotion.js"
 import { TerminalTheme } from "./PortfolioSession.jsx"
 import TerminalStatusBar from "./TerminalStatusBar.jsx"
@@ -56,7 +56,7 @@ export default function SessionTransition({ children }) {
     <div
       className="session"
       data-accent={theme?.accent || "mauve"}
-      data-bg={theme?.background || "grid"}
+      data-bg={theme?.background || DEFAULT_BACKGROUND}
     >
       <div className="session__window">
         <div aria-hidden="true" className="session__chrome">
