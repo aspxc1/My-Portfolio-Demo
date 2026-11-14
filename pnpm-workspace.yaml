@@ -1,0 +1,4 @@
+# Wrangler's native tooling requires these install scripts.
+allowBuilds:
+  esbuild: true
+  workerd: true
