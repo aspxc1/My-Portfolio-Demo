@@ -1,10 +1,11 @@
-import { useContext, useEffect, useLayoutEffect, useRef, useState } from "react"
+import { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { useLocation } from "react-router"
 import { profile } from "../content/site.js"
 import { DEFAULT_BACKGROUND, getSessionTask } from "../lib/terminalTheme.js"
 import useReducedMotion from "../lib/useReducedMotion.js"
 import { TerminalTheme } from "./PortfolioSession.jsx"
 import TerminalStatusBar from "./TerminalStatusBar.jsx"
+import TerminalStartup from "./TerminalStartup.jsx"
 import "./SessionTransition.css"
 
 const address = (location) => location.pathname + location.search + location.hash
@@ -12,6 +13,13 @@ const address = (location) => location.pathname + location.search + location.has
 export default function SessionTransition({ children }) {
   const requested = useLocation()
   const reducedMotion = useReducedMotion()
+  const [starting, setStarting] = useState(() => typeof window !== "undefined" && !reducedMotion
+    && requested.pathname === "/" && (!requested.hash || requested.hash === "#home"))
+  const focusAfterStartup = useRef(false)
+  const finishStartup = useCallback((restoreFocus = false) => {
+    focusAfterStartup.current = restoreFocus
+    setStarting(false)
+  }, [])
   const theme = useContext(TerminalTheme)
   const [displayed, setDisplayed] = useState(requested)
   const [phase, setPhase] = useState("idle")
@@ -20,6 +28,20 @@ export default function SessionTransition({ children }) {
   const firstRender = useRef(true)
   displayedRef.current = displayed
   const task = getSessionTask(displayed)
+
+  useEffect(() => {
+    if (reducedMotion || requested.pathname !== "/" || (requested.hash && requested.hash !== "#home")) {
+      setStarting(false)
+    }
+  }, [reducedMotion, requested])
+
+  useLayoutEffect(() => {
+    if (starting || !focusAfterStartup.current) return
+    focusAfterStartup.current = false
+    const target = screenRef.current?.querySelector("main")
+    target?.setAttribute("tabindex", "-1")
+    target?.focus({ preventScroll: true })
+  }, [starting])
 
   useEffect(() => {
     if (address(requested) === address(displayedRef.current) || reducedMotion) {
@@ -77,7 +99,9 @@ export default function SessionTransition({ children }) {
             if (event.target === event.currentTarget && phase === "entering") setPhase("idle")
           }}
         >
-          {children(displayed)}
+          {starting && !reducedMotion
+            ? <TerminalStartup onComplete={finishStartup} />
+            : children(displayed)}
         </div>
 
         <TerminalStatusBar location={displayed} />

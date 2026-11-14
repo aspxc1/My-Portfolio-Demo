@@ -44,6 +44,23 @@ function render(path) {
   return renderToStaticMarkup(createElement(MemoryRouter, { initialEntries: [path] }, createElement(App)))
 }
 
+test("normal-motion browser arrival boots only Home, before mounting its commands", () => {
+  globalThis.window = { matchMedia: () => ({ matches: false }) }
+  try {
+    for (const path of ["/", "/#home"]) {
+      const html = render(path)
+      assert.match(html, /aria-label="Terminal startup"/)
+      assert.match(html, /Skip startup/)
+      assert.doesNotMatch(html, /id="hero-title"|terminal-run--typing|\.\/menu\.sh/)
+    }
+    for (const path of ["/#about", "/#projects", "/#contact", "/projects/with-images", "/missing"]) {
+      assert.doesNotMatch(render(path), /aria-label="Terminal startup"/)
+    }
+  } finally {
+    delete globalThis.window
+  }
+})
+
 test("a fresh session starts with CRT in the window and background control", () => {
   for (const path of ["/", "/#about", "/projects/with-images"]) {
     const html = render(path)
