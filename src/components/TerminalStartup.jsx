@@ -1,5 +1,5 @@
 import { useEffect, useRef } from "react"
-import { profile } from "../content/site.js"
+import { profile, site } from "../content/site.js"
 import "./TerminalStartup.css"
 
 /** Short shell startup; routed commands mount only after this screen finishes. */
@@ -22,6 +22,8 @@ export default function TerminalStartup({ onComplete }) {
 
   return (
     <main className="terminal-startup container" aria-label="Terminal startup">
+      <title>{site.title}</title>
+      <meta name="description" content={site.description} />
       <p role="status" className="sr-only">Starting the portfolio terminal. Press Escape to skip.</p>
       <div aria-hidden="true" className="terminal-startup__output">
         <p className="terminal-startup__line terminal-startup__identity">{`${profile.handle}@portfolio`}</p>

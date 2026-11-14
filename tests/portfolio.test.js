@@ -51,6 +51,7 @@ test("normal-motion browser arrival boots only Home, before mounting its command
       const html = render(path)
       assert.match(html, /aria-label="Terminal startup"/)
       assert.match(html, /Skip startup/)
+      assert.match(html, /<title>Aaser Mohamed \| CE Student<\/title>/)
       assert.doesNotMatch(html, /id="hero-title"|terminal-run--typing|\.\/menu\.sh/)
     }
     for (const path of ["/#about", "/#projects", "/#contact", "/projects/with-images", "/missing"]) {
@@ -129,6 +130,7 @@ test("reduced motion renders the selected output and home navigation immediately
     for (const path of ["/", "/#about", "/#projects", "/#activities", "/#contact"]) {
       const html = render(path)
       assert.doesNotMatch(html, /terminal-run--waiting|terminal-run--typing|terminal-run--queued| inert=""/)
+      assert.doesNotMatch(html, /aria-label="Terminal startup"/)
       assert.match(html, /terminal-run--output/)
     }
   } finally {
