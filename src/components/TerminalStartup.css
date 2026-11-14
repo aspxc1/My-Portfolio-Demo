@@ -8,7 +8,7 @@
 
 .terminal-startup__output {
   padding-top: 0.5rem;
-  animation: startup-clear 180ms cubic-bezier(0.4, 0, 1, 1) 1200ms both;
+  animation: startup-clear 180ms cubic-bezier(0.4, 0, 1, 1) calc(var(--startup-duration) - 180ms) both;
 }
 
 .terminal-startup__line {

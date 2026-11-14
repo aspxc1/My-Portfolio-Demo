@@ -2,12 +2,14 @@ import { useEffect, useRef } from "react"
 import { profile, site } from "../content/site.js"
 import "./TerminalStartup.css"
 
+const startupDuration = 1720
+
 /** Short shell startup; routed commands mount only after this screen finishes. */
 export default function TerminalStartup({ onComplete }) {
   const skipRef = useRef(null)
 
   useEffect(() => {
-    const timer = window.setTimeout(() => onComplete(document.activeElement === skipRef.current), 1380)
+    const timer = window.setTimeout(() => onComplete(document.activeElement === skipRef.current), startupDuration)
     const onKeyDown = (event) => {
       if (event.key !== "Escape" || event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return
       event.preventDefault()
@@ -21,7 +23,7 @@ export default function TerminalStartup({ onComplete }) {
   }, [onComplete])
 
   return (
-    <main className="terminal-startup container" aria-label="Terminal startup">
+    <main className="terminal-startup container" aria-label="Terminal startup" style={{ "--startup-duration": `${startupDuration}ms` }}>
       <title>{site.title}</title>
       <meta name="description" content={site.description} />
       <p role="status" className="sr-only">Starting the portfolio terminal. Press Escape to skip.</p>
