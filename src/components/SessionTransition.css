@@ -96,49 +96,6 @@
   background: color-mix(in oklab, var(--background) 94%, var(--mantle));
 }
 
-.session__chrome {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  padding: 0.55rem 1rem;
-  border-bottom: 1px solid var(--border);
-  background: var(--mantle);
-  font: 0.75rem/1rem var(--font-mono);
-  color: var(--muted-foreground);
-  user-select: none;
-}
-
-.session__dots {
-  display: flex;
-  align-items: center;
-  gap: 0.4rem;
-}
-
-.session__dot {
-  width: 0.625rem;
-  height: 0.625rem;
-  border-radius: 999px;
-  background: var(--border);
-  transition: background-color 160ms ease;
-}
-
-.session__chrome:hover .session__dot--close { background: var(--window-close); }
-.session__chrome:hover .session__dot--minimize { background: var(--window-minimize); }
-.session__chrome:hover .session__dot--expand { background: var(--window-expand); }
-
-.session__title {
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-}
-
-.session__cwd {
-  min-width: 3rem;
-  text-align: right;
-  color: var(--terminal-teal);
-}
-
 .session__screen {
   position: relative;
   display: flex;
@@ -170,9 +127,6 @@
     overflow: hidden;
   }
 
-  .session__chrome {
-    padding-inline: 1.5rem;
-  }
 }
 
 /* Route focus announces the page without drawing a control outline around prose. */
@@ -212,7 +166,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .session__dot,
   .session__screen--leaving,
   .session__screen--entering,
   .session__screen--entering::after {

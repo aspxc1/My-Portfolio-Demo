@@ -1,7 +1,6 @@
 import { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { useLocation } from "react-router"
-import { profile } from "../content/site.js"
-import { DEFAULT_BACKGROUND, getSessionTask } from "../lib/terminalTheme.js"
+import { DEFAULT_BACKGROUND } from "../lib/terminalTheme.js"
 import useReducedMotion from "../lib/useReducedMotion.js"
 import { TerminalTheme } from "./PortfolioSession.jsx"
 import TerminalStatusBar from "./TerminalStatusBar.jsx"
@@ -27,7 +26,6 @@ export default function SessionTransition({ children }) {
   const screenRef = useRef(null)
   const firstRender = useRef(true)
   displayedRef.current = displayed
-  const task = getSessionTask(displayed)
 
   useEffect(() => {
     if (reducedMotion || requested.pathname !== "/" || (requested.hash && requested.hash !== "#home")) {
@@ -81,16 +79,6 @@ export default function SessionTransition({ children }) {
       data-bg={theme?.background || DEFAULT_BACKGROUND}
     >
       <div className="session__window">
-        <div aria-hidden="true" className="session__chrome">
-          <div className="session__dots">
-            <span className="session__dot session__dot--close" />
-            <span className="session__dot session__dot--minimize" />
-            <span className="session__dot session__dot--expand" />
-          </div>
-          <span className="session__title">{`${profile.handle}@portfolio — zsh`}</span>
-          <span className="session__cwd">{task.path}</span>
-        </div>
-
         <div
           ref={screenRef}
           className={`session__screen session__screen--${phase}`}
