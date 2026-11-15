@@ -6,7 +6,7 @@
 export const profile = {
   name: "Aaser Mohamed",
 
-  handle: "aasermo",
+  handle: "aaser",
   role: "Computer & AI Engineering student",
   school: "Ain Shams University",
   location: "Cairo, Egypt",

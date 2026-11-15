@@ -146,7 +146,7 @@ test("home and section menus name destinations clearly without shell commands or
     for (const label of ["About", "Projects", "Experience &amp; clubs", "Contact"]) {
       assert.match(menu, new RegExp(`aria-label="${label}"`))
     }
-    assert.doesNotMatch(menu, /ls -la|whoami|git log|ping aasermo|cd ~|drwx|lrwx/)
+    assert.doesNotMatch(menu, /ls -la|whoami|git log|ping aaser|cd ~|drwx|lrwx/)
   }
 })
 
