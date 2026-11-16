@@ -93,7 +93,8 @@
   flex: 1;
   flex-direction: column;
   width: 100%;
-  background: color-mix(in oklab, var(--background) 94%, var(--mantle));
+  /* Let a little of the backdrop through the surface without fading its content. */
+  background: color-mix(in oklab, var(--background) 94%, transparent);
 }
 
 .session__screen {
