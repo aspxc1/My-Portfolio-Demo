@@ -11,12 +11,12 @@ function createStars(count, initialSeed) {
   return Array.from({length:count}, (_,index) => ({
     x: `${(next() * 100).toFixed(3)}%`,
     y: `${(next() * 100).toFixed(3)}%`,
-    opacity: (0.25 + next() * 0.5).toFixed(2),
-    size: index % 11 === 0 ? "2px" : "1px",
+    opacity: (0.5 + next() * 0.4).toFixed(2),
+    size: index % 7 === 0 ? "3px" : index % 4 === 0 ? "1px" : "2px",
   }))
 }
 
-const planes = [createStars(64, 1946), createStars(40, 8517)]
+const planes = [createStars(108, 1946), createStars(64, 8517)]
 
 export default function TerminalStarfield() {
   const [paused, setPaused] = useState(false)

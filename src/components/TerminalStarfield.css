@@ -9,14 +9,14 @@
 
 .terminal-starfield__plane {
   position: absolute;
-  inset: -2rem;
-  animation: starfield-drift 80s linear infinite alternate;
+  inset: -3rem;
+  animation: starfield-drift 60s linear infinite alternate;
 }
 
 .terminal-starfield__plane:nth-child(2) {
-  animation-duration: 115s;
+  animation-duration: 95s;
   animation-direction: alternate-reverse;
-  opacity: 0.65;
+  opacity: 0.8;
 }
 
 .terminal-starfield__star {
@@ -27,11 +27,25 @@
 }
 
 .terminal-starfield__star:nth-child(4n) { background: var(--foreground); }
+
+/* A few crisp five-pixel crosses give the larger stars a recognizable silhouette. */
+.terminal-starfield__star:nth-child(19n) { background: transparent; color: var(--primary); }
+.terminal-starfield__star:nth-child(19n)::before,
+.terminal-starfield__star:nth-child(19n)::after {
+  content: "";
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  background: currentColor;
+  transform: translate(-50%, -50%);
+}
+.terminal-starfield__star:nth-child(19n)::before { width: 5px; height: 1px; }
+.terminal-starfield__star:nth-child(19n)::after { width: 1px; height: 5px; }
 .terminal-starfield[data-paused] .terminal-starfield__plane { animation-play-state: paused; }
 
 @keyframes starfield-drift {
-  from { transform: translate3d(-6px, 12px, 0); }
-  to { transform: translate3d(10px, -16px, 0); }
+  from { transform: translate3d(-12px, 28px, 0); }
+  to { transform: translate3d(18px, -36px, 0); }
 }
 
 /* Leave a narrow strip of night sky around the edge-to-edge mobile terminal. */
