@@ -1,5 +1,6 @@
 import { about, profile, sections } from "../content/site.js"
 import TerminalSection from "./TerminalSection.jsx"
+import GitHubActivity from "./GitHubActivity.jsx"
 import "./About.css"
 
 const section = sections.about
@@ -46,6 +47,7 @@ export default function About({ onReady, onNavigate }) {
           </dl>
         </div>
       </div>
+      <GitHubActivity />
     </TerminalSection>
   )
 }

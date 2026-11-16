@@ -165,6 +165,14 @@ test("Home is listed as the current page in its own menu", () => {
   assert.match(html, /<a[^>]+aria-label="Home"[^>]+aria-current="page"/)
 })
 
+test("GitHub activity follows the About stack and links to the GitHub identity, not the terminal handle", () => {
+  const html = render("/#about")
+  assert.ok(html.indexOf('id="github-activity-title"') > html.indexOf('class="about__stack"'))
+  assert.match(html, /@aspxc1/)
+  assert.match(html, /Loading contribution history/)
+  assert.doesNotMatch(render("/"), /id="github-activity-title"/)
+})
+
 test("the menu is a queued script command following neofetch", () => {
   const html = render("/")
   assert.ok(html.indexOf("neofetch") < html.indexOf("./menu.sh"))

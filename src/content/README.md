@@ -150,3 +150,12 @@ scroll position. Reduced-motion preferences skip typing and the clear/reveal
 transition, and pause the ASCII animation. Each view and its menu retain their original
 first-play timing; subsequent completed visits use shorter typed replays. Refresh
 starts a fresh session. Interrupted commands keep their full first play next time.
+## GitHub activity
+
+About's contribution calendar uses the GitHub profile URL in `site.js` (the link
+whose icon is `github`). It is independent of the terminal display handle.
+The public GitHub Contributions API supplies the last year's data and caches it
+for an hour. No token, build-time refresh, or Cloudflare Function is required.
+The calendar fetches when About mounts, shares requests across visits, and offers
+a retry if the feed is unavailable. Levels follow the selected terminal accent.
+

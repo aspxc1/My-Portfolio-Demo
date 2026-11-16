@@ -53,7 +53,7 @@ export default function TerminalMenu({ current, enabled = true, request = 0 }) {
             && bounds.left < window.innerWidth && bounds.right > 0
         }),
         editing: !!target?.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="textbox"]'),
-        interactive: !!target?.closest('a, button, summary, [role="button"], [role="link"], [role="tab"]'),
+        interactive: !!target?.closest('a, button, summary, [role="button"], [role="link"], [role="tab"], [data-keyboard-scope]'),
       })
       if (!action) return
       event.preventDefault()
