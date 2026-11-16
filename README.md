@@ -3,6 +3,9 @@
 A personal portfolio built with React, React Router and Vite, with animated
 ASCII, terminal-style navigation, accent controls and background presets.
 
+The default background is an accent-aware pixel starfield. Use the bottom
+`bg:` control to switch backgrounds. Reduced-motion preferences disable its drift.
+
 ## Run locally
 
 ```sh

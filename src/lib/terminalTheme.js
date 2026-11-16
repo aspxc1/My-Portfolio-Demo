@@ -1,4 +1,4 @@
-export const DEFAULT_BACKGROUND = "crt"
+export const DEFAULT_BACKGROUND = "starfield"
 
 export const ACCENTS = [
   { id: "mauve", label: "mauve", hex: "#cba6f7" },
@@ -9,6 +9,7 @@ export const ACCENTS = [
 ]
 
 export const BACKGROUNDS = [
+  { id: "starfield", label: "starfield" },
   { id: "grid", label: "grid" },
   { id: "crt", label: "crt" },
   { id: "circuit", label: "blueprint" },

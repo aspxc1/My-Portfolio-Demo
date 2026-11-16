@@ -62,11 +62,12 @@ test("normal-motion browser arrival boots only Home, before mounting its command
   }
 })
 
-test("a fresh session starts with CRT in the window and background control", () => {
+test("a fresh session starts with the decorative starfield and matching background control", () => {
   for (const path of ["/", "/#about", "/projects/with-images"]) {
     const html = render(path)
-    assert.match(html, /class="session"[^>]+data-bg="crt"/)
-    assert.match(html, /aria-label="Background style: crt\. Activate to switch background"/)
+    assert.match(html, /class="session"[^>]+data-bg="starfield"/)
+    assert.match(html, /class="terminal-starfield" aria-hidden="true"/)
+    assert.match(html, /aria-label="Background style: starfield\. Activate to switch background"/)
   }
 })
 

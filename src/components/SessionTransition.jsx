@@ -5,6 +5,7 @@ import useReducedMotion from "../lib/useReducedMotion.js"
 import { TerminalTheme } from "./PortfolioSession.jsx"
 import TerminalStatusBar from "./TerminalStatusBar.jsx"
 import TerminalStartup from "./TerminalStartup.jsx"
+import TerminalStarfield from "./TerminalStarfield.jsx"
 import "./SessionTransition.css"
 
 const address = (location) => location.pathname + location.search + location.hash
@@ -78,6 +79,7 @@ export default function SessionTransition({ children }) {
       data-accent={theme?.accent || "mauve"}
       data-bg={theme?.background || DEFAULT_BACKGROUND}
     >
+      {(theme?.background || DEFAULT_BACKGROUND) === "starfield" ? <TerminalStarfield /> : null}
       <div className="session__window">
         <div
           ref={screenRef}
