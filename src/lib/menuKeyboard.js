@@ -14,7 +14,7 @@ export function getMenuKeyAction(event, context) {
   }
   if (event.repeat) return null
   if (available && event.key === "Enter") return { type: "open", index }
-  if (/^[1-9]$/.test(event.key) && Number(event.key) <= count) {
+  if (insideMenu && /^[1-9]$/.test(event.key) && Number(event.key) <= count) {
     return { type: "open", index: Number(event.key) - 1 }
   }
   return null

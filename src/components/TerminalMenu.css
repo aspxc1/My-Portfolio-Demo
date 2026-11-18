@@ -107,6 +107,10 @@
   .terminal-menu__option { min-height: 2.75rem; }
 }
 
+@media (pointer: coarse) {
+  .terminal-menu__help { display: none; }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .terminal-menu.terminal-run--output .terminal-menu__output,
   .terminal-menu__option { transition: none; }

@@ -1,6 +1,6 @@
 import { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { useLocation } from "react-router"
-import { DEFAULT_BACKGROUND } from "../lib/terminalTheme.js"
+import { DEFAULT_THEME } from "../lib/terminalTheme.js"
 import useReducedMotion from "../lib/useReducedMotion.js"
 import { TerminalTheme } from "./PortfolioSession.jsx"
 import TerminalStatusBar from "./TerminalStatusBar.jsx"
@@ -21,6 +21,7 @@ export default function SessionTransition({ children }) {
     setStarting(false)
   }, [])
   const theme = useContext(TerminalTheme)
+  const background = theme?.resolvedBackground || DEFAULT_THEME.background
   const [displayed, setDisplayed] = useState(requested)
   const [phase, setPhase] = useState("idle")
   const displayedRef = useRef(displayed)
@@ -76,10 +77,10 @@ export default function SessionTransition({ children }) {
   return (
     <div
       className="session"
-      data-accent={theme?.accent || "mauve"}
-      data-bg={theme?.background || DEFAULT_BACKGROUND}
+      data-theme={theme?.theme || DEFAULT_THEME.id}
+      data-bg={background}
     >
-      {(theme?.background || DEFAULT_BACKGROUND) === "starfield" ? <TerminalStarfield /> : null}
+      {background === "starfield" ? <TerminalStarfield /> : null}
       <div className="session__window">
         <div
           ref={screenRef}

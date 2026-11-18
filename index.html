@@ -4,7 +4,16 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="theme-color" content="#1e1e2e" />
-    <meta name="color-scheme" content="dark" />
+    <meta name="color-scheme" content="dark light" />
+    <script>
+      try {
+        const appearance = JSON.parse(localStorage.getItem("portfolio-appearance"))
+        for (const key of ["theme", "accent"]) {
+          if (typeof appearance?.[key] === "string") document.documentElement.dataset[key] = appearance[key]
+        }
+      } catch {}
+    </script>
+    <link rel="stylesheet" href="/src/styles/terminalThemes.css" />
     <link rel="icon" href="/favicon.ico" sizes="16x16 32x32 48x48" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" sizes="any" />
 
