@@ -20,6 +20,7 @@ const fixtureProjects = [
 let server
 let App
 let getProjectNeighbours
+let GitHubProcesses
 
 before(async () => {
   server = await createServer({
@@ -37,6 +38,7 @@ before(async () => {
   })
   App = (await server.ssrLoadModule("/src/App.jsx")).default
   getProjectNeighbours = (await server.ssrLoadModule("/src/lib/projects.js")).getProjectNeighbours
+  GitHubProcesses = (await server.ssrLoadModule("/src/components/GitHubProcesses.jsx")).default
 })
 after(async () => { await server?.close() })
 
@@ -169,17 +171,46 @@ test("Home is listed as the current page in its own menu", () => {
   assert.match(html, /<a[^>]+aria-label="Home"[^>]+aria-current="page"/)
 })
 
-test("the htop monitor replaces the About body, without changing the route or GitHub identity", () => {
+test("About queues its stack and native htop output after whoami", () => {
   const html = render("/#about")
   assert.match(html, /~\/about/)
   assert.match(html, /whoami/)
+  assert.match(html, /terminal-run--queued[^>]*><p class="about__command"[^]*?apt list --installed[^]*?id="about-stack-title">Tech stack/)
+  assert.match(html, /TypeScript\/JavaScript, Python, Java, C\+\+, SQL/)
+  assert.match(html, /PostgreSQL, SQLite/)
+  assert.match(html, /terminal-run--queued[^>]*><p class="about__command"[^]*?>htop<\/span>/)
+  assert.ok(html.indexOf('id="about-stack-title"') < html.indexOf('id="htop-title"'))
   assert.match(html, /id="htop-title">GitHub Activity Monitor/)
   assert.match(html, /@aspxc1/)
   assert.match(html, /Loading contribution history/)
   assert.match(html, /Loading repository data/)
   assert.match(html, /Last updated/)
-  assert.doesNotMatch(html, /about__stack|Backend Development|Placeholder, imma do it later/)
+  assert.doesNotMatch(html, /htop__chrome|PyTorch|Backend Development|Placeholder, imma do it later/)
   assert.doesNotMatch(render("/"), /id="htop-title"/)
+})
+
+test("reduced motion shows both About outputs immediately without a skip control", () => {
+  globalThis.window = { matchMedia: () => ({ matches: true }) }
+  try {
+    const html = render("/#about")
+    assert.equal((html.match(/about__run terminal-run terminal-run--output/g) || []).length, 2)
+    assert.doesNotMatch(html, /about__output" inert|Skip animation/)
+  } finally {
+    delete globalThis.window
+  }
+})
+
+test("htop renders four repos on the first page with a range and paging controls", () => {
+  const repos = Array.from({ length: 6 }, (_, i) => ({
+    id: i + 1, name: `repo-${i + 1}`, url: `https://github.com/example/repo-${i + 1}`, language: "Python",
+    pushedAt: `2026-11-${20 - i}T00:00:00Z`, size: 10,
+  }))
+  const html = renderToStaticMarkup(createElement(GitHubProcesses, { snapshot: { repos, totalSize: 60 } }))
+  assert.equal((html.match(/data-repo=/g) || []).length, 4)
+  assert.match(html, /1–4 of 6/)
+  assert.match(html, /<button type="button" aria-disabled="true">← Prev/)
+  assert.match(html, /<button type="button" aria-disabled="false">Next →/)
+  assert.doesNotMatch(html, /repo-5|repo-6/)
 })
 
 test("Learning appears directly after Status in the visible neofetch facts", () => {

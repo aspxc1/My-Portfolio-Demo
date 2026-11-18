@@ -1,11 +1,77 @@
-import { sections } from "../content/site.js"
+import { useCallback, useEffect, useRef, useState } from "react"
+import { sections, stack } from "../content/site.js"
+import useTerminalRun from "../lib/useTerminalRun.js"
 import GitHubMonitor from "./GitHubMonitor.jsx"
-import TerminalSection from "./TerminalSection.jsx"
+import SectionHeading from "./SectionHeading.jsx"
+import TerminalCommand from "./TerminalCommand.jsx"
+import "./About.css"
+
+const section = sections.about
+const stackCommand = "apt list --installed"
+const monitorCommand = "htop"
+
+function AboutCommand({ command, run, children }) {
+  return (
+    <div ref={run.ref} className={`about__run terminal-run terminal-run--${run.stage}`} style={run.style}>
+      <p className="about__command"><TerminalCommand command={command} /></p>
+      <div className="about__output" inert={!run.finished}>{children}</div>
+    </div>
+  )
+}
 
 export default function About({ onReady, onNavigate }) {
+  const [skipped, setSkipped] = useState(false)
+  const skipButton = useRef(null)
+  const heading = useTerminalRun(section.command, { immediate: skipped })
+  const packages = useTerminalRun(stackCommand, { enabled: heading.finished, immediate: skipped })
+  const monitor = useTerminalRun(monitorCommand, { enabled: packages.finished, immediate: skipped })
+
+  const skipPlayback = useCallback(() => {
+    if (document.activeElement === skipButton.current) {
+      const title = heading.ref.current.querySelector("h1")
+      title.tabIndex = -1
+      title.focus({ preventScroll: true })
+    }
+    setSkipped(true)
+  }, [heading.ref])
+
+  useEffect(() => {
+    if (monitor.finished) {
+      onReady?.()
+      return
+    }
+    function onKeyDown(event) {
+      if (event.key === "Escape" && !event.defaultPrevented && !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey
+        && !heading.ref.current?.closest("[inert]")) {
+        event.preventDefault()
+        skipPlayback()
+      }
+    }
+    document.addEventListener("keydown", onKeyDown)
+    return () => document.removeEventListener("keydown", onKeyDown)
+  }, [heading.ref, monitor.finished, onReady, skipPlayback])
+
   return (
-    <TerminalSection section={sections.about} roomy onReady={onReady} onNavigate={onNavigate}>
-      <GitHubMonitor />
-    </TerminalSection>
+    <section id={section.id} className="terminal-section" aria-labelledby={`${section.id}-title`}>
+      <div className="container section-inner section-inner--roomy">
+        <div ref={heading.ref} className={`terminal-run terminal-run--${heading.stage}`} style={heading.style}>
+          <SectionHeading path={section.path} command={section.command} id={`${section.id}-title`} onNavigate={onNavigate} />
+        </div>
+        <AboutCommand command={stackCommand} run={packages}>
+          <section className="about__stack" aria-labelledby="about-stack-title">
+            <h2 id="about-stack-title">Tech stack</h2>
+            <dl>
+              {stack.filter(({ hidden }) => !hidden).map(({ group, items }) => (
+                <div key={group}><dt>{group}</dt><dd>{items.join(", ")}</dd></div>
+              ))}
+            </dl>
+          </section>
+        </AboutCommand>
+        <AboutCommand command={monitorCommand} run={monitor}>
+          <GitHubMonitor enabled={monitor.finished} />
+        </AboutCommand>
+        {!monitor.finished ? <button ref={skipButton} type="button" className="about__skip text-link" onClick={skipPlayback}>Skip animation</button> : null}
+      </div>
+    </section>
   )
 }

@@ -51,6 +51,14 @@ export const sections = {
   contact: { id: "contact", path: "~/contact", command: `ping ${profile.handle}`, nav: "Contact" },
 }
 
+export const stack = [
+  { group: "Languages", items: ["TypeScript/JavaScript", "Python", "Java", "C++", "SQL"] },
+  { group: "Web", items: ["Node.js", "Express.js", "HTML", "CSS"] },
+  { group: "Databases", items: ["PostgreSQL", "SQLite"] },
+  { group: "ML / AI", hidden: true, items: ["PyTorch", "scikit-learn", "NumPy"] },
+  { group: "Tools", items: ["Linux", "Git/GitHub"] },
+]
+
 export const contact = {
   blurb:
     "I'm looking for internships and interesting problems, especially backend/fullstack and ML work. LinkedIn and email are the fastest ways to reach me, and I usually reply within a day.",

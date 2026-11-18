@@ -121,8 +121,8 @@ While `pnpm dev` is running, saving a JSON file updates the preview automaticall
 For the live site, commit the JSON changes and run your usual build/deployment
 workflow; these files are bundled into the site at build time.
 
-Your name, contact links and Home's neofetch facts, including Learning, live in
-`site.js`.
+Your name, contact links, Home's neofetch facts, and About's grouped tech stack
+live in `site.js`. Set a stack category's `hidden` field to `false` to show it.
 
 ## Terminal navigation
 
@@ -152,6 +152,9 @@ starts a fresh session. Interrupted commands keep their full first play next tim
 
 ## GitHub activity
 
+About runs `apt list --installed` to list the tech stack, then `htop` to show
+GitHub activity. Use Skip animation or Escape to reveal both outputs immediately.
+
 The htop monitor uses the GitHub profile URL in `site.js` (the link whose icon is
 `github`), independently of the terminal display handle. It fetches the latest
 100 public repositories in one GitHub REST request and the contribution calendar
@@ -162,3 +165,5 @@ required. If either source fails, the other remains available.
 The table’s %MEM values represent each displayed repository’s share of the
 displayed size. The 13-week heatmap, streak, and contribution totals are based
 on the calendar feed, not just commits. Heatmap levels follow the terminal accent.
+The table shows four repositories per page. Along with the on-screen paging
+buttons, arrow keys and Page Up/Page Down work when a repository link has focus.
