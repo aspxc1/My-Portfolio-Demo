@@ -152,7 +152,7 @@ starts a fresh session. Interrupted commands keep their full first play next tim
 
 ## GitHub activity
 
-About runs `apt list --installed` to list the tech stack, then `htop` to show
+About runs `ls --icons ~/stack` to list the tech stack, then `htop` to show
 GitHub activity. Use Skip animation or Escape to reveal both outputs immediately.
 
 The htop monitor uses the GitHub profile URL in `site.js` (the link whose icon is

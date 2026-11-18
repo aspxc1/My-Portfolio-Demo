@@ -19,24 +19,16 @@ function compare(a, b, key, descending) {
   return (descending ? -result : result) || a.name.localeCompare(b.name)
 }
 
-export default function GitHubProcesses({ snapshot, search }) {
+export default function GitHubProcesses({ snapshot }) {
   const [sort, setSort] = useState({ key: "pushedAt", descending: true })
   const [selectedId, setSelectedId] = useState(null)
-  const [query, setQuery] = useState("")
-  const input = useRef(null)
   const tableBody = useRef(null)
   const focusPending = useRef(false)
-  const match = search ? query.trim().toLowerCase() : ""
-  const rows = snapshot.repos.filter(repo => [repo.name, repo.language].some(value => value?.toLowerCase().includes(match)))
-    .sort((a, b) => compare(a, b, sort.key, sort.descending))
+  const rows = [...snapshot.repos].sort((a, b) => compare(a, b, sort.key, sort.descending))
   const index = Math.max(0, rows.findIndex(repo => repo.id === selectedId))
   const selected = rows[index]
   const pageStart = Math.floor(index / pageSize) * pageSize
   const pageEnd = Math.min(pageStart + pageSize, rows.length)
-
-  useEffect(() => {
-    if (search) input.current?.focus()
-  }, [search])
 
   useEffect(() => {
     if (!focusPending.current) return
@@ -69,14 +61,6 @@ export default function GitHubProcesses({ snapshot, search }) {
         <p role="status">{selected ? `${pageStart + 1}–${pageEnd} of ${rows.length}` : "0 repos"} <span className="htop__row-hint" aria-hidden="true">· ↑↓ select</span></p>
       </div>
       {snapshot.hasMore ? <p className="htop__note">Showing the 100 most recently pushed public repositories.</p> : null}
-      <div id="htop-search" className="htop__process-tools" hidden={!search}>
-        <label><span className="sr-only">Filter by repository or language</span>
-          <input ref={input} type="search" placeholder="Repository or language" value={query} onChange={event => {
-            setQuery(event.target.value)
-            setSelectedId(null)
-          }} />
-        </label>
-      </div>
       <div className="htop__table">
         <table aria-label="Public repositories" aria-describedby="htop-table-help">
           <thead><tr>
@@ -117,7 +101,7 @@ export default function GitHubProcesses({ snapshot, search }) {
       <p id="htop-table-help" className="sr-only">Choose a column heading to sort. Focus a repository link and use Up, Down, Home, or End to select a row, or Page Up and Page Down to change pages. Enter opens the repository.</p>
       <p role="status" className="htop__detail">{selected
         ? `${selected.name} · ${selected.language || "No language listed"} · ${selected.size.toLocaleString("en")} KB${snapshot.totalSize ? ` · ${memory(selected.size, snapshot.totalSize)} of displayed size` : ""}`
-        : snapshot.repos.length ? "No repositories match this search." : "No public repositories found."}</p>
+        : "No public repositories found."}</p>
       <p role="status" className="sr-only">Sorted by {columns.find(column => column.key === sort.key).label}, {sort.descending ? "descending" : "ascending"}.</p>
     </section>
   )

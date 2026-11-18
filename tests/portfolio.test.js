@@ -175,16 +175,25 @@ test("About queues its stack and native htop output after whoami", () => {
   const html = render("/#about")
   assert.match(html, /~\/about/)
   assert.match(html, /whoami/)
-  assert.match(html, /terminal-run--queued[^>]*><p class="about__command"[^]*?apt list --installed[^]*?id="about-stack-title">Tech stack/)
-  assert.match(html, /TypeScript\/JavaScript, Python, Java, C\+\+, SQL/)
-  assert.match(html, /PostgreSQL, SQLite/)
+  assert.match(html, /terminal-run--queued[^>]*><p class="about__command"[^]*?ls --icons ~\/stack[^]*?class="about__stack"/)
+  const listing = html.match(/<section class="about__stack"[^>]*>(.*?)<\/section>/)[1]
+  assert.deepEqual([...listing.matchAll(/<h2>(.*?)<\/h2>/g)].map(match => match[1]), ["Languages", "Web", "Databases", "Tools"])
+  assert.deepEqual([...listing.matchAll(/<\/svg><\/span><span>(.*?)<\/span><\/li>/g)].map(match => match[1]), [
+    "TypeScript/JavaScript", "Python", "Java", "C++", "SQL", "Node.js", "Express.js", "HTML", "CSS",
+    "PostgreSQL", "SQLite", "Linux", "Git/GitHub",
+  ])
+  assert.equal((listing.match(/<ul role="list">/g) || []).length, 4)
+  assert.equal((listing.match(/class="about__stack-icon" aria-hidden="true"/g) || []).length, 13)
+  assert.doesNotMatch(listing, /<p>|<button|<a /)
   assert.match(html, /terminal-run--queued[^>]*><p class="about__command"[^]*?>htop<\/span>/)
-  assert.ok(html.indexOf('id="about-stack-title"') < html.indexOf('id="htop-title"'))
+  assert.ok(html.indexOf('class="about__stack"') < html.indexOf('id="htop-title"'))
   assert.match(html, /id="htop-title">GitHub Activity Monitor/)
   assert.match(html, /@aspxc1/)
   assert.match(html, /Loading contribution history/)
   assert.match(html, /Loading repository data/)
   assert.match(html, /Last updated/)
+  assert.match(html, /Cached for 1 hour/)
+  assert.doesNotMatch(html, /htop__keys|htop-help|htop-search|>F[13]</)
   assert.doesNotMatch(html, /htop__chrome|PyTorch|Backend Development|Placeholder, imma do it later/)
   assert.doesNotMatch(render("/"), /id="htop-title"/)
 })
@@ -211,10 +220,13 @@ test("htop renders four repos on the first page with a range and paging controls
   assert.match(html, /<button type="button" aria-disabled="true">← Prev/)
   assert.match(html, /<button type="button" aria-disabled="false">Next →/)
   assert.doesNotMatch(html, /repo-5|repo-6/)
+  assert.doesNotMatch(html, /htop-search|type="search"/)
 })
 
-test("Learning appears directly after Status in the visible neofetch facts", () => {
-  assert.match(render("/"), /<dt>Focus<\/dt>[\s\S]*?<dt>Status<\/dt>[\s\S]*?<dt>Learning<\/dt><dd>Backend Development<\/dd>[\s\S]*?<summary>System details/)
+test("neofetch keeps Focus and Status without a Learning row", () => {
+  const html = render("/")
+  assert.match(html, /<dt>Focus<\/dt>[\s\S]*?<dt>Status<\/dt>[\s\S]*?<summary>System details/)
+  assert.doesNotMatch(html, /<dt>Learning<\/dt>|Backend Development/)
 })
 
 test("the menu is a queued script command following neofetch", () => {

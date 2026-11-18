@@ -12,7 +12,7 @@ import "./Hero.css"
 
 const contacts = [{ label: "Email", icon: "email", href: `mailto:${profile.email}` }, ...profile.links]
 const desktopDetailsQuery = "(min-width: 1024px)"
-const primaryFacts = new Set(["Focus", "Status", "Learning"])
+const primaryFacts = new Set(["Focus", "Status"])
 
 export default function Hero({ onReady, onNavigate }) {
   const run = useTerminalRun("neofetch")

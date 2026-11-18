@@ -3,11 +3,12 @@ import { sections, stack } from "../content/site.js"
 import useTerminalRun from "../lib/useTerminalRun.js"
 import GitHubMonitor from "./GitHubMonitor.jsx"
 import SectionHeading from "./SectionHeading.jsx"
+import StackIcon from "./StackIcon.jsx"
 import TerminalCommand from "./TerminalCommand.jsx"
 import "./About.css"
 
 const section = sections.about
-const stackCommand = "apt list --installed"
+const stackCommand = "ls --icons ~/stack"
 const monitorCommand = "htop"
 
 function AboutCommand({ command, run, children }) {
@@ -23,8 +24,8 @@ export default function About({ onReady, onNavigate }) {
   const [skipped, setSkipped] = useState(false)
   const skipButton = useRef(null)
   const heading = useTerminalRun(section.command, { immediate: skipped })
-  const packages = useTerminalRun(stackCommand, { enabled: heading.finished, immediate: skipped })
-  const monitor = useTerminalRun(monitorCommand, { enabled: packages.finished, immediate: skipped })
+  const listing = useTerminalRun(stackCommand, { enabled: heading.finished, immediate: skipped })
+  const monitor = useTerminalRun(monitorCommand, { enabled: listing.finished, immediate: skipped })
 
   const skipPlayback = useCallback(() => {
     if (document.activeElement === skipButton.current) {
@@ -57,14 +58,18 @@ export default function About({ onReady, onNavigate }) {
         <div ref={heading.ref} className={`terminal-run terminal-run--${heading.stage}`} style={heading.style}>
           <SectionHeading path={section.path} command={section.command} id={`${section.id}-title`} onNavigate={onNavigate} />
         </div>
-        <AboutCommand command={stackCommand} run={packages}>
-          <section className="about__stack" aria-labelledby="about-stack-title">
-            <h2 id="about-stack-title">Tech stack</h2>
-            <dl>
-              {stack.filter(({ hidden }) => !hidden).map(({ group, items }) => (
-                <div key={group}><dt>{group}</dt><dd>{items.join(", ")}</dd></div>
-              ))}
-            </dl>
+        <AboutCommand command={stackCommand} run={listing}>
+          <section className="about__stack" aria-label="Tech stack">
+            {stack.filter(({ hidden }) => !hidden).map(({ group, items }) => (
+              <div className="about__stack-group" data-group={group} key={group}>
+                <h2>{group}</h2>
+                <ul role="list">
+                  {items.map(item => (
+                    <li key={item}><StackIcon name={item} /><span>{item}</span></li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </section>
         </AboutCommand>
         <AboutCommand command={monitorCommand} run={monitor}>

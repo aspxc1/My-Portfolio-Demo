@@ -37,7 +37,7 @@
 .htop__legend { display: flex; gap: 0.25rem; align-items: center; }
 .htop__legend .htop__cell { width: 0.5rem; height: 0.5rem; }
 .htop__processes { border-top: 1px dashed var(--border); padding-top: 0.625rem; }
-.htop__processes > .htop__section-heading, .htop__note, .htop__process-tools { margin-bottom: 0.375rem; }
+.htop__processes > .htop__section-heading, .htop__note { margin-bottom: 0.375rem; }
 .htop__status, .htop__detail { margin-top: 0.375rem; }
 .htop__status, .htop__detail, .htop__note { color: var(--muted-foreground); }
 .htop__status button { min-height: 2.75rem; cursor: pointer; color: var(--primary); }
@@ -55,26 +55,10 @@
 .htop__table td a { display: inline-flex; min-height: 2rem; align-items: center; color: var(--terminal-blue); }
 .htop__table td a:hover { text-decoration: underline; }
 .htop__detail { font-size: 0.75rem; overflow-wrap: anywhere; }
-.htop__process-tools input {
-  max-width: 100%;
-  min-height: 2.75rem;
-  background: var(--mantle);
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  padding-inline: 0.5rem;
-}
 .htop__pager { display: flex; justify-content: flex-end; gap: 1rem; }
 .htop__pager button { min-height: 2.75rem; color: var(--terminal-blue); cursor: pointer; }
 .htop__pager button[aria-disabled="true"] { color: var(--muted-foreground); cursor: default; }
-.htop__help { color: var(--muted-foreground); }
-.htop__help p + p { margin-top: 0.5rem; }
-.htop__footer { display: flex; flex-wrap: wrap; align-items: center; justify-content: space-between; gap: 0.375rem 1rem; border-top: 1px dashed var(--border); padding-top: 0.25rem; color: var(--muted-foreground); font-size: 0.75rem; }
-.htop__key { display: inline-flex; align-items: center; min-height: 2.75rem; cursor: pointer; }
-.htop__keys { display: flex; gap: 0.625rem; }
-.htop__key span { background: var(--terminal-teal); color: var(--primary-foreground); font-weight: 700; padding: 0.125rem 0.25rem; }
-.htop__key span:first-child { background: var(--foreground); }
-.htop__key:hover span:last-child { background: var(--primary); }
-.htop__source { overflow-wrap: anywhere; }
+.htop__footer { border-top: 1px dashed var(--border); padding-top: 0.25rem; color: var(--muted-foreground); font-size: 0.75rem; overflow-wrap: anywhere; }
 
 @media (min-width: 720px) {
   .htop__dashboard { grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr); }

@@ -33,7 +33,6 @@ export const hero = {
     { key: "Uptime", value: "2nd year, graduating May 2029" },
     { key: "Focus", value: "Backend SWE, Applied AI/ML" },
     { key: "Status", value: "Open to internships" },
-    { key: "Learning", value: "Backend Development" },
     { key: "Location", value: profile.location },
   ],
 }

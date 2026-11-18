@@ -49,8 +49,6 @@ export default function GitHubMonitor({ enabled }) {
   const calendar = contributions.data
   const snapshot = repositories.data
   const overview = calendar ? getContributionOverview(calendar.days, calendar.updatedAt) : null
-  const [help, setHelp] = useState(false)
-  const [search, setSearch] = useState(false)
 
   const timestamps = [snapshot?.updatedAt, calendar?.updatedAt].filter(Boolean).sort()
   const latest = timestamps.at(-1)
@@ -83,36 +81,20 @@ export default function GitHubMonitor({ enabled }) {
         </section>
       </div>
       {snapshot ? (
-        <GitHubProcesses snapshot={snapshot} search={search} />
+        <GitHubProcesses snapshot={snapshot} />
       ) : (
         <section className="htop__processes" aria-labelledby="htop-process-title">
           <div className="htop__section-heading"><h3 id="htop-process-title">Repository processes</h3></div>
           <SourceStatus source={repositories} name="repository data" label="Repository data" fallback={calendar ? "Contribution history is still available above." : null} />
         </section>
       )}
-      {help ? (
-        <div id="htop-help" className="htop__help">
-          <p>Choose a column heading to sort. Focus a repository and use ↑/↓ to select a row, Page Up/Page Down to change pages, or Home/End to jump. TIME+ is the last push date (UTC); %MEM is each repository’s share of the displayed repository size.</p>
-          <p>Load counts GitHub calendar contributions, not just commits. The current streak can continue from yesterday if there are none today.</p>
-        </div>
-      ) : null}
       <footer className="htop__footer">
-        <div className="htop__keys" role="group" aria-label="Monitor controls">
-          <button type="button" className="htop__key" aria-expanded={help} aria-controls={help ? "htop-help" : undefined} onClick={() => setHelp(value => !value)}>
-            <span aria-hidden="true">F1</span><span>Help</span>
-          </button>
-          {snapshot?.repos.length ? <button type="button" className="htop__key" aria-expanded={search} aria-controls="htop-search" onClick={() => setSearch(value => !value)}>
-            <span aria-hidden="true">F3</span><span>Search</span>
-          </button> : null}
-        </div>
-        <div className="htop__source">
-          <p>Last updated: {latest ? (
-            separateTimes
-              ? <>repos <time dateTime={snapshot.updatedAt}>{formatUpdated(snapshot.updatedAt)} UTC</time> · contributions <time dateTime={calendar.updatedAt}>{formatUpdated(calendar.updatedAt)} UTC</time></>
-              : <time dateTime={latest}>{formatUpdated(latest)} UTC</time>
-          ) : "—"}</p>
-          <p>Cached for 1 hour · <a className="text-link" href="https://github.com/grubersjoe/github-contributions-api">Contribution feed</a></p>
-        </div>
+        <p>Last updated: {latest ? (
+          separateTimes
+            ? <>repos <time dateTime={snapshot.updatedAt}>{formatUpdated(snapshot.updatedAt)} UTC</time> · contributions <time dateTime={calendar.updatedAt}>{formatUpdated(calendar.updatedAt)} UTC</time></>
+            : <time dateTime={latest}>{formatUpdated(latest)} UTC</time>
+        ) : "—"}</p>
+        <p>Cached for 1 hour · <a className="text-link" href="https://github.com/grubersjoe/github-contributions-api">Contribution feed</a></p>
       </footer>
     </section>
   )
