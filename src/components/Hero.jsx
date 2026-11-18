@@ -2,7 +2,7 @@ import { Ascii } from "ascii.rest/react"
 import * as synthwave from "ascii.rest/pieces/synthwave"
 import { useContext, useEffect, useState } from "react"
 import useTerminalRun from "../lib/useTerminalRun.js"
-import { ACCENTS } from "../lib/terminalTheme.js"
+import { DEFAULT_THEME } from "../lib/terminalTheme.js"
 import { hero, profile } from "../content/site.js"
 import { TerminalTheme } from "./PortfolioSession.jsx"
 import TerminalCommand from "./TerminalCommand.jsx"
@@ -16,7 +16,8 @@ const desktopDetailsQuery = "(min-width: 1024px)"
 export default function Hero({ onReady, onNavigate }) {
   const run = useTerminalRun("neofetch")
   const theme = useContext(TerminalTheme)
-  const activeAccent = theme?.accent || "mauve"
+  const accents = theme?.accents || DEFAULT_THEME.accents
+  const activeAccent = theme?.accent || accents[0].id
   const [detailsOpen, setDetailsOpen] = useState(() => typeof window !== "undefined" && window.matchMedia(desktopDetailsQuery).matches)
   useEffect(() => {
     const query = window.matchMedia(desktopDetailsQuery)
@@ -75,18 +76,18 @@ export default function Hero({ onReady, onNavigate }) {
           </details>
 
           <div role="group" aria-label="Terminal accent colors" className="hero__swatches">
-            {ACCENTS.map((swatch) => (
+            {accents.map((swatch) => (
               <button
                 key={swatch.id}
                 type="button"
                 className="hero__swatch"
-                style={{ "--swatch-color": swatch.hex }}
+                style={{ "--swatch-color": `var(--accent-${swatch.id})` }}
                 aria-label={`Set terminal accent to ${swatch.label}`}
                 aria-pressed={activeAccent === swatch.id}
                 onClick={() => theme?.setAccent(swatch.id)}
               />
             ))}
-            <span aria-hidden="true" className="hero__swatch-hint">{`// ${activeAccent}`}</span>
+            <span aria-hidden="true" className="hero__swatch-hint">{`// ${accents.find((item) => item.id === activeAccent)?.label}`}</span>
           </div>
         </div>
       </div>

@@ -62,12 +62,15 @@ test("normal-motion browser arrival boots only Home, before mounting its command
   }
 })
 
-test("a fresh session starts with the decorative starfield and matching background control", () => {
+test("a fresh session starts with Mocha and the decorative starfield; appearance controls are collapsed", () => {
   for (const path of ["/", "/#about", "/projects/with-images"]) {
     const html = render(path)
-    assert.match(html, /class="session"[^>]+data-bg="starfield"/)
+    assert.match(html, /class="session"[^>]+data-theme="mocha"[^>]+data-bg="starfield"/)
     assert.match(html, /class="terminal-starfield" aria-hidden="true"/)
-    assert.match(html, /aria-label="Background style: starfield\. Activate to switch background"/)
+    assert.match(html, /class="tmux-bar__control" aria-expanded="false" aria-controls="[^"]+"/)
+    assert.match(html, /class="tmux-bar__settings"[^>]+hidden=""/)
+    assert.match(html, /Theme default \(starfield\)/)
+    assert.match(html, /value="mocha" selected="">Catppuccin Mocha/)
   }
 })
 

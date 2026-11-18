@@ -21,14 +21,16 @@ test("a visible menu supports arrows and Enter without a click or prior focus", 
 
 test("selection wraps and numbered shortcuts activate only existing options", () => {
   assert.deepEqual(getMenuKeyAction({ key: "ArrowUp" }, { ...context, insideMenu: true }), { type: "select", index: 3 })
-  assert.deepEqual(getMenuKeyAction({ key: "4" }, context), { type: "open", index: 3 })
-  assert.equal(getMenuKeyAction({ key: "5" }, context), null)
+  assert.deepEqual(getMenuKeyAction({ key: "4" }, { ...context, insideMenu: true }), { type: "open", index: 3 })
+  assert.equal(getMenuKeyAction({ key: "5" }, { ...context, insideMenu: true }), null)
+  assert.equal(getMenuKeyAction({ key: "4" }, context), null)
+  assert.equal(getMenuKeyAction({ key: "4" }, { ...context, menuVisible: true }), null)
 })
 
 test("shortcuts leave links, editable fields and browser shortcuts alone", () => {
   assert.equal(getMenuKeyAction({ key: "Enter" }, { ...context, interactive: true }), null)
   assert.equal(getMenuKeyAction({ key: "ArrowDown" }, { ...context, editing: true }), null)
-  assert.equal(getMenuKeyAction({ key: "1", ctrlKey: true }, context), null)
+  assert.equal(getMenuKeyAction({ key: "1", ctrlKey: true }, { ...context, insideMenu: true }), null)
   assert.equal(getMenuKeyAction({ key: "ArrowDown", shiftKey: true }, context), null)
   assert.equal(getMenuKeyAction({ key: "Enter", shiftKey: true }, context), null)
   assert.equal(getMenuKeyAction({ key: "Enter", repeat: true }, context), null)

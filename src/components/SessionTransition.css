@@ -47,7 +47,7 @@
 }
 
 /* "crt": scanline raster + phosphor edge vignette. */
-.session[data-bg="crt"]::before {
+.session[data-bg="crt"]:not([data-theme="phosphor"])::before {
   background:
     repeating-linear-gradient(
       to bottom,
@@ -105,10 +105,37 @@
   transform-origin: top;
 }
 
-.session[data-bg="crt"] .terminal-command__prompt,
-.session[data-bg="crt"] .hero__ascii,
-.session[data-bg="crt"] .terminal-menu__marker {
+.session:is([data-bg="crt"], [data-theme="phosphor"]) .terminal-command__prompt,
+.session:is([data-bg="crt"], [data-theme="phosphor"]) .hero__ascii,
+.session:is([data-bg="crt"], [data-theme="phosphor"]) .terminal-menu__marker {
   text-shadow: 0 0 10px color-mix(in oklab, var(--primary) 45%, transparent);
+}
+
+.session[data-theme="phosphor"] .session__window {
+  border-radius: clamp(0.625rem, 1.7vw, 1.5rem) / clamp(0.5rem, 1.2vw, 1rem);
+  box-shadow: 0 0 2rem color-mix(in oklab, var(--primary) 12%, transparent);
+  overflow: hidden;
+}
+
+.session[data-theme="phosphor"] .session__screen::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  pointer-events: none;
+  border-radius: clamp(0.625rem, 1.7vw, 1.5rem);
+  background:
+    radial-gradient(ellipse at center, transparent 58%, color-mix(in oklab, var(--backdrop) 24%, transparent)),
+    repeating-linear-gradient(transparent 0 3px, color-mix(in oklab, var(--backdrop) 17%, transparent) 3px 4px);
+  box-shadow: inset 0 0 1.75rem color-mix(in oklab, var(--primary) 6%, transparent);
+}
+
+.session[data-theme="paper"] .session__window {
+  box-shadow: 0 1rem 3rem -1.25rem color-mix(in oklab, var(--foreground) 45%, transparent);
+}
+
+.session[data-theme="paper"] .session__screen {
+  background: repeating-linear-gradient(transparent 0 1.65rem, color-mix(in oklab, var(--border) 9%, transparent) 1.65rem calc(1.65rem + 1px));
 }
 
 @media (min-width: 840px) {
