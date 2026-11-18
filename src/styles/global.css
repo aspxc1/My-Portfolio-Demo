@@ -34,52 +34,11 @@
   font-display: swap;
 }
 
-/* Catppuccin Mocha: cool surfaces, mauve actions, blue/teal terminal accents. */
 :root {
-  color-scheme: dark;
-
-  --backdrop: #11111b;
-  --mantle: #181825;
-  --background: #1e1e2e;
-  --foreground: #cdd6f4;
-  --card: #313244;
-  --primary: #cba6f7;
-  --primary-foreground: #11111b;
-  --muted-foreground: #a6adc8;
-  --border: #45475a;
-  --terminal-blue: #89b4fa;
-  --terminal-teal: #94e2d5;
-  --success: #a6e3a1;
-
   --font-sans: "IBM Plex Sans", system-ui, sans-serif;
   --font-mono: "JetBrains Mono", ui-monospace, monospace;
 
   --radius: 0.3rem;
-}
-
-:root[data-accent="mauve"],
-.session[data-accent="mauve"] {
-  --primary: #cba6f7;
-}
-
-:root[data-accent="green"],
-.session[data-accent="green"] {
-  --primary: #a6e3a1;
-}
-
-:root[data-accent="teal"],
-.session[data-accent="teal"] {
-  --primary: #94e2d5;
-}
-
-:root[data-accent="blue"],
-.session[data-accent="blue"] {
-  --primary: #89b4fa;
-}
-
-:root[data-accent="peach"],
-.session[data-accent="peach"] {
-  --primary: #fab387;
 }
 
 /* ---------- Reset ---------- */

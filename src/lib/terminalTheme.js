@@ -1,12 +1,15 @@
-export const DEFAULT_BACKGROUND = "starfield"
+const accents = (names) => Object.entries(names).map(([id, label]) => ({ id, label }))
 
-export const ACCENTS = [
-  { id: "mauve", label: "mauve", hex: "#cba6f7" },
-  { id: "green", label: "phosphor", hex: "#a6e3a1" },
-  { id: "teal", label: "teal", hex: "#94e2d5" },
-  { id: "blue", label: "sapphire", hex: "#89b4fa" },
-  { id: "peach", label: "amber", hex: "#fab387" },
+export const THEMES = [
+  { id: "mocha", label: "Catppuccin Mocha", background: "starfield", accents: accents({ mauve: "mauve", green: "phosphor", teal: "teal", blue: "sapphire", peach: "amber" }) },
+  { id: "gruvbox", label: "Gruvbox Dark", background: "grid", accents: accents({ gold: "gold", olive: "olive", aqua: "aqua", coral: "coral", lilac: "lilac" }) },
+  { id: "dracula", label: "Dracula", background: "starfield", accents: accents({ violet: "violet", pink: "pink", mint: "mint", cyan: "cyan", apricot: "apricot" }) },
+  { id: "phosphor", label: "Green Phosphor CRT", background: "minimal", accents: accents({ phosphor: "phosphor", emerald: "emerald", soft: "soft green" }) },
+  { id: "paper", label: "Paper Teletype", background: "minimal", accents: accents({ ink: "ink", forest: "forest", indigo: "indigo", rust: "rust" }) },
 ]
+
+export const DEFAULT_THEME = THEMES[0]
+export const APPEARANCE_KEY = "portfolio-appearance"
 
 export const BACKGROUNDS = [
   { id: "starfield", label: "starfield" },
@@ -15,6 +18,26 @@ export const BACKGROUNDS = [
   { id: "circuit", label: "blueprint" },
   { id: "minimal", label: "minimal" },
 ]
+
+export const getTheme = (id) => THEMES.find((theme) => theme.id === id) || DEFAULT_THEME
+
+export function normalizeAppearance(value) {
+  const theme = getTheme(value?.theme)
+  return {
+    theme: theme.id,
+    accent: theme.accents.find((item) => item.id === value?.accent)?.id || theme.accents[0].id,
+    background: BACKGROUNDS.find((item) => item.id === value?.background)?.id || "auto",
+  }
+}
+
+export function readAppearance() {
+  if (typeof window === "undefined") return normalizeAppearance()
+  try {
+    return normalizeAppearance(JSON.parse(window.localStorage.getItem(APPEARANCE_KEY)))
+  } catch {
+    return normalizeAppearance()
+  }
+}
 
 const sectionTasks = {
   about: { index: 1, name: "whoami", path: "~/about" },

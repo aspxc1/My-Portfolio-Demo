@@ -1,6 +1,8 @@
 import assert from "node:assert/strict"
 import { test } from "node:test"
-import { ACCENTS, BACKGROUNDS, getSessionTask } from "../src/lib/terminalTheme.js"
+import { readFileSync } from "node:fs"
+import { runInNewContext } from "node:vm"
+import { APPEARANCE_KEY, BACKGROUNDS, THEMES, getSessionTask, normalizeAppearance, readAppearance } from "../src/lib/terminalTheme.js"
 
 test("session task resolves active tmux window metadata for home, sections, and project pages", () => {
   assert.deepEqual(getSessionTask({ pathname: "/", hash: "" }), { index: 0, name: "neofetch", path: "~" })
@@ -18,10 +20,40 @@ test("unknown or inherited object keys fall back to the home session task", () =
   }
 })
 
-test("accents and background presets expose unique identifiers", () => {
-  assert.equal(new Set(ACCENTS.map((item) => item.id)).size, ACCENTS.length)
+test("themes, their accents, and background presets expose unique identifiers", () => {
+  assert.equal(new Set(THEMES.map((item) => item.id)).size, THEMES.length)
   assert.equal(new Set(BACKGROUNDS.map((item) => item.id)).size, BACKGROUNDS.length)
-  for (const accent of ACCENTS) {
-    assert.match(accent.hex, /^#[0-9a-f]{6}$/i)
+  const css = readFileSync(new URL("../src/styles/terminalThemes.css", import.meta.url), "utf8")
+  for (const theme of THEMES) {
+    assert.ok(BACKGROUNDS.some((background) => background.id === theme.background))
+    assert.equal(new Set(theme.accents.map((item) => item.id)).size, theme.accents.length)
+    for (const accent of theme.accents) {
+      assert.match(css, new RegExp(`--accent-${accent.id}: #[0-9a-f]{6};`, "i"))
+    }
   }
+})
+
+test("appearance validates stored choices and chooses a compatible accent for each theme", () => {
+  const defaults = { theme: "mocha", accent: "mauve", background: "auto" }
+  assert.deepEqual(readAppearance(), defaults)
+  assert.deepEqual(normalizeAppearance({ theme: "unknown", accent: "unknown", background: "unknown" }), defaults)
+  assert.deepEqual(normalizeAppearance({ theme: "dracula", accent: "mauve", background: "grid" }), {
+    theme: "dracula", accent: "violet", background: "grid",
+  })
+  assert.deepEqual(normalizeAppearance({ theme: "paper", accent: "rust", background: "minimal" }), {
+    theme: "paper", accent: "rust", background: "minimal",
+  })
+})
+
+test("saved color settings apply before the app loads and unavailable storage leaves defaults alone", () => {
+  const html = readFileSync(new URL("../index.html", import.meta.url), "utf8")
+  const initializer = html.match(/<script>([\s\S]*?)<\/script>/)[1]
+  const dataset = {}
+  const document = { documentElement: { dataset } }
+  const localStorage = { getItem: (key) => key === APPEARANCE_KEY && '{"theme":"paper","accent":"rust","background":"grid"}' }
+  runInNewContext(initializer, { document, localStorage })
+  assert.deepEqual(dataset, { theme: "paper", accent: "rust" })
+  const blocked = { documentElement: { dataset: {} } }
+  runInNewContext(initializer, { document: blocked })
+  assert.deepEqual(blocked.documentElement.dataset, {})
 })

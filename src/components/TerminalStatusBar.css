@@ -49,7 +49,7 @@
   display: inline-flex;
   align-items: center;
   gap: 0.35rem;
-  min-height: 1.875rem;
+  min-height: 2.75rem;
   padding: 0.1875rem 0.5rem;
   border: 1px solid var(--border);
   border-radius: calc(var(--radius) * 0.65);
@@ -70,14 +70,17 @@
   outline-offset: 2px;
 }
 
-.tmux-bar__key {
-  color: var(--muted-foreground);
+.tmux-bar__settings:not([hidden]) {
+  flex-basis: 100%;
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.75rem;
+  padding-block: 0.75rem;
+  border-top: 1px solid var(--border);
 }
 
-.tmux-bar__val {
-  color: var(--primary);
-  font-weight: 700;
-}
+.tmux-bar__settings label { display: grid; min-width: 0; gap: 0.25rem; }
+.tmux-bar__settings select { width: 100%; font: inherit; background: var(--card); }
 
 .tmux-bar__dot {
   width: 0.5rem;
@@ -105,9 +108,12 @@
 
 @media (max-width: 639px), (pointer: coarse) {
   .tmux-bar__control {
-    min-height: 2.25rem;
     padding-inline: 0.625rem;
   }
+}
+
+@media (max-width: 639px) {
+  .tmux-bar__settings:not([hidden]) { grid-template-columns: 1fr; }
 }
 
 @media (prefers-reduced-motion: reduce) {

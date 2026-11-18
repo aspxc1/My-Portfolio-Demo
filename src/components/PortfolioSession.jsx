@@ -1,5 +1,5 @@
-import { createContext, useCallback, useEffect, useMemo, useRef, useState } from "react"
-import { ACCENTS, BACKGROUNDS, DEFAULT_BACKGROUND } from "../lib/terminalTheme.js"
+import { createContext, useLayoutEffect, useMemo, useRef, useState } from "react"
+import { APPEARANCE_KEY, getTheme, normalizeAppearance, readAppearance } from "../lib/terminalTheme.js"
 
 export const PlaybackHistory = createContext(null)
 export const ProjectBrowsing = createContext(null)
@@ -9,35 +9,35 @@ export const TerminalTheme = createContext(null)
 export default function PortfolioSession({ children }) {
   const completedRuns = useRef(new Set())
   const browsing = useState({ view: "list", category: "all" })
-  const [accent, setAccent] = useState("mauve")
-  const [background, setBackground] = useState(DEFAULT_BACKGROUND)
+  const [appearance, setAppearance] = useState(readAppearance)
+  const theme = getTheme(appearance.theme)
+  const background = appearance.background === "auto" ? theme.background : appearance.background
 
-  const cycleAccent = useCallback(() => {
-    setAccent((current) => {
-      const index = ACCENTS.findIndex((item) => item.id === current)
-      return ACCENTS[(index + 1) % ACCENTS.length].id
-    })
-  }, [])
+  useLayoutEffect(() => {
+    const root = document.documentElement
+    root.dataset.theme = appearance.theme
+    root.dataset.accent = appearance.accent
+    const themeColor = getComputedStyle(root).getPropertyValue("--background").trim()
+    if (themeColor) document.querySelector('meta[name="theme-color"]')?.setAttribute("content", themeColor)
+    try {
+      window.localStorage.setItem(APPEARANCE_KEY, JSON.stringify(appearance))
+    } catch {
+      // Appearance still works for this visit if storage is unavailable.
+    }
+  }, [appearance])
 
-  const cycleBackground = useCallback(() => {
-    setBackground((current) => {
-      const index = BACKGROUNDS.findIndex((item) => item.id === current)
-      return BACKGROUNDS[(index + 1) % BACKGROUNDS.length].id
-    })
-  }, [])
-
-  useEffect(() => {
-    document.documentElement.dataset.accent = accent
-    document.documentElement.dataset.bg = background
-  }, [accent, background])
-
-  const theme = useMemo(
-    () => ({ accent, setAccent, cycleAccent, background, setBackground, cycleBackground }),
-    [accent, background, cycleAccent, cycleBackground],
-  )
+  const appearanceContext = useMemo(() => ({
+    ...appearance,
+    accents: theme.accents,
+    defaultBackground: theme.background,
+    resolvedBackground: background,
+    setTheme: (theme) => setAppearance((previous) => normalizeAppearance({ ...previous, theme })),
+    setAccent: (accent) => setAppearance((previous) => normalizeAppearance({ ...previous, accent })),
+    setBackground: (background) => setAppearance((previous) => normalizeAppearance({ ...previous, background })),
+  }), [appearance, theme, background])
 
   return (
-    <TerminalTheme value={theme}>
+    <TerminalTheme value={appearanceContext}>
       <PlaybackHistory value={completedRuns.current}>
         <ProjectBrowsing value={browsing}>{children}</ProjectBrowsing>
       </PlaybackHistory>
