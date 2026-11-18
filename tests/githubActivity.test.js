@@ -1,6 +1,6 @@
 import assert from "node:assert/strict"
 import { test } from "node:test"
-import { getGitHubUsername, normalizeContributions, loadContributions } from "../src/lib/githubActivity.js"
+import { getContributionOverview, getGitHubUsername, normalizeContributions, loadContributions } from "../src/lib/githubActivity.js"
 
 const today = new Date("2026-11-16T12:00:00Z")
 const days = [
@@ -38,8 +38,20 @@ test("requests are shared and cached across visits, while failures can be retrie
   const fetcher = async () => { calls++; return {ok:true,json:async()=>({contributions:days})} }
   const [a,b] = await Promise.all([loadContributions("cache-test", {fetcher,now:today}),loadContributions("cache-test", {fetcher,now:today})])
   assert.equal(a,b)
+  assert.equal(a.updatedAt, today.toISOString())
   await loadContributions("cache-test", {fetcher,now:today})
   assert.equal(calls,1)
   await assert.rejects(loadContributions("retry-test", {fetcher:async()=>({ok:false,status:429}),now:today}))
   assert.equal((await loadContributions("retry-test", {fetcher,now:today})).total,9)
+})
+
+test("htop streak tolerates a quiet current day, but missing days do not become zero totals", () => {
+  const history = Array.from({ length: 30 }, (_, i) => ({
+    date: new Date(+today - (29 - i) * 86400000).toISOString().slice(0, 10),
+    count: i === 29 ? 0 : i >= 27 ? 2 : 0,
+  }))
+  assert.deepEqual(getContributionOverview(history, today), { streak: 2, load: [0, 4, 4] })
+  assert.deepEqual(getContributionOverview(history.slice(0, -1), today), { streak: 2, load: [null, null, null] })
+  assert.deepEqual(getContributionOverview(history.slice(0, -2), today), { streak: null, load: [null, null, null] })
+  assert.deepEqual(getContributionOverview(days, today), { streak: 1, load: [7, null, null] })
 })

@@ -121,9 +121,8 @@ While `pnpm dev` is running, saving a JSON file updates the preview automaticall
 For the live site, commit the JSON changes and run your usual build/deployment
 workflow; these files are bundled into the site at build time.
 
-Your name, summary, contact links and stack still live in `site.js`.
-Stack groups can use `hidden: true` to hide them without deleting their contents.
-To restore the ML / AI group, change its `hidden` value to `false` in `site.js`.
+Your name, contact links and Home's neofetch facts, including Learning, live in
+`site.js`.
 
 ## Terminal navigation
 
@@ -153,9 +152,13 @@ starts a fresh session. Interrupted commands keep their full first play next tim
 
 ## GitHub activity
 
-About's contribution calendar uses the GitHub profile URL in `site.js` (the link
-whose icon is `github`). It is independent of the terminal display handle.
-The public GitHub Contributions API supplies the last year's data and caches it
-for an hour. No token, build-time refresh, or Cloudflare Function is required.
-The calendar fetches when About mounts, shares requests across visits, and offers
-a retry if the feed is unavailable. Levels follow the selected terminal accent.
+The htop monitor uses the GitHub profile URL in `site.js` (the link whose icon is
+`github`), independently of the terminal display handle. It fetches the latest
+100 public repositories in one GitHub REST request and the contribution calendar
+from the public GitHub Contributions API. Both responses are cached in memory
+for an hour when About is visited. No token, background polling, or server is
+required. If either source fails, the other remains available.
+
+The table’s %MEM values represent each displayed repository’s share of the
+displayed size. The 13-week heatmap, streak, and contribution totals are based
+on the calendar feed, not just commits. Heatmap levels follow the terminal accent.

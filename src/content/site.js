@@ -10,8 +10,6 @@ export const profile = {
   role: "Computer & AI Engineering student",
   school: "Ain Shams University",
   location: "Cairo, Egypt",
-  summary:
-    "Placeholder, imma do it later",
   email: "aaserzanaty@gmail.com",
 
   links: [
@@ -25,7 +23,7 @@ export const profile = {
 export const site = {
 
   title: `${profile.name} | CE Student`,
-  description: profile.summary,
+  description: `${profile.name}, ${profile.role} at ${profile.school}.`,
 }
 
 export const hero = {
@@ -35,6 +33,7 @@ export const hero = {
     { key: "Uptime", value: "2nd year, graduating May 2029" },
     { key: "Focus", value: "Backend SWE, Applied AI/ML" },
     { key: "Status", value: "Open to internships" },
+    { key: "Learning", value: "Backend Development" },
     { key: "Location", value: profile.location },
   ],
 }
@@ -50,20 +49,6 @@ export const sections = {
     nav: "Experience & clubs",
   },
   contact: { id: "contact", path: "~/contact", command: `ping ${profile.handle}`, nav: "Contact" },
-}
-
-export const about = {
-  currently: [
-    { label: "learning", description: "Backend Development" },
-  ],
-  skills: [
-    { group: "Languages", items: ["TypeScript/JavaScript", "Python", "Java", "C++", "SQL"] },
-    { group: "Web", items: ["Node.js", "Express.js", "HTML", "CSS"] },
-    { group: "Databases", items: ["PostgreSQL", "SQLite"] },
-    // Set hidden to false to show this group again.
-    { group: "ML / AI", hidden: true, items: ["PyTorch", "scikit-learn", "NumPy"] },
-    { group: "Tools", items: ["Linux", "Git/GitHub"] },
-  ],
 }
 
 export const contact = {

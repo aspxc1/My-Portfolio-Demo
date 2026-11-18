@@ -12,6 +12,7 @@ import "./Hero.css"
 
 const contacts = [{ label: "Email", icon: "email", href: `mailto:${profile.email}` }, ...profile.links]
 const desktopDetailsQuery = "(min-width: 1024px)"
+const primaryFacts = new Set(["Focus", "Status", "Learning"])
 
 export default function Hero({ onReady, onNavigate }) {
   const run = useTerminalRun("neofetch")
@@ -48,7 +49,7 @@ export default function Hero({ onReady, onNavigate }) {
           </div>
 
           <dl className="hero__facts">
-            {hero.neofetch.filter((row) => row.key === "Status" || row.key === "Focus").map((row) => (
+            {hero.neofetch.filter((row) => primaryFacts.has(row.key)).map((row) => (
               <div key={row.key} className="hero__fact"><dt>{row.key}</dt><dd>{row.value}</dd></div>
             ))}
           </dl>
@@ -69,7 +70,7 @@ export default function Hero({ onReady, onNavigate }) {
           <details className="hero__details" open={detailsOpen} onToggle={(event) => setDetailsOpen(event.currentTarget.open)}>
             <summary>System details</summary>
             <dl className="hero__facts">
-              {hero.neofetch.filter((row) => row.key !== "Status" && row.key !== "Focus").map((row) => (
+              {hero.neofetch.filter((row) => !primaryFacts.has(row.key)).map((row) => (
                 <div key={row.key} className="hero__fact"><dt>{row.key}</dt><dd>{row.value}</dd></div>
               ))}
             </dl>

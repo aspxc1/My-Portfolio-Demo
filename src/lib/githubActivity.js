@@ -31,6 +31,25 @@ export function normalizeContributions(payload, now = new Date()) {
   return { days, weeks, total:days.reduce((sum,day) => sum + day.count,0), activeDays:days.filter(day => day.count > 0).length }
 }
 
+export function getContributionOverview(days, now = new Date()) {
+  const today = Date.parse(new Date(now).toISOString().slice(0, 10))
+  const counts = new Map(days.map(({ date, count }) => [Date.parse(date), count]))
+  const yesterday = today - dayMs
+  let streak = counts.has(yesterday) || counts.has(today) ? 0 : null
+  for (let date = counts.get(today) ? today : yesterday; counts.get(date) > 0; date -= dayMs) streak++
+
+  const load = [1, 7, 30].map((length) => {
+    let total = 0
+    for (let i = 0; i < length; i++) {
+      const count = counts.get(today - i * dayMs)
+      if (count === undefined) return null
+      total += count
+    }
+    return total
+  })
+  return { streak, load }
+}
+
 /** Public feed is cached upstream for one hour. Share requests across route visits. */
 export function loadContributions(username, { fetcher = fetch, now = new Date() } = {}) {
   if (!/^[a-z\d-]{1,39}$/i.test(username)) return Promise.reject(new Error("Invalid GitHub username"))
@@ -44,8 +63,12 @@ export function loadContributions(username, { fetcher = fetch, now = new Date() 
     const response = await fetcher(`https://github-contributions-api.jogruber.de/v4/${encodeURIComponent(username)}?y=last`, {
       signal:controller.signal, credentials:"omit", referrerPolicy:"no-referrer",
     })
-    if (!response.ok) throw new Error(`GitHub activity unavailable (${response.status})`)
-    return normalizeContributions(await response.json(), now)
+    if (!response.ok) {
+      const error = new Error(`GitHub activity unavailable (${response.status})`)
+      error.status = response.status
+      throw error
+    }
+    return { ...normalizeContributions(await response.json(), now), updatedAt: new Date(timestamp).toISOString() }
   })().catch(error => {
     if (requests.get(username) === entry) requests.delete(username)
     throw error

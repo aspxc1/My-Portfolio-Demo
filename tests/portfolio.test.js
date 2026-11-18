@@ -169,12 +169,21 @@ test("Home is listed as the current page in its own menu", () => {
   assert.match(html, /<a[^>]+aria-label="Home"[^>]+aria-current="page"/)
 })
 
-test("GitHub activity follows the About stack and links to the GitHub identity, not the terminal handle", () => {
+test("the htop monitor replaces the About body, without changing the route or GitHub identity", () => {
   const html = render("/#about")
-  assert.ok(html.indexOf('id="github-activity-title"') > html.indexOf('class="about__stack"'))
+  assert.match(html, /~\/about/)
+  assert.match(html, /whoami/)
+  assert.match(html, /id="htop-title">GitHub Activity Monitor/)
   assert.match(html, /@aspxc1/)
   assert.match(html, /Loading contribution history/)
-  assert.doesNotMatch(render("/"), /id="github-activity-title"/)
+  assert.match(html, /Loading repository data/)
+  assert.match(html, /Last updated/)
+  assert.doesNotMatch(html, /about__stack|Backend Development|Placeholder, imma do it later/)
+  assert.doesNotMatch(render("/"), /id="htop-title"/)
+})
+
+test("Learning appears directly after Status in the visible neofetch facts", () => {
+  assert.match(render("/"), /<dt>Focus<\/dt>[\s\S]*?<dt>Status<\/dt>[\s\S]*?<dt>Learning<\/dt><dd>Backend Development<\/dd>[\s\S]*?<summary>System details/)
 })
 
 test("the menu is a queued script command following neofetch", () => {
