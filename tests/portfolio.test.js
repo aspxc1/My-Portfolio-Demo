@@ -223,9 +223,12 @@ test("htop renders four repos on the first page with a range and paging controls
   assert.doesNotMatch(html, /htop-search|type="search"/)
 })
 
-test("neofetch keeps Focus and Status without a Learning row", () => {
+test("neofetch shows all profile facts together without a disclosure or Learning row", () => {
   const html = render("/")
-  assert.match(html, /<dt>Focus<\/dt>[\s\S]*?<dt>Status<\/dt>[\s\S]*?<summary>System details/)
+  const facts = html.match(/<dl class="hero__facts">[\s\S]*?<\/dl>/g)
+  assert.equal(facts?.length, 1)
+  assert.deepEqual([...facts[0].matchAll(/<dt>([^<]+)<\/dt>/g)].map(([, label]) => label), ["OS", "Uptime", "Focus", "Status", "Location"])
+  assert.doesNotMatch(html, /<details\b|System details/)
   assert.doesNotMatch(html, /<dt>Learning<\/dt>|Backend Development/)
 })
 

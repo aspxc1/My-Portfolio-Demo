@@ -1,6 +1,6 @@
 import { Ascii } from "ascii.rest/react"
 import * as synthwave from "ascii.rest/pieces/synthwave"
-import { useContext, useEffect, useState } from "react"
+import { useContext, useEffect } from "react"
 import useTerminalRun from "../lib/useTerminalRun.js"
 import { DEFAULT_THEME } from "../lib/terminalTheme.js"
 import { hero, profile } from "../content/site.js"
@@ -11,21 +11,12 @@ import ContactIcon from "./ContactIcon.jsx"
 import "./Hero.css"
 
 const contacts = [{ label: "Email", icon: "email", href: `mailto:${profile.email}` }, ...profile.links]
-const desktopDetailsQuery = "(min-width: 1024px)"
-const primaryFacts = new Set(["Focus", "Status"])
 
 export default function Hero({ onReady, onNavigate }) {
   const run = useTerminalRun("neofetch")
   const theme = useContext(TerminalTheme)
   const accents = theme?.accents || DEFAULT_THEME.accents
   const activeAccent = theme?.accent || accents[0].id
-  const [detailsOpen, setDetailsOpen] = useState(() => typeof window !== "undefined" && window.matchMedia(desktopDetailsQuery).matches)
-  useEffect(() => {
-    const query = window.matchMedia(desktopDetailsQuery)
-    const onChange = (event) => setDetailsOpen(event.matches)
-    query.addEventListener("change", onChange)
-    return () => query.removeEventListener("change", onChange)
-  }, [])
   useEffect(() => {
     if (run.finished) onReady?.()
   }, [run.finished, onReady])
@@ -49,7 +40,7 @@ export default function Hero({ onReady, onNavigate }) {
           </div>
 
           <dl className="hero__facts">
-            {hero.neofetch.filter((row) => primaryFacts.has(row.key)).map((row) => (
+            {hero.neofetch.map((row) => (
               <div key={row.key} className="hero__fact"><dt>{row.key}</dt><dd>{row.value}</dd></div>
             ))}
           </dl>
@@ -66,15 +57,6 @@ export default function Hero({ onReady, onNavigate }) {
               ))}
             </ul>
           </nav>
-
-          <details className="hero__details" open={detailsOpen} onToggle={(event) => setDetailsOpen(event.currentTarget.open)}>
-            <summary>System details</summary>
-            <dl className="hero__facts">
-              {hero.neofetch.filter((row) => !primaryFacts.has(row.key)).map((row) => (
-                <div key={row.key} className="hero__fact"><dt>{row.key}</dt><dd>{row.value}</dd></div>
-              ))}
-            </dl>
-          </details>
 
           <div role="group" aria-label="Terminal accent colors" className="hero__swatches">
             {accents.map((swatch) => (
