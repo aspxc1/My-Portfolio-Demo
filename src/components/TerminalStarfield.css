@@ -41,11 +41,19 @@
 }
 .terminal-starfield__star:nth-child(19n)::before { width: 5px; height: 1px; }
 .terminal-starfield__star:nth-child(19n)::after { width: 1px; height: 5px; }
-.terminal-starfield[data-paused] .terminal-starfield__plane { animation-play-state: paused; }
+.terminal-starfield__star:nth-child(11n) { animation: star-twinkle 4.5s ease-in-out infinite alternate; }
+.terminal-starfield__star:nth-child(17n) { animation: star-twinkle 6.2s ease-in-out 1.4s infinite alternate; }
+.terminal-starfield[data-paused] .terminal-starfield__plane,
+.terminal-starfield[data-paused] .terminal-starfield__star { animation-play-state: paused; }
 
 @keyframes starfield-drift {
   from { transform: translate3d(-12px, 28px, 0); }
   to { transform: translate3d(18px, -36px, 0); }
+}
+
+@keyframes star-twinkle {
+  from { opacity: 0.28; }
+  to { opacity: 0.95; }
 }
 
 /* Leave a narrow strip of night sky around the edge-to-edge mobile terminal. */
@@ -54,5 +62,6 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .terminal-starfield__plane { animation: none; }
+  .terminal-starfield__plane,
+  .terminal-starfield__star { animation: none; }
 }

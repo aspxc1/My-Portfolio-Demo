@@ -19,7 +19,7 @@
   z-index: 0;
 }
 
-/* "grid": 24px dot-matrix + subtle bottom horizon grid echoing the ASCII sun. */
+/* "grid": 24px dot-matrix with gentle seamless diagonal drift. */
 .session[data-bg="grid"]::before {
   background-image: radial-gradient(
     circle at 1px 1px,
@@ -28,55 +28,59 @@
   );
   background-size: 24px 24px;
   mask-image: radial-gradient(ellipse 85% 80% at 50% 42%, #000 30%, transparent 100%);
-  opacity: 0.65;
+  opacity: 0.58;
+  animation: bg-grid-drift 28s linear infinite;
 }
 
 .session[data-bg="grid"]::after {
-  background:
-    linear-gradient(
-      to top,
-      color-mix(in oklab, var(--primary) 11%, transparent) 0%,
-      transparent 38%
-    ),
-    repeating-linear-gradient(
-      to right,
-      color-mix(in oklab, var(--primary) 10%, transparent) 0 1px,
-      transparent 1px 48px
-    );
-  mask-image: linear-gradient(to top, rgba(0, 0, 0, 0.85) 0%, transparent 36%);
+  background: linear-gradient(
+    to top,
+    color-mix(in oklab, var(--primary) 10%, transparent) 0%,
+    transparent 36%
+  );
 }
 
-/* "crt": scanline raster + phosphor edge vignette. */
+/* "crt": scanline raster + gentle phosphor sweep + edge vignette. */
 .session[data-bg="crt"]:not([data-theme="phosphor"])::before {
   background:
+    linear-gradient(
+      to bottom,
+      transparent 0%,
+      color-mix(in oklab, var(--primary) 7%, transparent) 50%,
+      transparent 100%
+    ),
     repeating-linear-gradient(
       to bottom,
       transparent 0 2px,
-      rgba(0, 0, 0, 0.28) 2px 4px
+      rgba(0, 0, 0, 0.24) 2px 4px
     );
+  background-size: 100% 240px, 100% 4px;
+  background-repeat: no-repeat, repeat;
   z-index: 2;
-  opacity: 0.55;
+  opacity: 0.52;
+  animation: bg-crt-sweep 9s linear infinite;
 }
 
 .session[data-bg="crt"]::after {
   background: radial-gradient(
     ellipse 80% 70% at 50% 35%,
-    color-mix(in oklab, var(--primary) 10%, transparent) 0%,
+    color-mix(in oklab, var(--primary) 9%, transparent) 0%,
     transparent 65%,
     rgba(0, 0, 0, 0.45) 100%
   );
 }
 
-/* "circuit" (blueprint): major 96px + minor 24px coordinate grid. */
+/* "circuit" (blueprint): major 96px + minor 24px coordinate grid with slow drift. */
 .session[data-bg="circuit"]::before {
   background-image:
-    linear-gradient(to right, color-mix(in oklab, var(--primary) 16%, transparent) 1px, transparent 1px),
-    linear-gradient(to bottom, color-mix(in oklab, var(--primary) 16%, transparent) 1px, transparent 1px),
-    linear-gradient(to right, color-mix(in oklab, var(--border) 35%, transparent) 1px, transparent 1px),
-    linear-gradient(to bottom, color-mix(in oklab, var(--border) 35%, transparent) 1px, transparent 1px);
+    linear-gradient(to right, color-mix(in oklab, var(--primary) 15%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--primary) 15%, transparent) 1px, transparent 1px),
+    linear-gradient(to right, color-mix(in oklab, var(--border) 30%, transparent) 1px, transparent 1px),
+    linear-gradient(to bottom, color-mix(in oklab, var(--border) 30%, transparent) 1px, transparent 1px);
   background-size: 96px 96px, 96px 96px, 24px 24px, 24px 24px;
   mask-image: radial-gradient(ellipse 92% 85% at 50% 45%, #000 20%, transparent 95%);
-  opacity: 0.7;
+  opacity: 0.62;
+  animation: bg-circuit-drift 48s linear infinite;
 }
 
 .session[data-bg="minimal"]::before,
@@ -84,7 +88,22 @@
   display: none;
 }
 
-/* ---------- Riced terminal window ---------- */
+@keyframes bg-grid-drift {
+  from { background-position: 0 0; }
+  to { background-position: 24px 24px; }
+}
+
+@keyframes bg-circuit-drift {
+  from { background-position: 0 0, 0 0, 0 0, 0 0; }
+  to { background-position: 96px 96px, 96px 96px, 24px 24px, 24px 24px; }
+}
+
+@keyframes bg-crt-sweep {
+  from { background-position: 0 -240px, 0 0; }
+  to { background-position: 0 110vh, 0 0; }
+}
+
+/* ---------- Riced terminal surface ---------- */
 
 .session__window {
   position: relative;
@@ -93,49 +112,140 @@
   flex: 1;
   flex-direction: column;
   width: 100%;
-  /* Let a little of the backdrop through the surface without fading its content. */
-  background: color-mix(in oklab, var(--background) 94%, transparent);
+  background: color-mix(in oklab, var(--background) 95%, transparent);
+}
+
+/* Subtle tactile paper/matte grain overlay so dark surfaces have physical depth. */
+.session__window::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  z-index: 0;
+  opacity: 0.025;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
+}
+
+.session__topbar,
+.session__screen,
+.tmux-bar {
+  position: relative;
+  z-index: 1;
+}
+
+/* Razor-thin Waybar/Zellij-style top chrome — zero fake macOS window buttons. */
+.session__topbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  padding: 0.4rem 0.875rem;
+  border-bottom: 1px solid var(--border-subtle);
+  background: var(--mantle);
+  font: 0.75rem/1.25 var(--font-mono);
+  color: var(--muted-foreground);
+}
+
+.session__topbar-left,
+.session__topbar-right {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.session__topbar-host {
+  color: var(--foreground);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.session__topbar-sep {
+  color: var(--border);
+}
+
+.session__topbar-cwd {
+  color: var(--terminal-teal);
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.session__topbar-clock {
+  display: none;
+  font-variant-numeric: tabular-nums;
+  color: var(--muted-foreground);
+  white-space: nowrap;
+}
+
+.session__topbar-palette {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.15rem 0.45rem;
+  border: 1px solid var(--border);
+  border-radius: 2px;
+  background: var(--surface);
+  color: var(--foreground);
+  font: inherit;
+  cursor: pointer;
+  transition: border-color 120ms ease, color 120ms ease;
+}
+
+.session__topbar-palette:hover {
+  border-color: var(--primary);
+  color: var(--primary);
 }
 
 .session__screen {
-  position: relative;
   display: flex;
   flex: 1;
   flex-direction: column;
   transform-origin: top;
 }
 
-.session:is([data-bg="crt"], [data-theme="phosphor"]) .terminal-command__prompt,
-.session:is([data-bg="crt"], [data-theme="phosphor"]) .hero__ascii,
-.session:is([data-bg="crt"], [data-theme="phosphor"]) .terminal-menu__marker {
-  text-shadow: 0 0 10px color-mix(in oklab, var(--primary) 45%, transparent);
+.terminal-home {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
 }
 
-.session[data-theme="phosphor"] .session__window {
-  border-radius: clamp(0.625rem, 1.7vw, 1.5rem) / clamp(0.5rem, 1.2vw, 1rem);
-  box-shadow: 0 0 2rem color-mix(in oklab, var(--primary) 12%, transparent);
+.session:is([data-bg="crt"], [data-theme="phosphor"], [data-theme="amber"]) .terminal-command__prompt,
+.session:is([data-bg="crt"], [data-theme="phosphor"], [data-theme="amber"]) .terminal-menu__marker {
+  text-shadow: 0 0 8px color-mix(in oklab, var(--primary) 35%, transparent);
+}
+
+.session:is([data-theme="phosphor"], [data-theme="amber"]) .session__window {
+  border-radius: clamp(0.5rem, 1.4vw, 1.15rem) / clamp(0.4rem, 1vw, 0.85rem);
   overflow: hidden;
 }
 
-.session[data-theme="phosphor"] .session__screen::before {
+.session:is([data-theme="phosphor"], [data-theme="amber"]) .session__screen::before {
   content: "";
   position: absolute;
   inset: 0;
-  z-index: 1;
+  z-index: 2;
   pointer-events: none;
-  border-radius: clamp(0.625rem, 1.7vw, 1.5rem);
   background:
-    radial-gradient(ellipse at center, transparent 58%, color-mix(in oklab, var(--backdrop) 24%, transparent)),
-    repeating-linear-gradient(transparent 0 3px, color-mix(in oklab, var(--backdrop) 17%, transparent) 3px 4px);
-  box-shadow: inset 0 0 1.75rem color-mix(in oklab, var(--primary) 6%, transparent);
+    radial-gradient(ellipse at center, transparent 60%, color-mix(in oklab, var(--backdrop) 28%, transparent)),
+    repeating-linear-gradient(transparent 0 3px, color-mix(in oklab, var(--backdrop) 16%, transparent) 3px 4px);
 }
 
 .session[data-theme="paper"] .session__window {
-  box-shadow: 0 1rem 3rem -1.25rem color-mix(in oklab, var(--foreground) 45%, transparent);
+  box-shadow: 0 1rem 3rem -1.25rem color-mix(in oklab, var(--foreground) 35%, transparent);
 }
 
 .session[data-theme="paper"] .session__screen {
-  background: repeating-linear-gradient(transparent 0 1.65rem, color-mix(in oklab, var(--border) 9%, transparent) 1.65rem calc(1.65rem + 1px));
+  background: repeating-linear-gradient(transparent 0 1.65rem, color-mix(in oklab, var(--border) 10%, transparent) 1.65rem calc(1.65rem + 1px));
+}
+
+@media (min-width: 640px) {
+  .session__topbar {
+    padding: 0.45rem 1.25rem;
+  }
+  .session__topbar-clock {
+    display: inline;
+  }
 }
 
 @media (min-width: 840px) {
@@ -143,18 +253,27 @@
     padding: clamp(0.75rem, 1.75vw, 1.5rem);
   }
 
+  /* Subtle Hyprland-style active window border rim & ambient edge glow */
   .session__window {
     max-width: 75rem;
     margin-inline: auto;
-    border: 1px solid var(--border);
-    border-top-color: color-mix(in oklab, var(--primary) 55%, var(--border));
-    border-radius: calc(var(--radius) * 1.75);
+    border: 1px solid color-mix(in oklab, var(--primary) 42%, var(--border));
+    border-radius: calc(var(--radius) * 2.5);
     box-shadow:
-      0 24px 64px -16px rgba(0, 0, 0, 0.65),
-      0 0 0 1px rgba(0, 0, 0, 0.35);
+      inset 0 1px 0 color-mix(in oklab, var(--foreground) 7%, transparent),
+      0 0 0 1px color-mix(in oklab, var(--terminal-teal) 14%, transparent),
+      0 0 26px -6px color-mix(in oklab, var(--primary) 28%, transparent),
+      0 0 54px -14px color-mix(in oklab, var(--terminal-teal) 18%, transparent),
+      0 24px 64px -18px rgba(0, 0, 0, 0.72);
     overflow: hidden;
   }
 
+  .session[data-theme="paper"] .session__window {
+    border-color: var(--border);
+    box-shadow:
+      inset 0 1px 0 rgba(255, 255, 255, 0.45),
+      0 18px 46px -18px color-mix(in oklab, var(--foreground) 32%, transparent);
+  }
 }
 
 /* Route focus announces the page without drawing a control outline around prose. */
@@ -179,7 +298,7 @@
   position: absolute;
   inset: 0;
   pointer-events: none;
-  border-bottom: 1px solid var(--primary);
+  border-bottom: 1px solid color-mix(in oklab, var(--primary) 60%, transparent);
   animation: terminal-scan 260ms ease-out both;
 }
 
@@ -194,6 +313,10 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .session::before,
+  .session::after {
+    animation: none;
+  }
   .session__screen--leaving,
   .session__screen--entering,
   .session__screen--entering::after {
