@@ -121,18 +121,6 @@
   overflow-wrap: anywhere;
 }
 
-.hero__status {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
-}
-
-.hero__status-glyph {
-  color: var(--success);
-  font-size: 0.625rem;
-  line-height: 1;
-}
-
 .hero__contacts {
   grid-area: contacts;
   min-width: 0;

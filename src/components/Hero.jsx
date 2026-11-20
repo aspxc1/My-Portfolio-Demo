@@ -47,14 +47,7 @@ export default function Hero({ onReady, onNavigate }) {
             {hero.neofetch.map((row) => (
               <div key={row.key} className="hero__fact">
                 <dt>{row.key}</dt>
-                <dd>
-                  {row.key === "Status" ? (
-                    <span className="hero__status">
-                      <span aria-hidden="true" className="hero__status-glyph">●</span>
-                      {row.value}
-                    </span>
-                  ) : row.value}
-                </dd>
+                <dd>{row.value}</dd>
               </div>
             ))}
           </dl>
