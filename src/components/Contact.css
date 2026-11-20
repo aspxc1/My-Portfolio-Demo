@@ -13,17 +13,9 @@
 }
 
 .contact__availability {
-  display: inline-flex;
-  align-items: center;
-  gap: 0.45rem;
   font: 0.75rem/1.4 var(--font-mono);
   color: var(--terminal-teal);
   font-variant-numeric: tabular-nums;
-}
-
-.contact__dot {
-  color: var(--success);
-  font-size: 0.625rem;
 }
 
 .contact__blurb {

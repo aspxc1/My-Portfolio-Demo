@@ -74,8 +74,7 @@ export default function Contact({ onReady, onNavigate }) {
       <div className="contact__columns">
         <div className="contact__intro">
           <p className="contact__availability">
-            <span aria-hidden="true" className="contact__dot">●</span>
-            <span>{`${profile.location}${cairoClock ? ` · ${cairoClock} EET` : ""}`}</span>
+            {`${profile.location}${cairoClock ? ` · ${cairoClock} EET` : ""}`}
           </p>
           <p className="contact__blurb">{contact.blurb}</p>
 
