@@ -60,29 +60,12 @@ function AsciiMeter({ value, max, width = 10 }) {
   )
 }
 
-function getLanguageBreakdown(repos) {
-  if (!repos?.length) return []
-  const totals = new Map()
-  let counted = 0
-  for (const repo of repos) {
-    if (!repo.language) continue
-    totals.set(repo.language, (totals.get(repo.language) || 0) + Math.max(repo.size, 1))
-    counted += Math.max(repo.size, 1)
-  }
-  if (!counted) return []
-  return [...totals.entries()]
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 5)
-    .map(([lang, weight]) => ({ lang, share: Math.max(1, Math.round((weight / counted) * 100)) }))
-}
-
 export default function GitHubMonitor({ enabled }) {
   const contributions = useActivitySource(loadContributions, enabled)
   const repositories = useActivitySource(loadRepositories, enabled)
   const calendar = contributions.data
   const snapshot = repositories.data
   const overview = calendar ? getContributionOverview(calendar.days, calendar.updatedAt) : null
-  const languages = getLanguageBreakdown(snapshot?.repos)
 
   const timestamps = [snapshot?.updatedAt, calendar?.updatedAt].filter(Boolean).sort()
   const latest = timestamps.at(-1)
@@ -136,30 +119,6 @@ export default function GitHubMonitor({ enabled }) {
               </dd>
             </div>
           </dl>
-
-          {languages.length > 0 ? (
-            <div className="htop__langs" aria-label="Primary languages across repositories">
-              <div className="htop__lang-bar" aria-hidden="true">
-                {languages.map((item, idx) => (
-                  <span
-                    key={item.lang}
-                    className={`htop__lang-seg htop__lang-seg--${idx}`}
-                    style={{ flexGrow: item.share }}
-                    title={`${item.lang}: ${item.share}%`}
-                  />
-                ))}
-              </div>
-              <ul className="htop__lang-legend">
-                {languages.map((item, idx) => (
-                  <li key={item.lang}>
-                    <span aria-hidden="true" className={`htop__lang-dot htop__lang-seg--${idx}`} />
-                    <span>{item.lang}</span>
-                    <small>{`${item.share}%`}</small>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          ) : null}
         </section>
 
         <section className="htop__pane" aria-label="Contribution history">
