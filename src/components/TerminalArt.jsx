@@ -1,5 +1,3 @@
-import { Ascii } from "ascii.rest/react"
-import * as synthwave from "ascii.rest/pieces/synthwave"
 import { useEffect, useMemo, useRef, useState } from "react"
 import "./TerminalArt.css"
 
@@ -163,7 +161,6 @@ function packRows(output, tones) {
 const MODES = [
   { id: "torus", label: "donut.c" },
   { id: "neural", label: "lattice" },
-  { id: "synthwave", label: "synthwave" },
 ]
 
 export default function TerminalArt({ active }) {
@@ -178,7 +175,6 @@ export default function TerminalArt({ active }) {
   }, [mode])
 
   useEffect(() => {
-    if (mode === "synthwave") return
     if (!active || paused) {
       setFrame(staticFrame)
       return
@@ -226,29 +222,21 @@ export default function TerminalArt({ active }) {
         onPointerMove={onPointerMove}
         onPointerLeave={onPointerLeave}
       >
-        {mode === "synthwave" ? (
-          <Ascii
-            piece={synthwave}
-            className="terminal-art__synthwave"
-            options={{ fps: active && !paused ? synthwave.meta.fps : 0 }}
-          />
-        ) : (
-          <pre className="terminal-art__canvas">
-            {frame.map((runs, rowIndex) => (
-              <span key={rowIndex} className="terminal-art__row">
-                {runs.map((run, runIndex) =>
-                  run.tone < 0 ? (
-                    <span key={runIndex}>{run.text}</span>
-                  ) : (
-                    <span key={runIndex} className={`terminal-art__tone-${run.tone}`}>
-                      {run.text}
-                    </span>
-                  ),
-                )}
-              </span>
-            ))}
-          </pre>
-        )}
+        <pre className="terminal-art__canvas">
+          {frame.map((runs, rowIndex) => (
+            <span key={rowIndex} className="terminal-art__row">
+              {runs.map((run, runIndex) =>
+                run.tone < 0 ? (
+                  <span key={runIndex}>{run.text}</span>
+                ) : (
+                  <span key={runIndex} className={`terminal-art__tone-${run.tone}`}>
+                    {run.text}
+                  </span>
+                ),
+              )}
+            </span>
+          ))}
+        </pre>
       </div>
 
       <div className="terminal-art__controls" role="group" aria-label="ASCII visual mode">
