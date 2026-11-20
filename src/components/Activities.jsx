@@ -5,6 +5,15 @@ import "./Activities.css"
 
 const section = sections.activities
 
+function shortHash(seed) {
+  let h = 2166136261
+  for (let i = 0; i < seed.length; i++) {
+    h ^= seed.charCodeAt(i)
+    h = Math.imul(h, 16777619)
+  }
+  return (h >>> 0).toString(16).padStart(7, "0").slice(0, 7)
+}
+
 export default function Activities({ onReady, onNavigate }) {
   return (
     <TerminalSection section={section} roomy onReady={onReady} onNavigate={onNavigate}>
@@ -13,6 +22,7 @@ export default function Activities({ onReady, onNavigate }) {
         {activities.map((item, i) => {
           const isCurrent = item.end.toLowerCase() === "present"
           const isLast = i === activities.length - 1
+          const hash = item.hash || shortHash(item.org + item.role + item.start)
 
           return (
             <li key={item.org + item.role} className="activity">
@@ -22,6 +32,12 @@ export default function Activities({ onReady, onNavigate }) {
               </div>
 
               <article className={isLast ? "activity__body" : "activity__body activity__body--spaced"}>
+                <p className="activity__commit">
+                  <span className="activity__hash">{hash}</span>
+                  {i === 0 && isCurrent ? <span className="activity__ref">(HEAD -&gt; main)</span> : null}
+                  <span className="activity__date-inline">{`${item.start} — ${item.end}`}</span>
+                </p>
+
                 <h2 className="activity__title">
                   {item.role} <span className="activity__muted">@</span>{" "}
                   {item.orgUrl ? (
@@ -34,11 +50,6 @@ export default function Activities({ onReady, onNavigate }) {
                   )}
                 </h2>
 
-                <p className="activity__date">
-                  {item.start} — {item.end}
-                  {isCurrent ? <span className="activity__current">Current</span> : null}
-                </p>
-
                 <div className="activity__details">
                   <p className="activity__summary">{item.summary}</p>
                   {item.highlights.length > 0 ? (
@@ -48,7 +59,7 @@ export default function Activities({ onReady, onNavigate }) {
                           <span aria-hidden="true" className="activity__plus">
                             {"+"}
                           </span>
-                          {highlight}
+                          <span>{highlight}</span>
                         </li>
                       ))}
                     </ul>
