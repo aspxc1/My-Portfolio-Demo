@@ -9,7 +9,7 @@ export function normalizeRepositories(payload, username) {
       || !(row.pushed_at === null || (typeof row.pushed_at === "string" && Number.isFinite(Date.parse(row.pushed_at))))) {
       throw new Error("Invalid repository data")
     }
-    return {
+    const normalized = {
       id: row.id,
       name: row.name,
       url: `https://github.com/${encodeURIComponent(username)}/${encodeURIComponent(row.name)}`,
@@ -17,6 +17,19 @@ export function normalizeRepositories(payload, username) {
       pushedAt: row.pushed_at,
       size: row.size,
     }
+    if (typeof row.description === "string" && row.description.trim()) {
+      normalized.description = row.description.trim()
+    }
+    if (Number.isSafeInteger(row.stargazers_count) && row.stargazers_count > 0) {
+      normalized.stars = row.stargazers_count
+    }
+    if (typeof row.homepage === "string" && /^https?:\/\//i.test(row.homepage.trim())) {
+      normalized.homepage = row.homepage.trim()
+    }
+    if (typeof row.fork === "boolean" && row.fork) {
+      normalized.fork = true
+    }
+    return normalized
   }).sort((a, b) => (Date.parse(b.pushedAt) || 0) - (Date.parse(a.pushedAt) || 0) || a.name.localeCompare(b.name))
 
   return { repos, totalSize: repos.reduce((total, repo) => total + repo.size, 0) }

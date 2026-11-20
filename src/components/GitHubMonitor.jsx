@@ -6,11 +6,11 @@ import GitHubHeatmap from "./GitHubHeatmap.jsx"
 import GitHubProcesses from "./GitHubProcesses.jsx"
 import "./GitHubMonitor.css"
 
-const github = profile.links.find(link => link.icon === "github")
+const github = profile.links.find((link) => link.icon === "github")
 const username = getGitHubUsername(github?.href)
 const updatedLabel = new Intl.DateTimeFormat("en", { dateStyle: "medium", timeStyle: "short", timeZone: "UTC" })
-const displayCount = number => number?.toLocaleString("en") ?? "—"
-const formatUpdated = date => updatedLabel.format(new Date(date))
+const displayCount = (number) => number?.toLocaleString("en") ?? "—"
+const formatUpdated = (date) => updatedLabel.format(new Date(date))
 
 function useActivitySource(load, enabled) {
   const [result, setResult] = useState({ status: "loading" })
@@ -21,13 +21,13 @@ function useActivitySource(load, enabled) {
     let active = true
     setResult({ status: "loading" })
     load(username).then(
-      data => { if (active) setResult({ status: "loaded", data }) },
-      error => { if (active) setResult({ status: "error", error }) },
+      (data) => { if (active) setResult({ status: "loaded", data }) },
+      (error) => { if (active) setResult({ status: "error", error }) },
     )
     return () => { active = false }
   }, [enabled, load, request])
 
-  return { ...result, retry: () => retry(value => value + 1) }
+  return { ...result, retry: () => retry((value) => value + 1) }
 }
 
 function SourceStatus({ source, name, label, fallback }) {
@@ -38,9 +38,42 @@ function SourceStatus({ source, name, label, fallback }) {
   return (
     <div className="htop__status">
       <p>{message}{source.status === "error" && fallback ? ` ${fallback}` : ""}</p>
-      {source.status === "error" ? <button className="text-link" type="button" onClick={source.retry}>Retry {name}</button> : null}
+      {source.status === "error" ? (
+        <button className="text-link" type="button" onClick={source.retry}>Retry {name}</button>
+      ) : null}
     </div>
   )
+}
+
+function AsciiMeter({ value, max, width = 10 }) {
+  if (value == null || max <= 0) {
+    return <span className="htop__meter" aria-hidden="true">{`[${"·".repeat(width)}]`}</span>
+  }
+  const filled = Math.max(0, Math.min(width, Math.round((value / max) * width)))
+  return (
+    <span className="htop__meter" aria-hidden="true">
+      <span className="htop__meter-bracket">[</span>
+      <span className="htop__meter-fill">{"|".repeat(filled)}</span>
+      <span className="htop__meter-empty">{"·".repeat(width - filled)}</span>
+      <span className="htop__meter-bracket">]</span>
+    </span>
+  )
+}
+
+function getLanguageBreakdown(repos) {
+  if (!repos?.length) return []
+  const totals = new Map()
+  let counted = 0
+  for (const repo of repos) {
+    if (!repo.language) continue
+    totals.set(repo.language, (totals.get(repo.language) || 0) + Math.max(repo.size, 1))
+    counted += Math.max(repo.size, 1)
+  }
+  if (!counted) return []
+  return [...totals.entries()]
+    .sort((a, b) => b[1] - a[1])
+    .slice(0, 5)
+    .map(([lang, weight]) => ({ lang, share: Math.max(1, Math.round((weight / counted) * 100)) }))
 }
 
 export default function GitHubMonitor({ enabled }) {
@@ -49,10 +82,12 @@ export default function GitHubMonitor({ enabled }) {
   const calendar = contributions.data
   const snapshot = repositories.data
   const overview = calendar ? getContributionOverview(calendar.days, calendar.updatedAt) : null
+  const languages = getLanguageBreakdown(snapshot?.repos)
 
   const timestamps = [snapshot?.updatedAt, calendar?.updatedAt].filter(Boolean).sort()
   const latest = timestamps.at(-1)
   const separateTimes = latest && formatUpdated(timestamps[0]) !== formatUpdated(latest)
+
   function sourceAnnouncement(source, label) {
     if (source.status === "loading") return `Loading ${label}.`
     if (source.status === "loaded") return `${label} loaded.`
@@ -63,38 +98,100 @@ export default function GitHubMonitor({ enabled }) {
     <section className="htop" aria-labelledby="htop-title">
       <header className="htop__section-heading htop__intro">
         <h2 id="htop-title">GitHub Activity Monitor</h2>
-        <a className="text-link htop__identity" href={github?.href}>@{username}</a>
+        <a className="text-link htop__identity" href={github?.href} target="_blank" rel="noreferrer">@{username}</a>
       </header>
+
       <div className="htop__dashboard">
         <p role="status" className="sr-only">{sourceAnnouncement(contributions, "contribution history")}</p>
         <p role="status" className="sr-only">{sourceAnnouncement(repositories, "repository data")}</p>
+
         <section className="htop__pane" aria-labelledby="htop-session">
-          <div className="htop__section-heading"><h3 id="htop-session">Session stats</h3></div>
+          <div className="htop__section-heading">
+            <h3 id="htop-session">Session stats</h3>
+            {calendar ? <span>{`${displayCount(calendar.total)} / yr`}</span> : null}
+          </div>
           <dl className="htop__stats">
-            <div><dt>Uptime:</dt><dd>{overview?.streak == null ? "—" : `${overview.streak} ${overview.streak === 1 ? "day" : "days"}`} <small>current streak</small></dd></div>
-            <div><dt>Load:</dt><dd>{overview ? overview.load.map(displayCount).join(" / ") : "—"} <small>contributions (1d / 7d / 30d)</small></dd></div>
-            <div><dt>Tasks:</dt><dd>{displayCount(snapshot?.repos.length)} <small>{snapshot?.hasMore ? "public repos shown" : "public repos"}</small></dd></div>
+            <div>
+              <dt>Uptime</dt>
+              <dd>
+                <AsciiMeter value={overview?.streak} max={30} />
+                <span>{overview?.streak == null ? "—" : `${overview.streak} ${overview.streak === 1 ? "day" : "days"}`}</span>
+                <small>current streak</small>
+              </dd>
+            </div>
+            <div>
+              <dt>Load</dt>
+              <dd>
+                <AsciiMeter value={overview?.load?.[2]} max={60} />
+                <span>{overview ? overview.load.map(displayCount).join(" / ") : "—"}</span>
+                <small>1d / 7d / 30d</small>
+              </dd>
+            </div>
+            <div>
+              <dt>Tasks</dt>
+              <dd>
+                <AsciiMeter value={snapshot?.repos.length} max={25} />
+                <span>{displayCount(snapshot?.repos.length)}</span>
+                <small>{snapshot?.hasMore ? "public repos shown" : "public repos"}</small>
+              </dd>
+            </div>
           </dl>
+
+          {languages.length > 0 ? (
+            <div className="htop__langs" aria-label="Primary languages across repositories">
+              <div className="htop__lang-bar" aria-hidden="true">
+                {languages.map((item, idx) => (
+                  <span
+                    key={item.lang}
+                    className={`htop__lang-seg htop__lang-seg--${idx}`}
+                    style={{ flexGrow: item.share }}
+                    title={`${item.lang}: ${item.share}%`}
+                  />
+                ))}
+              </div>
+              <ul className="htop__lang-legend">
+                {languages.map((item, idx) => (
+                  <li key={item.lang}>
+                    <span aria-hidden="true" className={`htop__lang-dot htop__lang-seg--${idx}`} />
+                    <span>{item.lang}</span>
+                    <small>{`${item.share}%`}</small>
+                  </li>
+                ))}
+              </ul>
+            </div>
+          ) : null}
         </section>
+
         <section className="htop__pane" aria-label="Contribution history">
-          {calendar ? <GitHubHeatmap weeks={calendar.weeks.slice(-13)} /> : <SourceStatus source={contributions} name="contribution history" label="Contribution history" />}
+          {calendar ? (
+            <GitHubHeatmap weeks={calendar.weeks.slice(-13)} />
+          ) : (
+            <SourceStatus source={contributions} name="contribution history" label="Contribution history" />
+          )}
         </section>
       </div>
+
       {snapshot ? (
         <GitHubProcesses snapshot={snapshot} />
       ) : (
         <section className="htop__processes" aria-labelledby="htop-process-title">
           <div className="htop__section-heading"><h3 id="htop-process-title">Repository processes</h3></div>
-          <SourceStatus source={repositories} name="repository data" label="Repository data" fallback={calendar ? "Contribution history is still available above." : null} />
+          <SourceStatus
+            source={repositories}
+            name="repository data"
+            label="Repository data"
+            fallback={calendar ? "Contribution history is still available above." : null}
+          />
         </section>
       )}
+
       <footer className="htop__footer">
         <p>Last updated: {latest ? (
           separateTimes
             ? <>repos <time dateTime={snapshot.updatedAt}>{formatUpdated(snapshot.updatedAt)} UTC</time> · contributions <time dateTime={calendar.updatedAt}>{formatUpdated(calendar.updatedAt)} UTC</time></>
             : <time dateTime={latest}>{formatUpdated(latest)} UTC</time>
         ) : "—"}</p>
-        <p>Cached for 1 hour · <a className="text-link" href="https://github.com/grubersjoe/github-contributions-api">Contribution feed</a></p>
+        <p>Cached for 1 hour · <a className="text-link" href="https://github.com/grubersjoe/github-contributions-api" target="_blank" rel="noreferrer">Contribution feed</a></p>
       </footer>
     </section>
   )

@@ -175,15 +175,14 @@ test("About queues its stack and native htop output after whoami", () => {
   const html = render("/#about")
   assert.match(html, /~\/about/)
   assert.match(html, /whoami/)
-  assert.match(html, /terminal-run--queued[^>]*><p class="about__command"[^]*?ls --icons ~\/stack[^]*?class="about__stack"/)
+  assert.match(html, /terminal-run--queued[^>]*><p class="about__command"[^]*?tree ~\/stack[^]*?class="about__stack"/)
   const listing = html.match(/<section class="about__stack"[^>]*>(.*?)<\/section>/)[1]
   assert.deepEqual([...listing.matchAll(/<h2>(.*?)<\/h2>/g)].map(match => match[1]), ["Languages", "Web", "Databases", "Tools"])
-  assert.deepEqual([...listing.matchAll(/<\/svg><\/span><span>(.*?)<\/span><\/li>/g)].map(match => match[1]), [
+  assert.deepEqual([...listing.matchAll(/<li><span>(.*?)<\/span><\/li>/g)].map(match => match[1]), [
     "TypeScript/JavaScript", "Python", "Java", "C++", "SQL", "Node.js", "Express.js", "HTML", "CSS",
     "PostgreSQL", "SQLite", "Linux", "Git/GitHub",
   ])
   assert.equal((listing.match(/<ul role="list">/g) || []).length, 4)
-  assert.equal((listing.match(/class="about__stack-icon" aria-hidden="true"/g) || []).length, 13)
   assert.doesNotMatch(listing, /<p>|<button|<a /)
   assert.match(html, /terminal-run--queued[^>]*><p class="about__command"[^]*?>htop<\/span>/)
   assert.ok(html.indexOf('class="about__stack"') < html.indexOf('id="htop-title"'))

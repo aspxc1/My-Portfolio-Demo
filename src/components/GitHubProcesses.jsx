@@ -100,7 +100,7 @@ export default function GitHubProcesses({ snapshot }) {
       ) : null}
       <p id="htop-table-help" className="sr-only">Choose a column heading to sort. Focus a repository link and use Up, Down, Home, or End to select a row, or Page Up and Page Down to change pages. Enter opens the repository.</p>
       <p role="status" className="htop__detail">{selected
-        ? `${selected.name} · ${selected.language || "No language listed"} · ${selected.size.toLocaleString("en")} KB${snapshot.totalSize ? ` · ${memory(selected.size, snapshot.totalSize)} of displayed size` : ""}`
+        ? `${selected.name}${selected.stars ? ` ★${selected.stars}` : ""} · ${selected.language || "No language listed"} · ${selected.size.toLocaleString("en")} KB${snapshot.totalSize ? ` · ${memory(selected.size, snapshot.totalSize)} of displayed size` : ""}${selected.description ? ` — ${selected.description}` : ""}`
         : "No public repositories found."}</p>
       <p role="status" className="sr-only">Sorted by {columns.find(column => column.key === sort.key).label}, {sort.descending ? "descending" : "ascending"}.</p>
     </section>

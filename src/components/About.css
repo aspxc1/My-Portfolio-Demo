@@ -1,60 +1,139 @@
+.about__whoami {
+  margin-top: 0.75rem;
+  max-width: 58ch;
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+  line-height: 1.65;
+  color: var(--muted-foreground);
+  visibility: hidden;
+  opacity: 0;
+}
+
+.terminal-run--output > .about__whoami {
+  visibility: visible;
+  opacity: 1;
+  transition: opacity 160ms ease-out;
+}
+
+.about__whoami-handle {
+  color: var(--foreground);
+  font-weight: 700;
+}
+
+.about__whoami-sep {
+  color: var(--primary);
+}
+
 .about__run {
   font-family: var(--font-mono);
   min-width: 0;
 }
 
 .about__run.terminal-run--queued { display: none; }
-.about__command { color: var(--foreground); font-size: 0.9375rem; font-weight: 600; }
-.about__output { display: none; padding-top: 0.625rem; }
+.about__command { color: var(--foreground); font-size: 0.875rem; font-weight: 600; }
+.about__output { display: none; padding-top: 0.75rem; }
 .about__run.terminal-run--output > .about__output { display: block; }
 
-.about__stack { display: grid; gap: 1rem 2rem; font-size: 0.875rem; }
-.about__stack-group { --stack-accent: var(--primary); min-width: 0; }
+/* Authentic eza --tree --icons multi-column directory listing (zero puffy pills). */
+.about__stack {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.25rem 1.75rem;
+  padding: 0.875rem 1rem;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  background: color-mix(in oklab, var(--mantle) 72%, transparent);
+  font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.about__stack-group {
+  --stack-accent: var(--primary);
+  min-width: 0;
+}
+
 .about__stack-group[data-group="Languages"] { --stack-accent: var(--terminal-teal); }
 .about__stack-group[data-group="Web"] { --stack-accent: var(--terminal-blue); }
 .about__stack-group[data-group="Tools"] { --stack-accent: var(--success); }
+
 .about__stack-group h2 {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
   margin-bottom: 0.375rem;
-  border-bottom: 1px dashed var(--border);
   color: var(--stack-accent);
+  font-size: 0.8125rem;
   font-weight: 700;
 }
-.about__stack-group ul { display: flex; flex-wrap: wrap; gap: 0.375rem; }
+
+.about__stack-group h2::after {
+  content: "/";
+  color: var(--muted-foreground);
+  font-weight: 400;
+}
+
+.about__stack-group ul {
+  display: flex;
+  flex-direction: column;
+}
+
 .about__stack-group li {
-  display: inline-flex;
+  position: relative;
+  display: flex;
   align-items: center;
   gap: 0.5rem;
   min-width: 0;
-  padding: 0.5rem 0.625rem;
-  background: color-mix(in oklab, var(--stack-accent) 8%, var(--background));
-  border: 1px solid color-mix(in oklab, var(--stack-accent) 38%, var(--border));
-  border-radius: 0.25rem;
+  padding: 0.2rem 0.375rem 0.2rem 1.4rem;
+  border-radius: 2px;
   color: var(--foreground);
-  font-weight: 600;
+  font-weight: 400;
   overflow-wrap: anywhere;
+  transition: background-color 100ms ease, color 100ms ease;
 }
-.about__stack-icon {
-  display: grid;
-  place-items: center;
-  flex: 0 0 1.5rem;
-  height: 1.25rem;
-  border: 1px solid color-mix(in oklab, var(--stack-accent) 50%, var(--border));
-  border-radius: 0.1875rem;
+
+.about__stack-group li::before {
+  content: "├─";
+  position: absolute;
+  left: 0;
+  color: var(--border);
+  font-weight: 400;
+  user-select: none;
+}
+
+.about__stack-group li:last-child::before {
+  content: "└─";
+}
+
+.about__stack-group li:hover {
+  background: var(--surface);
   color: var(--stack-accent);
 }
 
-@media (min-width: 720px) {
-  .about__stack { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+@media (min-width: 560px) {
+  .about__stack {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 960px) {
+  .about__stack {
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    padding: 1rem 1.25rem;
+  }
 }
 
 .about__skip {
   align-self: flex-start;
-  min-height: 2.75rem;
+  min-height: 2.5rem;
   cursor: pointer;
   color: var(--muted-foreground);
   font: 0.75rem var(--font-mono);
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .about__whoami,
+  .about__stack-group li {
+    transition: none;
+  }
   .about__skip { display: none; }
 }

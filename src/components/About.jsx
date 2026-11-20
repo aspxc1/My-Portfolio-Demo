@@ -1,14 +1,13 @@
 import { useCallback, useEffect, useRef, useState } from "react"
-import { sections, stack } from "../content/site.js"
+import { profile, sections, stack } from "../content/site.js"
 import useTerminalRun from "../lib/useTerminalRun.js"
 import GitHubMonitor from "./GitHubMonitor.jsx"
 import SectionHeading from "./SectionHeading.jsx"
-import StackIcon from "./StackIcon.jsx"
 import TerminalCommand from "./TerminalCommand.jsx"
 import "./About.css"
 
 const section = sections.about
-const stackCommand = "ls --icons ~/stack"
+const stackCommand = "tree ~/stack"
 const monitorCommand = "htop"
 
 function AboutCommand({ command, run, children }) {
@@ -57,25 +56,39 @@ export default function About({ onReady, onNavigate }) {
       <div className="container section-inner section-inner--roomy">
         <div ref={heading.ref} className={`terminal-run terminal-run--${heading.stage}`} style={heading.style}>
           <SectionHeading path={section.path} command={section.command} id={`${section.id}-title`} onNavigate={onNavigate} />
+          <p className="about__whoami">
+            <span className="about__whoami-handle">{profile.handle}</span>
+            <span aria-hidden="true" className="about__whoami-sep"> — </span>
+            {`${profile.role} at ${profile.school} (${profile.location}). Focused on Backend SWE and Applied AI/ML.`}
+          </p>
         </div>
+
         <AboutCommand command={stackCommand} run={listing}>
           <section className="about__stack" aria-label="Tech stack">
             {stack.filter(({ hidden }) => !hidden).map(({ group, items }) => (
               <div className="about__stack-group" data-group={group} key={group}>
                 <h2>{group}</h2>
                 <ul role="list">
-                  {items.map(item => (
-                    <li key={item}><StackIcon name={item} /><span>{item}</span></li>
+                  {items.map((item) => (
+                    <li key={item}>
+                      <span>{item}</span>
+                    </li>
                   ))}
                 </ul>
               </div>
             ))}
           </section>
         </AboutCommand>
+
         <AboutCommand command={monitorCommand} run={monitor}>
           <GitHubMonitor enabled={monitor.finished} />
         </AboutCommand>
-        {!monitor.finished ? <button ref={skipButton} type="button" className="about__skip text-link" onClick={skipPlayback}>Skip animation</button> : null}
+
+        {!monitor.finished ? (
+          <button ref={skipButton} type="button" className="about__skip text-link" onClick={skipPlayback}>
+            Skip animation
+          </button>
+        ) : null}
       </div>
     </section>
   )
