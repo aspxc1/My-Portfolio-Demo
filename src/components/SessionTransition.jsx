@@ -1,8 +1,11 @@
 import { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { useLocation } from "react-router"
-import { DEFAULT_THEME } from "../lib/terminalTheme.js"
+import { profile } from "../content/site.js"
+import { formatCairoClock } from "../lib/terminalShell.js"
+import { DEFAULT_THEME, getSessionTask } from "../lib/terminalTheme.js"
 import useReducedMotion from "../lib/useReducedMotion.js"
-import { TerminalTheme } from "./PortfolioSession.jsx"
+import { PaletteControl, TerminalTheme } from "./PortfolioSession.jsx"
+import CommandPalette from "./CommandPalette.jsx"
 import TerminalStatusBar from "./TerminalStatusBar.jsx"
 import TerminalStartup from "./TerminalStartup.jsx"
 import TerminalStarfield from "./TerminalStarfield.jsx"
@@ -21,13 +24,34 @@ export default function SessionTransition({ children }) {
     setStarting(false)
   }, [])
   const theme = useContext(TerminalTheme)
+  const palette = useContext(PaletteControl)
   const background = theme?.resolvedBackground || DEFAULT_THEME.background
   const [displayed, setDisplayed] = useState(requested)
   const [phase, setPhase] = useState("idle")
+  const [cairoTime, setCairoTime] = useState("")
   const displayedRef = useRef(displayed)
   const screenRef = useRef(null)
   const firstRender = useRef(true)
   displayedRef.current = displayed
+
+  const task = getSessionTask(displayed)
+
+  useEffect(() => {
+    setCairoTime(formatCairoClock())
+    const timer = window.setInterval(() => setCairoTime(formatCairoClock()), 30000)
+    return () => window.clearInterval(timer)
+  }, [])
+
+  useEffect(() => {
+    function onKeyDown(event) {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault()
+        palette?.toggle()
+      }
+    }
+    document.addEventListener("keydown", onKeyDown)
+    return () => document.removeEventListener("keydown", onKeyDown)
+  }, [palette])
 
   useEffect(() => {
     if (reducedMotion || requested.pathname !== "/" || (requested.hash && requested.hash !== "#home")) {
@@ -82,6 +106,28 @@ export default function SessionTransition({ children }) {
     >
       {background === "starfield" ? <TerminalStarfield /> : null}
       <div className="session__window">
+        <div className="session__topbar" aria-label="Terminal session bar">
+          <div className="session__topbar-left">
+            <span className="session__topbar-host">{`${profile.handle}@portfolio`}</span>
+            <span aria-hidden="true" className="session__topbar-sep">/</span>
+            <span className="session__topbar-cwd">{task.path}</span>
+          </div>
+          <div className="session__topbar-right">
+            {cairoTime ? <span className="session__topbar-clock" title="Cairo local time">{`CAI ${cairoTime}`}</span> : null}
+            {palette ? (
+              <button
+                type="button"
+                className="session__topbar-palette"
+                onClick={palette.open}
+                aria-label="Open fuzzy command palette"
+              >
+                <span>fzf</span>
+                <kbd className="tui-kbd">⌘K</kbd>
+              </button>
+            ) : null}
+          </div>
+        </div>
+
         <div
           ref={screenRef}
           className={`session__screen session__screen--${phase}`}
@@ -97,6 +143,8 @@ export default function SessionTransition({ children }) {
 
         <TerminalStatusBar location={displayed} />
       </div>
+
+      {palette ? <CommandPalette open={palette.isOpen} onClose={palette.close} /> : null}
     </div>
   )
 }

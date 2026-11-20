@@ -1,15 +1,17 @@
-import { createContext, useLayoutEffect, useMemo, useRef, useState } from "react"
+import { createContext, useCallback, useLayoutEffect, useMemo, useRef, useState } from "react"
 import { APPEARANCE_KEY, getTheme, normalizeAppearance, readAppearance } from "../lib/terminalTheme.js"
 
 export const PlaybackHistory = createContext(null)
 export const ProjectBrowsing = createContext(null)
 export const TerminalTheme = createContext(null)
+export const PaletteControl = createContext(null)
 
 /** Lives across route changes, but resets on refresh and never leaks between SSR requests. */
 export default function PortfolioSession({ children }) {
   const completedRuns = useRef(new Set())
   const browsing = useState({ view: "list", category: "all" })
   const [appearance, setAppearance] = useState(readAppearance)
+  const [paletteOpen, setPaletteOpen] = useState(false)
   const theme = getTheme(appearance.theme)
   const background = appearance.background === "auto" ? theme.background : appearance.background
 
@@ -36,11 +38,24 @@ export default function PortfolioSession({ children }) {
     setBackground: (background) => setAppearance((previous) => normalizeAppearance({ ...previous, background })),
   }), [appearance, theme, background])
 
+  const openPalette = useCallback(() => setPaletteOpen(true), [])
+  const closePalette = useCallback(() => setPaletteOpen(false), [])
+  const togglePalette = useCallback(() => setPaletteOpen((value) => !value), [])
+
+  const paletteContext = useMemo(() => ({
+    isOpen: paletteOpen,
+    open: openPalette,
+    close: closePalette,
+    toggle: togglePalette,
+  }), [paletteOpen, openPalette, closePalette, togglePalette])
+
   return (
     <TerminalTheme value={appearanceContext}>
-      <PlaybackHistory value={completedRuns.current}>
-        <ProjectBrowsing value={browsing}>{children}</ProjectBrowsing>
-      </PlaybackHistory>
+      <PaletteControl value={paletteContext}>
+        <PlaybackHistory value={completedRuns.current}>
+          <ProjectBrowsing value={browsing}>{children}</ProjectBrowsing>
+        </PlaybackHistory>
+      </PaletteControl>
     </TerminalTheme>
   )
 }
