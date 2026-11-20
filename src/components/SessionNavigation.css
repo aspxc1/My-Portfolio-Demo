@@ -1,27 +1,24 @@
 .session-navigation {
-  padding-top: 1.25rem;
-  padding-bottom: 2rem;
+  margin-top: auto;
+  padding-top: 1.5rem;
+  padding-bottom: 1.75rem;
+  border-top: 1px solid var(--border-subtle);
   font-family: var(--font-mono);
   font-size: 0.8125rem;
   line-height: 1.5;
 }
 
-.session-navigation__prompt {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  color: var(--muted-foreground);
-  margin-top: 1.25rem;
-  overflow-wrap: anywhere;
+.session-navigation__split {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.5rem;
+  align-items: start;
 }
 
-.session-navigation__path {
-  color: var(--terminal-teal);
-  white-space: pre-wrap;
-}
-
-/* The cursor belongs to the running command, then returns to this prompt. */
-.session:has(.terminal-run:not(.terminal-run--output)) .session-navigation__caret {
-  visibility: hidden;
-  animation: none;
+@media (min-width: 840px) {
+  .session-navigation__split {
+    grid-template-columns: minmax(16rem, 22rem) minmax(0, 1fr);
+    gap: 2.25rem;
+    align-items: start;
+  }
 }

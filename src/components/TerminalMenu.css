@@ -1,14 +1,13 @@
 .terminal-menu {
   width: 100%;
-  max-width: 28rem;
   font-family: var(--font-mono);
-  font-size: 1.125rem;
-  line-height: 1.5;
+  font-size: 0.9375rem;
+  line-height: 1.45;
 }
 
 .terminal-menu__command {
-  margin-bottom: 0.75rem;
-  font-size: 1rem;
+  margin-bottom: 0.625rem;
+  font-size: 0.875rem;
   color: var(--foreground);
 }
 
@@ -29,9 +28,11 @@
 
 .terminal-menu__heading {
   margin-bottom: 0.375rem;
-  color: var(--primary);
-  font-size: 1.25rem;
-  font-weight: 700;
+  color: var(--muted-foreground);
+  font-size: 0.6875rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.14em;
 }
 
 .terminal-menu__option {
@@ -39,8 +40,8 @@
   grid-template-columns: 2ch 1ch minmax(0, 1fr) auto;
   align-items: center;
   gap: 0.5rem;
-  min-height: 2.125rem;
-  padding: 0.25rem 0.625rem 0.25rem 0.5rem;
+  min-height: 2rem;
+  padding: 0.2rem 0.625rem 0.2rem 0.5rem;
   border-left: 2px solid transparent;
   border-radius: 0 var(--radius) var(--radius) 0;
   color: var(--foreground);
@@ -49,16 +50,18 @@
 
 .terminal-menu__number {
   color: var(--muted-foreground);
+  font-size: 0.8125rem;
   font-variant-numeric: tabular-nums;
 }
 
 .terminal-menu__marker {
   visibility: hidden;
   color: var(--primary);
+  font-weight: 700;
 }
 
 .terminal-menu__current {
-  color: var(--muted-foreground);
+  color: var(--terminal-teal);
   font-size: 0.6875rem;
 }
 
@@ -92,19 +95,15 @@
   display: flex;
   flex-wrap: wrap;
   gap: 0.25rem 1rem;
-  margin-top: 0.75rem;
+  margin-top: 0.625rem;
   color: var(--muted-foreground);
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
 }
 
-.terminal-menu kbd { font: inherit; }
-
-@media (max-width: 479px) {
-  .terminal-menu { font-size: 1rem; }
-}
+.terminal-menu kbd { font: inherit; color: var(--foreground); }
 
 @media (max-width: 639px), (pointer: coarse) {
-  .terminal-menu__option { min-height: 2.75rem; }
+  .terminal-menu__option { min-height: 2.5rem; }
 }
 
 @media (pointer: coarse) {
