@@ -1,0 +1,125 @@
+@font-face {
+  font-family: "ascii.rest mono";
+  src: url("/fonts/ascii-rest-mono.woff2") format("woff2");
+  unicode-range: U+00B0, U+00B7, U+2022, U+2500-259F, U+25CF;
+  font-display: swap;
+}
+
+.terminal-art {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 0;
+}
+
+.terminal-art__stage {
+  display: grid;
+  place-items: center;
+  min-height: 12.5rem;
+  padding: 0.75rem 0.5rem;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius);
+  background: color-mix(in oklab, var(--mantle) 82%, transparent);
+  overflow: hidden;
+  user-select: none;
+}
+
+.terminal-art__canvas {
+  margin: 0;
+  font-family: var(--font-mono);
+  font-size: clamp(0.45rem, 1.35vw, 0.625rem);
+  line-height: 1.08;
+  letter-spacing: 0.02em;
+  font-variant-ligatures: none;
+  white-space: pre;
+}
+
+.terminal-art__row {
+  display: block;
+}
+
+.terminal-art__tone-0 { color: color-mix(in oklab, var(--muted-foreground) 72%, var(--border)); }
+.terminal-art__tone-1 { color: var(--terminal-blue); }
+.terminal-art__tone-2 { color: var(--terminal-teal); }
+.terminal-art__tone-3 { color: var(--primary); font-weight: 700; }
+
+.terminal-art__synthwave {
+  margin: 0;
+  font-family: "JetBrains Mono", "ascii.rest mono", monospace;
+  font-size: clamp(0.32rem, 1.05vw, 0.525rem);
+  line-height: 1.18;
+  letter-spacing: 0;
+  font-variant-ligatures: none;
+  white-space: pre;
+  font-weight: 400;
+  color: var(--primary);
+}
+
+.terminal-art__controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.25rem;
+  font-family: var(--font-mono);
+  font-size: 0.6875rem;
+}
+
+.terminal-art__mode,
+.terminal-art__pause {
+  min-height: 1.75rem;
+  padding: 0.125rem 0.5rem;
+  border: 1px solid transparent;
+  border-radius: var(--radius);
+  color: var(--muted-foreground);
+  cursor: pointer;
+  transition: color 120ms ease, border-color 120ms ease, background-color 120ms ease;
+}
+
+.terminal-art__mode:hover,
+.terminal-art__pause:hover {
+  color: var(--foreground);
+  background: var(--surface);
+}
+
+.terminal-art__mode[aria-pressed="true"] {
+  border-color: var(--border);
+  background: var(--surface);
+  color: var(--primary);
+}
+
+.terminal-art__pause {
+  margin-left: 0.25rem;
+  color: var(--muted-foreground);
+}
+
+@media (min-width: 700px) {
+  .terminal-art__stage {
+    min-height: 15.5rem;
+    padding: 0.875rem 0.625rem;
+  }
+  .terminal-art__canvas {
+    font-size: 0.54rem;
+  }
+  .terminal-art__synthwave {
+    font-size: 0.36rem;
+  }
+}
+
+@media (min-width: 1024px) {
+  .terminal-art__stage {
+    min-height: 17.5rem;
+  }
+  .terminal-art__canvas {
+    font-size: 0.64rem;
+  }
+  .terminal-art__synthwave {
+    font-size: 0.52rem;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .terminal-art__mode,
+  .terminal-art__pause {
+    transition: none;
+  }
+}
