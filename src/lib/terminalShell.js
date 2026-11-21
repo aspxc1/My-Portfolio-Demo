@@ -553,7 +553,7 @@ function executeSingleStage(tokens, stdinLines, context, fs) {
           { text: `    ${profile.handle} — ${profile.name}, ${profile.role}` },
           { text: "" },
           { tone: "teal", text: "SYNOPSIS" },
-          { text: "    Backend SWE & Applied AI/ML @ Ain Shams University (May 2029)" },
+          { text: `    Computer & AI Engineering @ ${profile.school} (May 2029)` },
           { text: "" },
           { tone: "teal", text: "STACK" },
           ...stack.filter((g) => !g.hidden).map((g) => ({ text: `    ${g.group.padEnd(11)} ${g.items.join(", ")}` })),
