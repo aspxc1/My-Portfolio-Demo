@@ -6,13 +6,14 @@ import { getProject, getProjectNeighbours, projects } from "../lib/projects.js"
 import NotFoundPage from "./NotFoundPage.jsx"
 import "./ProjectPage.css"
 
-/** The page at /projects/:slug, e.g. /projects/lecture-rag */
+/** Project detail page styled as an authentic man(1) / glow pager. */
 export default function ProjectPage() {
   const { slug } = useParams()
   const project = getProject(slug)
   if (!project) return <NotFoundPage />
 
   const { prev, next } = getProjectNeighbours(projects, slug)
+  const manSlug = project.slug.toUpperCase()
   const context = [
     { label: "Problem", value: project.problem },
     { label: "My contribution", value: project.contribution },
@@ -30,19 +31,19 @@ export default function ProjectPage() {
       <title>{`${project.name} | ${profile.name}`}</title>
       <meta name="description" content={project.tagline} />
 
+      <div className="project-page__manbar" aria-hidden="true">
+        <span>{`${manSlug}(1)`}</span>
+        <span>{`${profile.handle}@portfolio`}</span>
+        <span>{`${manSlug}(1)`}</span>
+      </div>
+
       <nav aria-label="Breadcrumb" className="project-page__breadcrumb">
         <ol>
-          <li>
-            <Link to="/" aria-label="Home">~</Link>
-          </li>
+          <li><Link to="/" aria-label="Home">~</Link></li>
           <li aria-hidden="true">/</li>
-          <li>
-            <Link to="/#projects">projects</Link>
-          </li>
+          <li><Link to="/#projects">projects</Link></li>
           <li aria-hidden="true">/</li>
-          <li aria-current="page" className="project-page__breadcrumb-current">
-            {project.slug}
-          </li>
+          <li aria-current="page" className="project-page__breadcrumb-current">{project.slug}</li>
         </ol>
       </nav>
 
@@ -52,8 +53,14 @@ export default function ProjectPage() {
         <p className="project-page__tagline">{project.tagline}</p>
 
         {context.length > 0 ? (
-          <dl className="project-page__context">
-            {context.map((row) => <div key={row.label}><dt>{row.label}</dt><dd>{row.value}</dd></div>)}
+          <dl className="project-page__context tui-frame">
+            <span className="tui-frame__legend" aria-hidden="true">synopsis</span>
+            {context.map((row) => (
+              <div key={row.label}>
+                <dt>{row.label}</dt>
+                <dd>{row.value}</dd>
+              </div>
+            ))}
           </dl>
         ) : null}
 
@@ -68,7 +75,7 @@ export default function ProjectPage() {
                   className={i === 0 ? "project-page__button project-page__button--primary" : "project-page__button"}
                 >
                   {link.label}
-                  <span aria-hidden="true">{"->"}</span>
+                  <span aria-hidden="true">{" ->"}</span>
                   <span className="sr-only">(opens in new tab)</span>
                 </a>
               </li>
@@ -79,36 +86,35 @@ export default function ProjectPage() {
 
       <div className="project-page__columns">
         <div className="project-page__main">
-          {project.description.length > 0 ? <section aria-labelledby="overview" className="project-page__section">
-            <h2 id="overview" className="label">
-              Overview
-            </h2>
-            <div className="project-page__description">
-              {project.description.map((paragraph) => (
-                <p key={paragraph.slice(0, 24)}>{paragraph}</p>
-              ))}
-            </div>
-          </section> : null}
+          {project.description.length > 0 ? (
+            <section aria-labelledby="overview" className="project-page__section">
+              <h2 id="overview" className="label">Overview</h2>
+              <div className="project-page__description">
+                {project.description.map((paragraph) => (
+                  <p key={paragraph.slice(0, 24)}>{paragraph}</p>
+                ))}
+              </div>
+            </section>
+          ) : null}
 
-          {project.highlights.length > 0 ? <section aria-labelledby="features" className="project-page__section">
-            <h2 id="features" className="label">
-              Features
-            </h2>
-            <ul className="project-page__features">
-              {project.highlights.map((highlight) => (
-                <li key={highlight}>
-                  <span aria-hidden="true" className="project-page__arrow">
-                    {">"}
-                  </span>
-                  {highlight}
-                </li>
-              ))}
-            </ul>
-          </section> : null}
+          {project.highlights.length > 0 ? (
+            <section aria-labelledby="features" className="project-page__section">
+              <h2 id="features" className="label">Features</h2>
+              <ul className="project-page__features">
+                {project.highlights.map((highlight) => (
+                  <li key={highlight}>
+                    <span aria-hidden="true" className="project-page__arrow">+</span>
+                    <span>{highlight}</span>
+                  </li>
+                ))}
+              </ul>
+            </section>
+          ) : null}
         </div>
 
-        <aside aria-label="Details" className="project-page__section">
-          <h2 className="label">Details</h2>
+        <aside aria-label="Details" className="project-page__section project-page__aside tui-frame">
+          <span className="tui-frame__legend" aria-hidden="true">details</span>
+          <h2 className="sr-only">Details</h2>
           <dl className="kv-list">
             {details.map((row) => (
               <div key={row.label}>
@@ -123,20 +129,27 @@ export default function ProjectPage() {
       <ProjectGallery key={project.slug} images={project.images} name={project.name} />
 
       <div className="project-page__ending">
-      {prev || next ? <nav aria-label="More projects" className="project-page__pager">
-        {prev ? <Link to={`/projects/${prev.slug}`} className="project-page__pager-link">
-          <span className="project-page__pager-hint">{"← Previous project"}</span>
-          <span className="project-page__pager-name">{prev.name}</span>
-        </Link> : null}
-        {next ? <Link to={`/projects/${next.slug}`} className="project-page__pager-link project-page__pager-link--next">
-          <span className="project-page__pager-hint">{"Next project →"}</span>
-          <span className="project-page__pager-name">{next.name}</span>
-        </Link> : null}
-      </nav> : null}
-      <div className="project-page__return">
-        <Link to="/#projects" className="project-page__button">All projects</Link>
-        <Link to="/#contact" className="project-page__button project-page__button--primary">Get in touch</Link>
-      </div>
+        {prev || next ? (
+          <nav aria-label="More projects" className="project-page__pager">
+            {prev ? (
+              <Link to={`/projects/${prev.slug}`} className="project-page__pager-link">
+                <span className="project-page__pager-hint">← Previous project</span>
+                <span className="project-page__pager-name">{prev.name}</span>
+              </Link>
+            ) : null}
+            {next ? (
+              <Link to={`/projects/${next.slug}`} className="project-page__pager-link project-page__pager-link--next">
+                <span className="project-page__pager-hint">Next project →</span>
+                <span className="project-page__pager-name">{next.name}</span>
+              </Link>
+            ) : null}
+          </nav>
+        ) : null}
+
+        <div className="project-page__return">
+          <Link to="/#projects" className="project-page__button">All projects</Link>
+          <Link to="/#contact" className="project-page__button project-page__button--primary">Get in touch</Link>
+        </div>
       </div>
     </main>
   )

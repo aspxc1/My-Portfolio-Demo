@@ -1,10 +1,48 @@
+/* ---------- Empty directory state ---------- */
+
+.projects__empty-frame {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  padding: 1.25rem 1.125rem 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+}
+
+.projects__empty-meta {
+  color: var(--muted-foreground);
+  font-size: 0.75rem;
+}
+
+.projects__empty-dir {
+  display: flex;
+  gap: 1.25rem;
+  color: var(--terminal-teal);
+  font-size: 0.75rem;
+  opacity: 0.8;
+}
+
+.projects__empty-dir span:first-child,
+.projects__empty-dir span:nth-child(2) {
+  color: var(--muted-foreground);
+}
+
+.projects__empty {
+  margin-top: 0.5rem;
+  padding-top: 0.65rem;
+  border-top: 1px dashed var(--border-subtle);
+  color: var(--muted-foreground);
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+}
+
 /* ---------- Filter + view toggles ---------- */
 
 .projects__controls {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
-  padding-block: 0.875rem;
+  gap: 0.75rem;
+  padding-block: 0.75rem;
   border-top: 1px dashed var(--border);
   border-bottom: 1px dashed var(--border);
 }
@@ -22,15 +60,7 @@
   gap: 1.25rem;
 }
 
-.projects__view-label {
-  font-family: var(--font-mono);
-  font-size: 0.75rem;
-  line-height: 1rem;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--muted-foreground);
-}
-
+.projects__view-label,
 .projects__total {
   font-family: var(--font-mono);
   font-size: 0.75rem;
@@ -38,39 +68,42 @@
   color: var(--muted-foreground);
 }
 
+.projects__view-label {
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
 .project-start {
   display: block;
-  margin-top: 0.375rem;
+  margin-top: 0.25rem;
   color: var(--primary);
-  font: 0.75rem/1.5 var(--font-mono);
+  font: 0.75rem/1.4 var(--font-mono);
   font-weight: 400;
 }
 
-.projects__empty {
-  color: var(--muted-foreground);
-  font-family: var(--font-mono);
-  font-size: 0.875rem;
-}
+/* ---------- Yazi list + preview split ---------- */
 
-/* ---------- List view ---------- */
+.projects__yazi {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1.25rem;
+  align-items: start;
+}
 
 .projects__table {
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: color-mix(in oklab, var(--mantle) 65%, transparent);
-  overflow: hidden;
+  padding: 0.75rem 0 0;
+  overflow: visible;
 }
 
-/* Column widths for the list view. ProjectRow.css uses the same widths. */
 .projects__table-head {
   display: none;
-  grid-template-columns: 2.5rem 12rem 1fr 14rem 4rem 1.5rem;
-  column-gap: 1rem;
-  padding: 0.625rem 1rem;
+  grid-template-columns: 2.5rem 11rem minmax(0, 1fr) 10rem 3.5rem 1.25rem;
+  column-gap: 0.85rem;
+  padding: 0.45rem 1rem;
   border-bottom: 1px solid var(--border);
   background: var(--surface);
   font-family: var(--font-mono);
-  font-size: 0.75rem;
+  font-size: 0.6875rem;
   line-height: 1rem;
   text-transform: uppercase;
   letter-spacing: 0.06em;
@@ -79,6 +112,78 @@
 
 .projects__rows > li + li {
   border-top: 1px solid var(--border-subtle);
+}
+
+.projects__preview {
+  display: none;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 1.25rem 1.125rem 1rem;
+  font-family: var(--font-mono);
+  font-size: 0.8125rem;
+}
+
+.projects__preview-meta {
+  display: flex;
+  justify-content: space-between;
+  gap: 0.5rem;
+  font-size: 0.75rem;
+  color: var(--muted-foreground);
+}
+
+.projects__preview-status {
+  color: var(--primary);
+  font-weight: 600;
+}
+
+.projects__preview-title {
+  font-size: 1rem;
+  font-weight: 700;
+  color: var(--foreground);
+}
+
+.projects__preview-tagline {
+  color: var(--muted-foreground);
+  line-height: 1.55;
+}
+
+.projects__preview-block {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  padding-top: 0.55rem;
+  border-top: 1px dashed var(--border-subtle);
+  font-size: 0.75rem;
+  color: var(--foreground);
+}
+
+.projects__preview-key {
+  font-size: 0.6875rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  color: var(--terminal-blue);
+  font-weight: 600;
+}
+
+.projects__preview-stack {
+  color: var(--terminal-teal);
+}
+
+.projects__preview-open {
+  align-self: flex-start;
+  margin-top: 0.25rem;
+  padding: 0.3rem 0.6rem;
+  border: 1px solid var(--primary);
+  border-radius: 2px;
+  color: var(--primary);
+  font-size: 0.75rem;
+  font-weight: 600;
+  transition: background-color 120ms ease, color 120ms ease;
+}
+
+.projects__preview-open:hover {
+  background: var(--primary);
+  color: var(--primary-foreground);
 }
 
 /* ---------- Grid view ---------- */
@@ -103,6 +208,14 @@
 }
 
 @media (min-width: 1024px) {
+  .projects__yazi {
+    grid-template-columns: minmax(0, 1.55fr) minmax(17rem, 0.9fr);
+  }
+  .projects__preview {
+    display: flex;
+    position: sticky;
+    top: 1rem;
+  }
   .projects__table-head {
     display: grid;
   }

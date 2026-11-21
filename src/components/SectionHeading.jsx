@@ -4,8 +4,8 @@ import "./SectionHeading.css"
 
 /**
  * The heading at the top of each section:
- *   ~/about ------------------------------
- *   $ whoami
+ *   ~/about ------------------------------ [Navigate ↓]
+ *   % whoami
  */
 export default function SectionHeading({ path, command, id, onNavigate }) {
   return (

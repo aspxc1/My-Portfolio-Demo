@@ -1,5 +1,6 @@
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { profile } from "../content/site.js"
+import { toBrailleSparkline } from "../lib/brailleSparkline.js"
 import { getContributionOverview, getGitHubUsername, loadContributions } from "../lib/githubActivity.js"
 import { loadRepositories } from "../lib/githubRepositories.js"
 import GitHubHeatmap from "./GitHubHeatmap.jsx"
@@ -67,6 +68,17 @@ export default function GitHubMonitor({ enabled }) {
   const snapshot = repositories.data
   const overview = calendar ? getContributionOverview(calendar.days, calendar.updatedAt) : null
 
+  const sparkline = useMemo(() => {
+    if (!calendar?.days?.length) return ""
+    const recent = calendar.days.slice(-91)
+    const buckets = []
+    for (let i = 0; i < recent.length; i += 3) {
+      const slice = recent.slice(i, i + 3)
+      buckets.push(slice.reduce((sum, day) => sum + (day.count || 0), 0))
+    }
+    return toBrailleSparkline(buckets, { min: 0 })
+  }, [calendar])
+
   const timestamps = [snapshot?.updatedAt, calendar?.updatedAt].filter(Boolean).sort()
   const latest = timestamps.at(-1)
   const separateTimes = latest && formatUpdated(timestamps[0]) !== formatUpdated(latest)
@@ -78,7 +90,12 @@ export default function GitHubMonitor({ enabled }) {
   }
 
   return (
-    <section className="htop" aria-labelledby="htop-title">
+    <section className="htop tui-frame" aria-labelledby="htop-title">
+      <span className="tui-frame__legend" aria-hidden="true">
+        <span>htop</span>
+        <span className="tui-frame__legend-meta">github/{username}</span>
+      </span>
+
       <header className="htop__section-heading htop__intro">
         <h2 id="htop-title">GitHub Activity Monitor</h2>
         <a className="text-link htop__identity" href={github?.href} target="_blank" rel="noreferrer">@{username}</a>
@@ -98,51 +115,58 @@ export default function GitHubMonitor({ enabled }) {
               <dt>Uptime</dt>
               <dd>
                 <AsciiMeter value={overview?.streak} max={30} />
-                <span>{overview?.streak == null ? "—" : `${overview.streak} ${overview.streak === 1 ? "day" : "days"}`}</span>
+                <span>{overview ? `${overview.streak}d` : "—"}</span>
                 <small>current streak</small>
               </dd>
             </div>
             <div>
               <dt>Load</dt>
               <dd>
-                <AsciiMeter value={overview?.load?.[2]} max={60} />
-                <span>{overview ? overview.load.map(displayCount).join(" / ") : "—"}</span>
+                <AsciiMeter value={overview?.last30} max={80} />
+                <span>{overview ? `${overview.today} / ${overview.last7} / ${overview.last30}` : "—"}</span>
                 <small>1d / 7d / 30d</small>
               </dd>
             </div>
             <div>
               <dt>Tasks</dt>
               <dd>
-                <AsciiMeter value={snapshot?.repos.length} max={25} />
-                <span>{displayCount(snapshot?.repos.length)}</span>
-                <small>{snapshot?.hasMore ? "public repos shown" : "public repos"}</small>
+                <AsciiMeter value={snapshot?.repos.length} max={40} />
+                <span>{snapshot ? `${snapshot.repos.length}${snapshot.hasMore ? "+" : ""}` : "—"}</span>
+                <small>public repos</small>
               </dd>
             </div>
+            {sparkline ? (
+              <div>
+                <dt>Pulse</dt>
+                <dd>
+                  <span className="htop__sparkline" aria-label="13-week contribution velocity sparkline">{sparkline}</span>
+                  <small>13w trend</small>
+                </dd>
+              </div>
+            ) : null}
           </dl>
         </section>
 
-        <section className="htop__pane" aria-label="Contribution history">
-          {calendar ? (
-            <GitHubHeatmap weeks={calendar.weeks.slice(-13)} />
-          ) : (
-            <SourceStatus source={contributions} name="contribution history" label="Contribution history" />
-          )}
+        <section className="htop__pane" aria-label="Contribution heatmap">
+          {contributions.status === "loaded"
+            ? <GitHubHeatmap weeks={calendar.weeks} />
+            : <SourceStatus source={contributions} name="contribution history" label="Contribution history" />}
         </section>
       </div>
 
-      {snapshot ? (
-        <GitHubProcesses snapshot={snapshot} />
-      ) : (
-        <section className="htop__processes" aria-labelledby="htop-process-title">
-          <div className="htop__section-heading"><h3 id="htop-process-title">Repository processes</h3></div>
-          <SourceStatus
-            source={repositories}
-            name="repository data"
-            label="Repository data"
-            fallback={calendar ? "Contribution history is still available above." : null}
-          />
-        </section>
-      )}
+      {repositories.status === "loaded"
+        ? <GitHubProcesses snapshot={snapshot} />
+        : (
+          <section className="htop__processes" aria-labelledby="htop-process-title">
+            <div className="htop__section-heading"><h3 id="htop-process-title">Repository processes</h3></div>
+            <SourceStatus
+              source={repositories}
+              name="repository data"
+              label="Repository data"
+              fallback={calendar ? "Contribution history is still available above." : null}
+            />
+          </section>
+        )}
 
       <footer className="htop__footer">
         <p>Last updated: {latest ? (

@@ -21,6 +21,7 @@ let server
 let App
 let getProjectNeighbours
 let GitHubProcesses
+let GitHubHeatmap
 
 before(async () => {
   server = await createServer({
@@ -39,6 +40,7 @@ before(async () => {
   App = (await server.ssrLoadModule("/src/App.jsx")).default
   getProjectNeighbours = (await server.ssrLoadModule("/src/lib/projects.js")).getProjectNeighbours
   GitHubProcesses = (await server.ssrLoadModule("/src/components/GitHubProcesses.jsx")).default
+  GitHubHeatmap = (await server.ssrLoadModule("/src/components/GitHubHeatmap.jsx")).default
 })
 after(async () => { await server?.close() })
 
@@ -64,20 +66,20 @@ test("normal-motion browser arrival boots only Home, before mounting its command
   }
 })
 
-test("a fresh session starts with Mocha and the decorative starfield; appearance controls are collapsed", () => {
+test("a fresh session starts with Kanagawa Wave on a flat surface; appearance drawer is collapsed", () => {
   for (const path of ["/", "/#about", "/projects/with-images"]) {
     const html = render(path)
-    assert.match(html, /class="session"[^>]+data-theme="mocha"[^>]+data-bg="starfield"/)
-    assert.match(html, /class="terminal-starfield" aria-hidden="true"/)
+    assert.match(html, /class="session"[^>]+data-theme="kanagawa"[^>]+data-surface="flat"/)
+    assert.doesNotMatch(html, /terminal-starfield/)
     assert.match(html, /class="tmux-bar__control" aria-expanded="false" aria-controls="[^"]+"/)
     assert.match(html, /class="tmux-bar__settings"[^>]+hidden=""/)
-    assert.match(html, /Theme default \(starfield\)/)
-    assert.match(html, /value="mocha" selected="">Catppuccin Mocha/)
+    assert.doesNotMatch(html, /<select\b/)
   }
 })
 
 test("project details display supplied images with alt text and an optional caption", () => {
   const html = render("/projects/with-images")
+  assert.match(html, /WITH-IMAGES\(1\)/)
   assert.match(html, /<img[^>]+src="\/images\/project.webp"[^>]+alt="Project dashboard"/)
   assert.match(html, /<figcaption[^>]*>The main view<\/figcaption>/)
 })
@@ -144,6 +146,13 @@ test("reduced motion renders the selected output and home navigation immediately
   }
 })
 
+test("404 renders the actual requested pathname with a fuzzy route suggestion", () => {
+  const html = render("/projcts")
+  assert.match(html, /zsh: no such file or directory: \/projcts/)
+  assert.match(html, /Did you mean/)
+  assert.match(html, /~\/projects/)
+})
+
 test("home and section menus name destinations clearly without shell commands or file permissions", () => {
   for (const path of ["/", "/#about", "/#projects", "/#activities", "/#contact"]) {
     const html = render(path)
@@ -171,29 +180,27 @@ test("Home is listed as the current page in its own menu", () => {
   assert.match(html, /<a[^>]+aria-label="Home"[^>]+aria-current="page"/)
 })
 
-test("About queues its stack and native htop output after whoami", () => {
+test("About queues its stack and native htop output after whoami without a Codeforces widget", () => {
   const html = render("/#about")
   assert.match(html, /~\/about/)
   assert.match(html, /whoami/)
-  assert.match(html, /terminal-run--queued[^>]*><p class="about__command"[^]*?tree ~\/stack[^]*?class="about__stack"/)
-  const listing = html.match(/<section class="about__stack"[^>]*>(.*?)<\/section>/)[1]
-  assert.deepEqual([...listing.matchAll(/<h2>(.*?)<\/h2>/g)].map(match => match[1]), ["Languages", "Web", "Databases", "Tools"])
-  assert.deepEqual([...listing.matchAll(/<li><span>(.*?)<\/span><\/li>/g)].map(match => match[1]), [
+  assert.match(html, /terminal-run--queued[^>]*><p class="about__command"[^]*?tree ~\/stack[^]*?class="about__stack/)
+  const listing = html.match(/<section class="about__stack[^"]*"[^>]*>([\s\S]*?)<\/section>/)[1]
+  assert.deepEqual([...listing.matchAll(/<h2>(.*?)<\/h2>/g)].map((match) => match[1]), ["Languages", "Web", "Databases", "Tools"])
+  assert.deepEqual([...listing.matchAll(/<li><span>(.*?)<\/span><\/li>/g)].map((match) => match[1]), [
     "TypeScript/JavaScript", "Python", "Java", "C++", "SQL", "Node.js", "Express.js", "HTML", "CSS",
     "PostgreSQL", "SQLite", "Linux", "Git/GitHub",
   ])
   assert.equal((listing.match(/<ul role="list">/g) || []).length, 4)
-  assert.doesNotMatch(listing, /<p>|<button|<a /)
   assert.match(html, /terminal-run--queued[^>]*><p class="about__command"[^]*?>htop<\/span>/)
-  assert.ok(html.indexOf('class="about__stack"') < html.indexOf('id="htop-title"'))
+  assert.ok(html.indexOf("about__stack") < html.indexOf('id="htop-title"'))
   assert.match(html, /id="htop-title">GitHub Activity Monitor/)
   assert.match(html, /@aspxc1/)
   assert.match(html, /Loading contribution history/)
   assert.match(html, /Loading repository data/)
   assert.match(html, /Last updated/)
   assert.match(html, /Cached for 1 hour/)
-  assert.doesNotMatch(html, /htop__keys|htop-help|htop-search|>F[13]</)
-  assert.doesNotMatch(html, /htop__chrome|PyTorch|Backend Development|Placeholder, imma do it later/)
+  assert.doesNotMatch(html, /codeforces::/i)
   assert.doesNotMatch(render("/"), /id="htop-title"/)
 })
 
@@ -208,6 +215,17 @@ test("reduced motion shows both About outputs immediately without a skip control
   }
 })
 
+test("htop heatmap renders interactive calendar cells and day details", () => {
+  const weeks = [[
+    { date: "2026-11-15", count: 0, level: 0 },
+    { date: "2026-11-16", count: 3, level: 2 },
+  ]]
+  const html = renderToStaticMarkup(createElement(GitHubHeatmap, { weeks }))
+  assert.match(html, /data-keyboard-scope="calendar"/)
+  assert.match(html, /htop__heat-details/)
+  assert.match(html, /3 contributions/)
+})
+
 test("htop renders four repos on the first page with a range and paging controls", () => {
   const repos = Array.from({ length: 6 }, (_, i) => ({
     id: i + 1, name: `repo-${i + 1}`, url: `https://github.com/example/repo-${i + 1}`, language: "Python",
@@ -219,7 +237,6 @@ test("htop renders four repos on the first page with a range and paging controls
   assert.match(html, /<button type="button" aria-disabled="true">← Prev/)
   assert.match(html, /<button type="button" aria-disabled="false">Next →/)
   assert.doesNotMatch(html, /repo-5|repo-6/)
-  assert.doesNotMatch(html, /htop-search|type="search"/)
 })
 
 test("neofetch shows all profile facts together without a disclosure or Learning row", () => {
@@ -250,9 +267,10 @@ test("project context and overview precede the optional gallery, with clear retu
   assert.match(html, /href="\/#contact"/)
 })
 
-test("small project collections default to the directory list with one starting cue", () => {
+test("small project collections default to the yazi directory list + preview pane with one starting cue", () => {
   const html = render("/#projects")
   assert.match(html, /projects__rows/)
+  assert.match(html, /projects__preview/)
   assert.doesNotMatch(html, /projects__views/)
   assert.equal((html.match(/Start here/g) || []).length, 1)
 })

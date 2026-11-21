@@ -1,13 +1,22 @@
 .htop {
-  display: grid;
-  gap: 0.875rem;
-  min-width: 0;
-  padding: 0.875rem 1rem;
-  border: 1px solid var(--border);
-  border-radius: var(--radius);
-  background: color-mix(in oklab, var(--mantle) 72%, transparent);
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 1.25rem 1.125rem 0.95rem;
   font-family: var(--font-mono);
   font-size: 0.8125rem;
+  line-height: 1.5;
+}
+
+.htop__dashboard {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr);
+  gap: 1rem 1.5rem;
+}
+
+/* Flat hairlined split instead of nested rounded cards */
+.htop__pane {
+  min-width: 0;
 }
 
 .htop__intro {
@@ -24,25 +33,8 @@
 .htop__identity {
   display: inline-flex;
   align-items: center;
-  min-height: 2rem;
+  min-height: 1.75rem;
   color: var(--foreground);
-}
-
-.htop__dashboard {
-  display: grid;
-  gap: 1rem 1.75rem;
-}
-
-.htop__pane,
-.htop__processes {
-  min-width: 0;
-}
-
-.htop__pane {
-  padding: 0.75rem 0.875rem;
-  border: 1px solid var(--border-subtle);
-  border-radius: 2px;
-  background: color-mix(in oklab, var(--background) 85%, transparent);
 }
 
 .htop__section-heading,
@@ -56,18 +48,27 @@
   font-size: 0.75rem;
 }
 
+.htop__section-heading {
+  padding-bottom: 0.35rem;
+  border-bottom: 1px dashed var(--border-subtle);
+}
+
+.htop__heat-details {
+  margin-top: 0.35rem;
+}
+
 .htop__section-heading h3 {
   font-size: 0.75rem;
   font-weight: 700;
   text-transform: uppercase;
   letter-spacing: 0.08em;
-  color: var(--foreground);
+  color: var(--terminal-teal);
 }
 
 .htop__stats {
   display: grid;
   gap: 0.45rem;
-  margin-top: 0.625rem;
+  margin-top: 0.65rem;
 }
 
 .htop__stats div {
@@ -108,10 +109,16 @@
 .htop__meter-fill { color: var(--primary); font-weight: 700; }
 .htop__meter-empty { color: var(--border); }
 
+.htop__sparkline {
+  color: var(--primary);
+  font-size: 1rem;
+  line-height: 1;
+  letter-spacing: 0.04em;
+}
+
 /* Heatmap with month header and weekday gutter */
 .htop__calendar {
   margin-block: 0.5rem;
-  border-radius: 2px;
 }
 
 .htop__months {
@@ -180,10 +187,10 @@
   height: 0.5rem;
 }
 
-/* Process table — refined TUI header instead of garish green slab */
+/* Process table — crisp btop/htop inverted bar header */
 .htop__processes {
-  border-top: 1px solid var(--border-subtle);
-  padding-top: 0.75rem;
+  border-top: 1px solid var(--border);
+  padding-top: 0.85rem;
 }
 
 .htop__processes > .htop__section-heading,
@@ -193,7 +200,7 @@
 
 .htop__status,
 .htop__detail {
-  margin-top: 0.4rem;
+  margin-top: 0.45rem;
 }
 
 .htop__status,
@@ -203,7 +210,7 @@
 }
 
 .htop__status button {
-  min-height: 2.25rem;
+  min-height: 2rem;
   cursor: pointer;
   color: var(--primary);
 }
@@ -211,7 +218,6 @@
 .htop__table {
   overflow-x: auto;
   border: 1px solid var(--border-subtle);
-  border-radius: 2px;
 }
 
 .htop__table table {
@@ -222,15 +228,21 @@
 }
 
 .htop__table th {
-  background: var(--success);
-  color: var(--primary-foreground);
+  background: var(--surface);
+  color: var(--foreground);
+  border-bottom: 1px solid var(--border);
   font-size: 0.75rem;
   font-weight: 700;
 }
 
+.htop__table th[aria-sort] {
+  background: var(--primary);
+  color: var(--primary-foreground);
+}
+
 .htop__table th button {
   width: 100%;
-  min-height: 2.35rem;
+  min-height: 2.15rem;
   padding-inline: 0.625rem;
   text-align: left;
   cursor: pointer;
@@ -238,7 +250,7 @@
 }
 
 .htop__table th button:hover {
-  background: color-mix(in oklab, var(--primary-foreground) 14%, transparent);
+  background: color-mix(in oklab, var(--foreground) 10%, transparent);
 }
 
 .htop__short-label { display: none; }
@@ -277,7 +289,7 @@
 
 .htop__table td a {
   display: inline-flex;
-  min-height: 2rem;
+  min-height: 1.95rem;
   align-items: center;
   color: var(--terminal-blue);
   font-weight: 600;
@@ -301,7 +313,7 @@
 }
 
 .htop__pager button {
-  min-height: 2.25rem;
+  min-height: 2.1rem;
   color: var(--terminal-blue);
   cursor: pointer;
 }
@@ -325,10 +337,14 @@
 
 @media (min-width: 760px) {
   .htop {
-    padding: 1rem 1.25rem;
+    padding: 1.25rem 1.25rem 1rem;
   }
   .htop__dashboard {
     grid-template-columns: minmax(0, 1.05fr) minmax(0, 1.15fr);
+  }
+  .htop__pane + .htop__pane {
+    padding-left: 1.5rem;
+    border-left: 1px solid var(--border-subtle);
   }
 }
 
@@ -343,7 +359,7 @@
   .htop__table td, .htop__table th button { padding-inline: 0.25rem; }
   .htop__table td, .htop__table th { overflow-wrap: anywhere; }
   .htop__table td:nth-child(2) { width: auto; }
-  .htop__table td a { min-height: 2.5rem; }
+  .htop__table td a { min-height: 2.35rem; }
 }
 
 @media (pointer: coarse) {

@@ -64,19 +64,22 @@ export default function About({ onReady, onNavigate }) {
         </div>
 
         <AboutCommand command={stackCommand} run={listing}>
-          <section className="about__stack" aria-label="Tech stack">
-            {stack.filter(({ hidden }) => !hidden).map(({ group, items }) => (
-              <div className="about__stack-group" data-group={group} key={group}>
-                <h2>{group}</h2>
-                <ul role="list">
-                  {items.map((item) => (
-                    <li key={item}>
-                      <span>{item}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            ))}
+          <section className="about__stack tui-frame" aria-label="Tech stack">
+            <span className="tui-frame__legend" aria-hidden="true">~/stack</span>
+            <div className="about__stack-grid">
+              {stack.filter(({ hidden }) => !hidden).map(({ group, items }) => (
+                <div className="about__stack-group" data-group={group} key={group}>
+                  <h2>{group}</h2>
+                  <ul role="list">
+                    {items.map((item) => (
+                      <li key={item}>
+                        <span>{item}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              ))}
+            </div>
           </section>
         </AboutCommand>
 
