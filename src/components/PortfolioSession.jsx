@@ -41,7 +41,7 @@ export default function PortfolioSession({ children }) {
     if (bg && border && fg && primary) {
       const iconLink = document.querySelector('link[rel="icon"][type="image/svg+xml"]')
       if (iconLink) {
-        const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect x="1" y="1" width="30" height="30" rx="5" fill="${bg}" stroke="${border}" stroke-width="1.5"/><path fill="${fg}" fill-rule="evenodd" d="M10.4 7h3.2L19.8 25h-3.4l-1.2-3.8H8.8L7.6 25H4.2L10.4 7Zm-.6 11.4h4.4L12 11.2l-2.2 7.2Z"/><rect x="21.5" y="20.5" width="6" height="4.5" rx="0.75" fill="${primary}"/></svg>`
+        const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect x="1" y="1" width="30" height="30" rx="5" fill="${bg}" stroke="${border}" stroke-width="1.5"/><rect x="6.5" y="19.5" width="4.5" height="4.5" rx="0.8" fill="${primary}"/><path d="M22.5 7.5 14 24.5" fill="none" stroke="${fg}" stroke-width="3.2" stroke-linecap="round"/></svg>`
         iconLink.setAttribute("href", `data:image/svg+xml,${encodeURIComponent(svg)}`)
       }
     }
