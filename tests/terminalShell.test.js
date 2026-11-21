@@ -1,32 +1,56 @@
 import assert from "node:assert/strict"
 import { test } from "node:test"
-import { executeShellCommand, getShellSuggestion } from "../src/lib/terminalShell.js"
+import { executeShellCommand, getShellSuggestion, normalizeVfsPath } from "../src/lib/terminalShell.js"
 
-test("shell navigation and theme commands return structured side-effect intents", () => {
-  assert.equal(executeShellCommand("cd ~/projects").navigate, "/#projects")
-  assert.equal(executeShellCommand("cd experience").navigate, "/#activities")
-  assert.equal(executeShellCommand("cd ..").navigate, "/")
-  assert.equal(executeShellCommand("theme kanagawa").setTheme, "kanagawa")
-  assert.equal(executeShellCommand("bg crt").setBackground, "crt")
-  assert.equal(executeShellCommand("copy email").copyText, "aaserzanaty@gmail.com")
-  assert.equal(executeShellCommand("clear").clear, true)
+test("shell navigation, tmux split, and theme commands return structured side-effect intents", () => {
+  const nav = executeShellCommand("cd projects")
+  assert.equal(nav.navigate, "/#projects")
+  assert.equal(nav.setCwd, "~/projects")
+
+  const themed = executeShellCommand("theme noir")
+  assert.equal(themed.setTheme, "noir")
+
+  const splitV = executeShellCommand("split v")
+  assert.equal(splitV.setSplit, "vertical")
+
+  const audioOn = executeShellCommand("audio on")
+  assert.equal(audioOn.setAudio, true)
+
+  const copied = executeShellCommand("wl-copy email")
+  assert.match(copied.copyText, /@/)
+
+  const cleared = executeShellCommand("clear")
+  assert.equal(cleared.clear, true)
 })
 
-test("shell reads virtual files, renders man page, and refuses sudo cleanly", () => {
-  const bio = executeShellCommand("cat bio.txt")
-  assert.ok(bio.lines.some((line) => line.text.includes("Ain Shams University")))
+test("virtual filesystem resolves relative paths, reads files, renders man page, and refuses sudo", () => {
+  assert.equal(normalizeVfsPath("~/projects", ".."), "~")
+  assert.equal(normalizeVfsPath("~/projects", "../about/stack.toml"), "~/about/stack.toml")
+
+  const cat = executeShellCommand("cat .config/theme.conf", { theme: "noir", accent: "jade" })
+  assert.ok(cat.lines.some((line) => line.text.includes('theme = "noir"')))
+
   const man = executeShellCommand("man aaser")
-  assert.ok(man.lines.some((line) => line.text.includes("AASER(1)")))
-  const denied = executeShellCommand("sudo rm -rf /")
-  assert.equal(denied.lines[0].tone, "error")
-  assert.match(denied.lines[0].text, /sudoers/)
-  const missing = executeShellCommand("nonexistent-cmd")
-  assert.equal(missing.lines[0].tone, "error")
+  assert.ok(man.lines.some((line) => line.text.includes("SYNOPSIS")))
+
+  const sudo = executeShellCommand("sudo rm -rf /")
+  assert.equal(sudo.isError, true)
+  assert.equal(sudo.lines[0].tone, "error")
+  assert.match(sudo.lines[0].text, /sudoers/i)
 })
 
-test("zsh-style autosuggestion completes commands, themes, and active accents", () => {
-  assert.equal(getShellSuggestion("man "), "aaser")
+test("shell pipelines chain cat | grep | wc cleanly", () => {
+  const piped = executeShellCommand("cat README.md | grep -i backend | wc -l")
+  assert.equal(Number(piped.lines[0].text) >= 1, true)
+
+  const headed = executeShellCommand("ls -la | head -n 3")
+  assert.equal(headed.lines.length, 3)
+})
+
+test("zsh-style autosuggestion completes commands, themes, accents, and VFS paths", () => {
+  assert.equal(getShellSuggestion("them"), "e")
   assert.equal(getShellSuggestion("theme kan"), "agawa")
-  assert.equal(getShellSuggestion("accent ca", [{ id: "carp", label: "carp" }]), "rp")
-  assert.equal(getShellSuggestion(""), "")
+  assert.equal(getShellSuggestion("accent cr", { accents: [{ id: "carp" }, { id: "crystal" }] }), "ystal")
+  assert.equal(getShellSuggestion("cat READ"), "ME.md")
+  assert.equal(getShellSuggestion("split v"), "ertical")
 })

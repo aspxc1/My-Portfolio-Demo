@@ -1,78 +1,135 @@
-import { useContext, useEffect, useRef, useState } from "react"
-import { useNavigate } from "react-router"
+import { useContext, useEffect, useMemo, useRef, useState } from "react"
+import { useLocation, useNavigate } from "react-router"
+import activities from "../content/activities.json"
 import { profile } from "../content/site.js"
 import { projects } from "../lib/projects.js"
+import { playKeyTick, playTerminalBell } from "../lib/terminalAudio.js"
 import { executeShellCommand, getShellSuggestion } from "../lib/terminalShell.js"
-import { TerminalTheme } from "./PortfolioSession.jsx"
+import { TerminalTheme, WorkspaceControl } from "./PortfolioSession.jsx"
 import "./TerminalShell.css"
 
-const QUICK_COMMANDS = ["help", "man aaser", "ls -la", "theme kanagawa", "copy email"]
+function isTypingContext(target) {
+  return target instanceof HTMLElement && (
+    target.isContentEditable || /^(INPUT|TEXTAREA|SELECT)$/.test(target.tagName)
+  )
+}
 
-export default function TerminalShell({ path = "~", onOpenPalette }) {
-  const navigate = useNavigate()
+/**
+ * Persistent interactive zsh prompt & tmux split pane.
+ * - Dock mode: razor-thin single prompt bar at bottom (expands smoothly once commands run)
+ * - Split mode: full resizable tmux terminal pane with Ctrl+R reverse search, Ctrl+C, Ctrl+L, Tab completion
+ */
+export default function TerminalShell({ path = "~", mode = "dock", active = false, zoomed = false, onActivate, onOpenPalette }) {
   const appearance = useContext(TerminalTheme)
+  const workspace = useContext(WorkspaceControl)
+  const navigate = useNavigate()
+  const location = useLocation()
+
+  const entries = workspace?.shellEntries || []
+  const setEntries = workspace?.setShellEntries
+  const history = workspace?.shellHistory || []
+  const setHistory = workspace?.setShellHistory
+
   const [input, setInput] = useState("")
-  const [entries, setEntries] = useState([])
-  const [history, setHistory] = useState([])
   const [historyCursor, setHistoryCursor] = useState(-1)
-  const startedAt = useRef(Date.now())
+  const [searchMode, setSearchMode] = useState(false)
+  const [searchQuery, setSearchQuery] = useState("")
+
   const inputRef = useRef(null)
   const logRef = useRef(null)
+  const lastDeepCmd = useRef("")
 
-  const suggestion = getShellSuggestion(input, appearance?.accents || [])
+  const suggestion = useMemo(
+    () => (searchMode ? "" : getShellSuggestion(input, { accents: appearance?.accents, currentPath: path, projects })),
+    [input, appearance?.accents, path, searchMode],
+  )
+
+  const searchMatch = useMemo(() => {
+    if (!searchMode || !searchQuery) return ""
+    const q = searchQuery.toLowerCase()
+    for (let i = history.length - 1; i >= 0; i--) {
+      if (history[i].toLowerCase().includes(q)) return history[i]
+    }
+    return ""
+  }, [searchMode, searchQuery, history])
 
   useEffect(() => {
-    if (logRef.current) {
-      logRef.current.scrollTop = logRef.current.scrollHeight
-    }
-  }, [entries])
+    if (logRef.current) logRef.current.scrollTop = logRef.current.scrollHeight
+  }, [entries, mode])
 
-  // Global "/" shortcut focuses the interactive prompt when not already typing
+  useEffect(() => {
+    if (workspace?.shellFocusTick > 0) {
+      inputRef.current?.focus()
+    }
+  }, [workspace?.shellFocusTick])
+
+  // Global `/` shortcut focuses the prompt
   useEffect(() => {
     function onGlobalKey(event) {
       if (event.key !== "/" || event.ctrlKey || event.metaKey || event.altKey || event.defaultPrevented) return
-      const target = event.target instanceof Element ? event.target : null
-      if (target?.closest('input, textarea, select, [contenteditable="true"], [role="dialog"]')) return
+      if (isTypingContext(event.target)) return
       event.preventDefault()
+      onActivate?.()
       inputRef.current?.focus()
     }
     document.addEventListener("keydown", onGlobalKey)
     return () => document.removeEventListener("keydown", onGlobalKey)
-  }, [])
+  }, [onActivate])
+
+  // Deep-link `/?cmd=man+aaser` execution on arrival
+  useEffect(() => {
+    const params = new URLSearchParams(location.search)
+    const cmd = params.get("cmd")?.trim()
+    if (!cmd || cmd === lastDeepCmd.current) return
+    lastDeepCmd.current = cmd
+    workspace?.toggleSplit("vertical")
+    runCommand(cmd)
+  }, [location.search])
 
   function runCommand(rawCommand) {
     const trimmed = rawCommand.trim()
     if (!trimmed) return
 
     const nextHistory = [...history, trimmed]
-    setHistory(nextHistory)
+    setHistory?.(nextHistory)
     setHistoryCursor(-1)
     setInput("")
+    setSearchMode(false)
+    setSearchQuery("")
 
     const result = executeShellCommand(trimmed, {
       currentPath: path,
       projects,
+      activities,
       theme: appearance?.theme,
       accent: appearance?.accent,
       accents: appearance?.accents,
-      background: appearance?.background,
+      surface: appearance?.surface,
+      audio: appearance?.audio,
       history: nextHistory,
-      startedAt: startedAt.current,
+      startedAt: workspace?.startedAt,
     })
 
+    if (result.isError) playTerminalBell(appearance?.audio)
+    else playKeyTick(appearance?.audio)
+
     if (result.clear) {
-      setEntries([])
+      setEntries?.([])
       return
     }
 
-    setEntries((prev) => [
-      ...prev.slice(-14),
+    setEntries?.((prev) => [
+      ...prev.slice(-30),
       { id: `${Date.now()}-${prev.length}`, path, command: trimmed, lines: result.lines || [] },
     ])
 
+    if (result.setCwd) workspace?.setShellCwd(result.setCwd)
     if (result.setTheme) appearance?.setTheme(result.setTheme)
     if (result.setAccent) appearance?.setAccent(result.setAccent)
-    if (result.setBackground) appearance?.setBackground(result.setBackground)
+    if (result.setSurface) appearance?.setSurface(result.setSurface)
+    if (typeof result.setAudio === "boolean") appearance?.setAudio(result.setAudio)
+    if (result.setSplit) workspace?.toggleSplit(result.setSplit)
+    if (result.toggleZoom) workspace?.toggleZoom()
     if (result.copyText && typeof navigator !== "undefined") {
       navigator.clipboard?.writeText(result.copyText).catch(() => {})
     }
@@ -88,14 +145,73 @@ export default function TerminalShell({ path = "~", onOpenPalette }) {
   function onKeyDown(event) {
     if (event.key === "Escape") {
       event.preventDefault()
-      inputRef.current?.blur()
+      if (searchMode) {
+        setSearchMode(false)
+        setSearchQuery("")
+      } else {
+        inputRef.current?.blur()
+      }
       return
     }
+
+    if (event.ctrlKey && event.key.toLowerCase() === "c") {
+      event.preventDefault()
+      playTerminalBell(appearance?.audio)
+      if (searchMode) {
+        setSearchMode(false)
+        setSearchQuery("")
+        return
+      }
+      if (input) {
+        setEntries?.((prev) => [
+          ...prev.slice(-30),
+          { id: `${Date.now()}-int`, path, command: `${input}^C`, lines: [] },
+        ])
+        setInput("")
+        setHistoryCursor(-1)
+      }
+      return
+    }
+
+    if (event.ctrlKey && event.key.toLowerCase() === "l") {
+      event.preventDefault()
+      setEntries?.([])
+      return
+    }
+
+    if (event.ctrlKey && event.key.toLowerCase() === "r") {
+      event.preventDefault()
+      setSearchMode(true)
+      setSearchQuery(input)
+      return
+    }
+
+    if (searchMode) {
+      if (event.key === "Enter") {
+        event.preventDefault()
+        const resolved = searchMatch || searchQuery
+        setSearchMode(false)
+        setSearchQuery("")
+        if (resolved) runCommand(resolved)
+        return
+      }
+      if (event.key === "Tab" || event.key === "ArrowRight") {
+        event.preventDefault()
+        if (searchMatch) setInput(searchMatch)
+        setSearchMode(false)
+        setSearchQuery("")
+        return
+      }
+      return
+    }
+
     if ((event.key === "Tab" || (event.key === "ArrowRight" && event.currentTarget.selectionStart === input.length)) && suggestion) {
       event.preventDefault()
       setInput(input + suggestion)
+      playKeyTick(appearance?.audio)
       return
     }
+
     if (event.key === "ArrowUp") {
       if (!history.length) return
       event.preventDefault()
@@ -104,6 +220,7 @@ export default function TerminalShell({ path = "~", onOpenPalette }) {
       setInput(history[nextIndex])
       return
     }
+
     if (event.key === "ArrowDown") {
       if (historyCursor < 0) return
       event.preventDefault()
@@ -115,51 +232,72 @@ export default function TerminalShell({ path = "~", onOpenPalette }) {
         setHistoryCursor(nextIndex)
         setInput(history[nextIndex])
       }
-      return
-    }
-    if (event.key === "l" && event.ctrlKey) {
-      event.preventDefault()
-      setEntries([])
     }
   }
+
+  const isSplit = mode !== "dock"
 
   return (
     <section
       aria-label="Interactive terminal shell"
-      className="terminal-shell"
+      className={`terminal-shell terminal-shell--${mode}${active ? " terminal-shell--active" : ""}`}
+      onPointerDown={() => onActivate?.()}
       onClick={(event) => {
         if (!(event.target instanceof Element) || !event.target.closest("button, a")) {
           inputRef.current?.focus()
         }
       }}
     >
-      <div className="terminal-shell__header">
-        <span className="terminal-shell__title">
-          <span aria-hidden="true" className="terminal-shell__glyph">❯</span>
-          Interactive shell
-        </span>
-        <div className="terminal-shell__hints">
-          <span className="terminal-shell__hint"><kbd className="tui-kbd">/</kbd> focus</span>
-          {onOpenPalette ? (
-            <button type="button" className="terminal-shell__palette-trigger" onClick={onOpenPalette}>
-              <kbd className="tui-kbd">Ctrl+K</kbd> fzf
+      {isSplit ? (
+        <div className="terminal-shell__pane-bar">
+          <span className="terminal-shell__pane-title">{`zsh · ${path}`}</span>
+          <div className="terminal-shell__pane-actions">
+            {entries.length > 0 ? (
+              <button type="button" className="terminal-shell__pane-btn" onClick={() => setEntries?.([])}>clear</button>
+            ) : null}
+            <button
+              type="button"
+              className="terminal-shell__pane-btn"
+              onClick={() => workspace?.toggleZoom()}
+              title="Zoom pane (Ctrl+B z)"
+            >
+              {zoomed ? "unzoom" : "zoom"}
             </button>
-          ) : null}
+            <button
+              type="button"
+              className="terminal-shell__pane-btn"
+              onClick={() => workspace?.toggleSplit("dock")}
+              title="Collapse split (Ctrl+B x)"
+            >
+              ×
+            </button>
+          </div>
         </div>
-      </div>
+      ) : null}
 
       {entries.length > 0 ? (
         <div ref={logRef} className="terminal-shell__log" aria-live="polite">
+          {!isSplit ? (
+            <div className="terminal-shell__dock-actions">
+              <button type="button" className="terminal-shell__pane-btn" onClick={() => workspace?.toggleSplit("vertical")}>
+                expand split
+              </button>
+              <button type="button" className="terminal-shell__pane-btn" onClick={() => setEntries?.([])}>
+                clear
+              </button>
+            </div>
+          ) : null}
           {entries.map((entry) => (
             <div key={entry.id} className="terminal-shell__entry">
               <p className="terminal-shell__echo">
-                <span className="terminal-shell__user">{profile.handle}@portfolio</span>
-                <span className="terminal-shell__path">:{entry.path}$ </span>
+                <span className="terminal-shell__user">{`${profile.handle}@portfolio:`}</span>
+                <span className="terminal-shell__path">{entry.path}</span>
+                <span className="terminal-shell__user">{"% "}</span>
                 <span>{entry.command}</span>
               </p>
-              {entry.lines.map((line, lineIndex) => (
+              {entry.lines.map((line, idx) => (
                 <p
-                  key={lineIndex}
+                  key={`${entry.id}-${idx}`}
                   className={line.tone ? `terminal-shell__line terminal-shell__line--${line.tone}` : "terminal-shell__line"}
                 >
                   {line.text || "\u00A0"}
@@ -168,66 +306,83 @@ export default function TerminalShell({ path = "~", onOpenPalette }) {
             </div>
           ))}
         </div>
-      ) : (
-        <div className="terminal-shell__intro">
-          <p className="terminal-shell__note">
-            Type a command or press <kbd className="tui-kbd">Tab</kbd> to autocomplete. Try:
-          </p>
-          <div className="terminal-shell__chips">
-            {QUICK_COMMANDS.map((cmd) => (
-              <button
-                key={cmd}
-                type="button"
-                className="terminal-shell__chip"
-                onClick={() => {
-                  runCommand(cmd)
-                  inputRef.current?.focus()
-                }}
-              >
-                {cmd}
-              </button>
-            ))}
-          </div>
+      ) : isSplit ? (
+        <div className="terminal-shell__welcome">
+          <p>{`zsh 5.9 (${profile.handle}@portfolio) — type `}<span className="terminal-shell__hl">help</span>{`, `}<span className="terminal-shell__hl">ls -la</span>{`, `}<span className="terminal-shell__hl">man aaser</span>{`, or pipe commands (`}<span className="terminal-shell__hl">cat README.md | grep -i ml</span>{`).`}</p>
         </div>
-      )}
+      ) : null}
 
       <form
         className="terminal-shell__form"
         onSubmit={(event) => {
           event.preventDefault()
-          runCommand(input)
+          if (searchMode) {
+            const resolved = searchMatch || searchQuery
+            setSearchMode(false)
+            setSearchQuery("")
+            if (resolved) runCommand(resolved)
+          } else {
+            runCommand(input)
+          }
         }}
       >
-        <label htmlFor="terminal-shell-input" className="sr-only">
-          Terminal command input
+        <label htmlFor="terminal-shell-input" className="terminal-shell__prompt">
+          {searchMode ? (
+            <span className="terminal-shell__search-label">{`(reverse-i-search)'${searchQuery}': `}</span>
+          ) : (
+            <>
+              <span className="terminal-shell__user">{`${profile.handle}@portfolio:`}</span>
+              <span className="terminal-shell__path">{path}</span>
+              <span className="terminal-shell__sigil">{"%"}</span>
+            </>
+          )}
         </label>
-        <span className="terminal-shell__prompt" aria-hidden="true">
-          <span className="terminal-shell__user">{profile.handle}@portfolio</span>
-          <span className="terminal-shell__path">:{path}$</span>
-        </span>
+
         <div className="terminal-shell__field">
-          <span className="terminal-shell__mirror" aria-hidden="true">
-            <span className="terminal-shell__typed">{input}</span>
-            {suggestion ? <span className="terminal-shell__ghost">{suggestion}</span> : null}
-          </span>
+          {!searchMode ? (
+            <span aria-hidden="true" className="terminal-shell__mirror">
+              <span className="terminal-shell__typed">{input}</span>
+              {suggestion ? <span className="terminal-shell__ghost">{suggestion}</span> : null}
+            </span>
+          ) : null}
+
           <input
             ref={inputRef}
             id="terminal-shell-input"
             type="text"
-            value={input}
+            value={searchMode ? searchQuery : input}
             onChange={(event) => {
-              setInput(event.target.value)
-              setHistoryCursor(-1)
+              if (searchMode) {
+                setSearchQuery(event.target.value)
+              } else {
+                setInput(event.target.value)
+                setHistoryCursor(-1)
+              }
             }}
             onKeyDown={onKeyDown}
-            placeholder="help"
+            placeholder={searchMode ? "search history…" : isSplit ? "help, ls -la, cat README.md…" : "help, ls -la, man aaser, split v…"}
             autoComplete="off"
             autoCorrect="off"
             autoCapitalize="off"
             spellCheck={false}
             className="terminal-shell__input"
           />
+
+          {searchMode && searchMatch ? (
+            <span className="terminal-shell__search-match">{searchMatch}</span>
+          ) : null}
         </div>
+
+        {!isSplit ? (
+          <span aria-hidden="true" className="terminal-shell__key-hints">
+            <kbd className="tui-kbd">/</kbd>
+            {onOpenPalette ? (
+              <button type="button" className="terminal-shell__pane-btn" onClick={onOpenPalette}>
+                fzf
+              </button>
+            ) : null}
+          </span>
+        ) : null}
       </form>
     </section>
   )

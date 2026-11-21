@@ -21,4 +21,13 @@
     gap: 2.25rem;
     align-items: start;
   }
+
+  .session-navigation__split--single {
+    grid-template-columns: minmax(16rem, 24rem);
+  }
+}
+
+.session-navigation .terminal-shell--dock {
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
 }
