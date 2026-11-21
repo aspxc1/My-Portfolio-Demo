@@ -1,25 +1,24 @@
 import { useContext, useId, useLayoutEffect, useRef, useState } from "react"
 import { Link } from "react-router"
 import { profile } from "../content/site.js"
-import { BACKGROUNDS, THEMES, getSessionTask } from "../lib/terminalTheme.js"
+import { SURFACES, THEMES, getSessionTask } from "../lib/terminalTheme.js"
 import { TerminalTheme } from "./PortfolioSession.jsx"
 import "./TerminalStatusBar.css"
 
 const tmuxWindows = [
-  { index: 0, label: "home", to: "/" },
-  { index: 1, label: "about", to: "/#about" },
-  { index: 2, label: "projects", to: "/#projects" },
-  { index: 3, label: "experience", to: "/#activities" },
-  { index: 4, label: "contact", to: "/#contact" },
+  { index: 0, label: "home", name: "Home", to: "/" },
+  { index: 1, label: "about", name: "About", to: "/#about" },
+  { index: 2, label: "projects", name: "Projects", to: "/#projects" },
+  { index: 3, label: "experience", name: "Experience & clubs", to: "/#activities" },
+  { index: 4, label: "contact", name: "Contact", to: "/#contact" },
 ]
 
-export default function TerminalStatusBar({ location }) {
+export default function TerminalStatusBar({ location, prefixArmed = false }) {
   const appearance = useContext(TerminalTheme)
   const [open, setOpen] = useState(false)
   const footer = useRef(null)
   const panelId = useId()
   const task = getSessionTask(location)
-  const defaultBackground = BACKGROUNDS.find((item) => item.id === appearance?.defaultBackground)?.label
 
   useLayoutEffect(() => {
     if (open) footer.current?.scrollIntoView({ block: "nearest", behavior: "instant" })
@@ -28,7 +27,9 @@ export default function TerminalStatusBar({ location }) {
   return (
     <footer ref={footer} aria-label="Terminal status bar" className="tmux-bar">
       <div className="tmux-bar__left">
-        <span className="tmux-bar__session" aria-hidden="true">[0] {profile.handle}</span>
+        <span className={prefixArmed ? "tmux-bar__session tmux-bar__session--prefix" : "tmux-bar__session"} aria-hidden="true">
+          {prefixArmed ? "PREFIX" : `[0] ${profile.handle}`}
+        </span>
         <nav aria-label="Tmux windows" className="tmux-bar__windows">
           {tmuxWindows.map((win) => {
             const isActive = win.index === task.index
@@ -37,6 +38,7 @@ export default function TerminalStatusBar({ location }) {
                 key={win.index}
                 to={win.to}
                 className={isActive ? "tmux-bar__win tmux-bar__win--active" : "tmux-bar__win"}
+                aria-label={win.name}
                 aria-current={isActive ? "page" : undefined}
               >
                 {`${win.index}:${win.label}${isActive ? "*" : ""}`}
@@ -59,16 +61,16 @@ export default function TerminalStatusBar({ location }) {
               <span className="tmux-bar__swatch-a" />
               <span className="tmux-bar__swatch-b" />
             </span>
-            Appearance
+            <span>{appearance.theme}</span>
           </button>
         ) : null}
 
-        <span aria-hidden="true" className="tmux-bar__meta">utf-8</span>
+        <span aria-hidden="true" className="tmux-bar__meta">^B % · utf-8</span>
       </div>
 
       {appearance ? (
         <div className="tmux-bar__settings" id={panelId} hidden={!open}>
-          <div className="tmux-bar__theme-strip" role="group" aria-label="Quick theme presets">
+          <div className="tmux-bar__theme-strip" role="group" aria-label="Theme presets">
             {THEMES.map((theme) => (
               <button
                 key={theme.id}
@@ -87,26 +89,67 @@ export default function TerminalStatusBar({ location }) {
             ))}
           </div>
 
-          <div className="tmux-bar__selects">
-            <label>
-              Theme
-              <select className="tmux-bar__control" value={appearance.theme} onChange={(event) => appearance.setTheme(event.target.value)}>
-                {THEMES.map((theme) => <option key={theme.id} value={theme.id}>{theme.label}</option>)}
-              </select>
-            </label>
-            <label>
-              Accent
-              <select className="tmux-bar__control" value={appearance.accent} onChange={(event) => appearance.setAccent(event.target.value)}>
-                {appearance.accents.map((accent) => <option key={accent.id} value={accent.id}>{accent.label}</option>)}
-              </select>
-            </label>
-            <label>
-              Background
-              <select className="tmux-bar__control" value={appearance.background} onChange={(event) => appearance.setBackground(event.target.value)}>
-                <option value="auto">Theme default ({defaultBackground})</option>
-                {BACKGROUNDS.map((background) => <option key={background.id} value={background.id}>{background.label}</option>)}
-              </select>
-            </label>
+          <div className="tmux-bar__toggles">
+            <div className="tmux-bar__group" role="group" aria-label="Accent color">
+              <span className="tmux-bar__group-label">accent</span>
+              <div className="tmux-bar__chips">
+                {appearance.accents.map((accent) => (
+                  <button
+                    key={accent.id}
+                    type="button"
+                    className="tmux-bar__chip"
+                    aria-pressed={appearance.accent === accent.id}
+                    onClick={() => appearance.setAccent(accent.id)}
+                  >
+                    <span
+                      aria-hidden="true"
+                      className="tmux-bar__chip-swatch"
+                      style={{ background: `var(--accent-${accent.id})` }}
+                    />
+                    {accent.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="tmux-bar__group" role="group" aria-label="Display surface">
+              <span className="tmux-bar__group-label">surface</span>
+              <div className="tmux-bar__chips">
+                {SURFACES.map((item) => (
+                  <button
+                    key={item.id}
+                    type="button"
+                    className="tmux-bar__chip"
+                    aria-pressed={appearance.surface === item.id}
+                    onClick={() => appearance.setSurface(item.id)}
+                  >
+                    {item.label}
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            <div className="tmux-bar__group" role="group" aria-label="Terminal audio">
+              <span className="tmux-bar__group-label">bell</span>
+              <div className="tmux-bar__chips">
+                <button
+                  type="button"
+                  className="tmux-bar__chip"
+                  aria-pressed={!appearance.audio}
+                  onClick={() => appearance.setAudio(false)}
+                >
+                  off
+                </button>
+                <button
+                  type="button"
+                  className="tmux-bar__chip"
+                  aria-pressed={appearance.audio}
+                  onClick={() => appearance.setAudio(true)}
+                >
+                  on
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       ) : null}

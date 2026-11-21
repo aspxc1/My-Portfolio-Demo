@@ -1,39 +1,15 @@
+/* Default theme: Kanagawa Wave — calm sumi-ink obsidian with warm carp gold & wave teal. */
 :root {
   color-scheme: dark;
-  --backdrop: #0d0e17;
-  --mantle: #151622;
-  --background: #1b1c2a;
-  --surface: #222436;
-  --card: #292b3f;
-  --foreground: #d8dff6;
-  --primary-foreground: #0d0e17;
-  --muted-foreground: #939bb8;
-  --border: #363950;
-  --border-subtle: #27293c;
-  --terminal-blue: #89b4fa;
-  --terminal-teal: #94e2d5;
-  --terminal-yellow: #f9e2af;
-  --terminal-red: #f38ba8;
-  --success: #a6e3a1;
-  --accent-mauve: #cba6f7;
-  --accent-green: #a6e3a1;
-  --accent-teal: #94e2d5;
-  --accent-blue: #89b4fa;
-  --accent-peach: #fab387;
-  --theme-accent: var(--accent-mauve);
-}
-
-:root[data-theme="kanagawa"] {
-  color-scheme: dark;
   --backdrop: #16161d;
-  --mantle: #1a1a22;
+  --mantle: #191922;
   --background: #1f1f28;
-  --surface: #262632;
+  --surface: #252530;
   --card: #2a2a37;
   --foreground: #dcd7ba;
   --primary-foreground: #16161d;
   --muted-foreground: #9a9685;
-  --border: #3c3c4f;
+  --border: #3a3a4c;
   --border-subtle: #2b2b39;
   --terminal-blue: #7e9cd8;
   --terminal-teal: #7aa89f;
@@ -48,18 +24,67 @@
   --theme-accent: var(--accent-carp);
 }
 
+:root[data-theme="noir"] {
+  color-scheme: dark;
+  --backdrop: #070809;
+  --mantle: #0c0d0f;
+  --background: #111215;
+  --surface: #181a1f;
+  --card: #1f2228;
+  --foreground: #e6e4de;
+  --primary-foreground: #070809;
+  --muted-foreground: #8f939c;
+  --border: #2c3038;
+  --border-subtle: #1d2026;
+  --terminal-blue: #8cb4e8;
+  --terminal-teal: #79c7b6;
+  --terminal-yellow: #e2c078;
+  --terminal-red: #e06c75;
+  --success: #8ac48e;
+  --accent-bone: #e6e4de;
+  --accent-jade: #79c7b6;
+  --accent-ochre-noir: #e2c078;
+  --accent-ice: #8cb4e8;
+  --theme-accent: var(--accent-jade);
+}
+
+:root[data-theme="mocha"] {
+  color-scheme: dark;
+  --backdrop: #11111b;
+  --mantle: #181825;
+  --background: #1e1e2e;
+  --surface: #262638;
+  --card: #313244;
+  --foreground: #cdd6f4;
+  --primary-foreground: #11111b;
+  --muted-foreground: #9399b2;
+  --border: #45475a;
+  --border-subtle: #2b2c3e;
+  --terminal-blue: #89b4fa;
+  --terminal-teal: #94e2d5;
+  --terminal-yellow: #f9e2af;
+  --terminal-red: #f38ba8;
+  --success: #a6e3a1;
+  --accent-mauve: #cba6f7;
+  --accent-green: #a6e3a1;
+  --accent-teal: #94e2d5;
+  --accent-blue: #89b4fa;
+  --accent-peach: #fab387;
+  --theme-accent: var(--accent-mauve);
+}
+
 :root[data-theme="gruvbox"] {
   color-scheme: dark;
   --backdrop: #181a1b;
   --mantle: #1f1e1d;
-  --background: #262524;
-  --surface: #2e2c2a;
-  --card: #383431;
+  --background: #282828;
+  --surface: #32302f;
+  --card: #3c3836;
   --foreground: #ebdbb2;
   --primary-foreground: #181a1b;
   --muted-foreground: #bdae93;
-  --border: #5a4e42;
-  --border-subtle: #3c3631;
+  --border: #504945;
+  --border-subtle: #3a3633;
   --terminal-blue: #83a598;
   --terminal-teal: #8ec07c;
   --terminal-yellow: #fabd2f;
@@ -68,7 +93,7 @@
   --accent-gold: #fabd2f;
   --accent-olive: #b8bb26;
   --accent-aqua: #8ec07c;
-  --accent-coral: #fb806d;
+  --accent-coral: #fe8019;
   --accent-lilac: #d3869b;
   --theme-accent: var(--accent-gold);
 }
@@ -98,16 +123,16 @@
 
 :root[data-theme="dracula"] {
   color-scheme: dark;
-  --backdrop: #15141e;
-  --mantle: #1e1f2b;
-  --background: #252735;
-  --surface: #2d3041;
-  --card: #35384b;
-  --foreground: #f4f4ee;
-  --primary-foreground: #15141e;
-  --muted-foreground: #aeb3cf;
-  --border: #525574;
-  --border-subtle: #34374c;
+  --backdrop: #15161f;
+  --mantle: #1e1f29;
+  --background: #282a36;
+  --surface: #303342;
+  --card: #383b4d;
+  --foreground: #f8f8f2;
+  --primary-foreground: #15161f;
+  --muted-foreground: #a8b0d3;
+  --border: #4d516b;
+  --border-subtle: #35384b;
   --terminal-blue: #8be9fd;
   --terminal-teal: #50fa7b;
   --terminal-yellow: #f1fa8c;
@@ -118,7 +143,7 @@
   --accent-mint: #50fa7b;
   --accent-cyan: #8be9fd;
   --accent-apricot: #ffb86c;
-  --theme-accent: var(--accent-violet);
+  --theme-accent: var(--accent-cyan);
 }
 
 :root[data-theme="phosphor"] {
@@ -146,8 +171,8 @@
 
 :root[data-theme="paper"] {
   color-scheme: light;
-  --backdrop: #d5c7ae;
-  --mantle: #e7dbc5;
+  --backdrop: #ded3be;
+  --mantle: #eae0cc;
   --background: #f5ecda;
   --surface: #ede2cc;
   --card: #e5d7bd;
@@ -173,16 +198,20 @@
   background: var(--backdrop);
 }
 
-:root:is(:not([data-theme]), [data-theme="mocha"])[data-accent="mauve"] { --active-accent: var(--accent-mauve); }
-:root:is(:not([data-theme]), [data-theme="mocha"])[data-accent="green"] { --active-accent: var(--accent-green); }
-:root:is(:not([data-theme]), [data-theme="mocha"])[data-accent="teal"] { --active-accent: var(--accent-teal); }
-:root:is(:not([data-theme]), [data-theme="mocha"])[data-accent="blue"] { --active-accent: var(--accent-blue); }
-:root:is(:not([data-theme]), [data-theme="mocha"])[data-accent="peach"] { --active-accent: var(--accent-peach); }
-:root[data-theme="kanagawa"][data-accent="carp"] { --active-accent: var(--accent-carp); }
-:root[data-theme="kanagawa"][data-accent="wave"] { --active-accent: var(--accent-wave); }
-:root[data-theme="kanagawa"][data-accent="crystal"] { --active-accent: var(--accent-crystal); }
-:root[data-theme="kanagawa"][data-accent="autumn"] { --active-accent: var(--accent-autumn); }
-:root[data-theme="kanagawa"][data-accent="spring"] { --active-accent: var(--accent-spring); }
+:root:is(:not([data-theme]), [data-theme="kanagawa"])[data-accent="carp"] { --active-accent: var(--accent-carp); }
+:root:is(:not([data-theme]), [data-theme="kanagawa"])[data-accent="wave"] { --active-accent: var(--accent-wave); }
+:root:is(:not([data-theme]), [data-theme="kanagawa"])[data-accent="crystal"] { --active-accent: var(--accent-crystal); }
+:root:is(:not([data-theme]), [data-theme="kanagawa"])[data-accent="autumn"] { --active-accent: var(--accent-autumn); }
+:root:is(:not([data-theme]), [data-theme="kanagawa"])[data-accent="spring"] { --active-accent: var(--accent-spring); }
+:root[data-theme="noir"][data-accent="jade"] { --active-accent: var(--accent-jade); }
+:root[data-theme="noir"][data-accent="bone"] { --active-accent: var(--accent-bone); }
+:root[data-theme="noir"][data-accent="ochre-noir"] { --active-accent: var(--accent-ochre-noir); }
+:root[data-theme="noir"][data-accent="ice"] { --active-accent: var(--accent-ice); }
+:root[data-theme="mocha"][data-accent="mauve"] { --active-accent: var(--accent-mauve); }
+:root[data-theme="mocha"][data-accent="green"] { --active-accent: var(--accent-green); }
+:root[data-theme="mocha"][data-accent="teal"] { --active-accent: var(--accent-teal); }
+:root[data-theme="mocha"][data-accent="blue"] { --active-accent: var(--accent-blue); }
+:root[data-theme="mocha"][data-accent="peach"] { --active-accent: var(--accent-peach); }
 :root[data-theme="gruvbox"][data-accent="gold"] { --active-accent: var(--accent-gold); }
 :root[data-theme="gruvbox"][data-accent="olive"] { --active-accent: var(--accent-olive); }
 :root[data-theme="gruvbox"][data-accent="aqua"] { --active-accent: var(--accent-aqua); }
@@ -191,10 +220,10 @@
 :root[data-theme="amber"][data-accent="p3"] { --active-accent: var(--accent-p3); }
 :root[data-theme="amber"][data-accent="ochre"] { --active-accent: var(--accent-ochre); }
 :root[data-theme="amber"][data-accent="warm"] { --active-accent: var(--accent-warm); }
+:root[data-theme="dracula"][data-accent="cyan"] { --active-accent: var(--accent-cyan); }
 :root[data-theme="dracula"][data-accent="violet"] { --active-accent: var(--accent-violet); }
 :root[data-theme="dracula"][data-accent="pink"] { --active-accent: var(--accent-pink); }
 :root[data-theme="dracula"][data-accent="mint"] { --active-accent: var(--accent-mint); }
-:root[data-theme="dracula"][data-accent="cyan"] { --active-accent: var(--accent-cyan); }
 :root[data-theme="dracula"][data-accent="apricot"] { --active-accent: var(--accent-apricot); }
 :root[data-theme="phosphor"][data-accent="phosphor"] { --active-accent: var(--accent-phosphor); }
 :root[data-theme="phosphor"][data-accent="emerald"] { --active-accent: var(--accent-emerald); }
