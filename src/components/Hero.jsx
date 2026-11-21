@@ -16,6 +16,7 @@ export default function Hero({ onReady, onNavigate }) {
   const theme = useContext(TerminalTheme)
   const accents = theme?.accents || DEFAULT_THEME.accents
   const activeAccent = theme?.accent || accents[0].id
+
   useEffect(() => {
     if (run.finished) onReady?.()
   }, [run.finished, onReady])
