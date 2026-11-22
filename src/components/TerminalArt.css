@@ -4,6 +4,7 @@
   align-items: center;
   gap: 0.45rem;
   min-width: 0;
+  contain: layout style;
 }
 
 /* Unboxed stage — sits directly on the terminal surface like real fastfetch. */
