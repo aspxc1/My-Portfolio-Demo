@@ -118,10 +118,14 @@ export default function TerminalShell({ path = "~", mode = "dock", active = fals
       return
     }
 
-    setEntries?.((prev) => [
-      ...prev.slice(-30),
-      { id: `${Date.now()}-${prev.length}`, path, command: trimmed, lines: result.lines || [] },
-    ])
+    if (!isSplit && result.navigate) {
+      // Dock navigation transitions straight to the destination without leaving a stale redirect log line.
+    } else {
+      setEntries?.((prev) => [
+        ...prev.slice(-30),
+        { id: `${Date.now()}-${prev.length}`, path, command: trimmed, lines: result.lines || [] },
+      ])
+    }
 
     if (result.setCwd) workspace?.setShellCwd(result.setCwd)
     if (result.setTheme) appearance?.setTheme(result.setTheme)
@@ -360,7 +364,7 @@ export default function TerminalShell({ path = "~", mode = "dock", active = fals
               }
             }}
             onKeyDown={onKeyDown}
-            placeholder={searchMode ? "search history…" : isSplit ? "help, ls -la, cat README.md…" : "help, ls -la, man aaser, split v…"}
+            placeholder={searchMode ? "search history…" : isSplit ? "help, ls -la, cat README.md…" : "about, next, help, ls -la, split v…"}
             autoComplete="off"
             autoCorrect="off"
             autoCapitalize="off"

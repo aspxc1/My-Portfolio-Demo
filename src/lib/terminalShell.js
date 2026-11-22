@@ -16,6 +16,23 @@ const destinationMap = {
   "~/contact": "/#contact",
 }
 
+export const SHELL_SECTIONS = [
+  { id: "home", command: "home", path: "~", route: "/" },
+  { id: "about", command: "about", path: "~/about", route: "/#about" },
+  { id: "projects", command: "projects", path: "~/projects", route: "/#projects" },
+  { id: "activities", command: "experience", path: "~/experience", route: "/#activities" },
+  { id: "contact", command: "contact", path: "~/contact", route: "/#contact" },
+]
+
+export function getAdjacentSection(currentPath = "~", delta = 1) {
+  const normalized = normalizeVfsPath(currentPath, ".")
+  const currentIndex = SHELL_SECTIONS.findIndex(
+    (sec) => normalized === sec.path || (sec.path !== "~" && normalized.startsWith(`${sec.path}/`)),
+  )
+  const idx = currentIndex >= 0 ? currentIndex : 0
+  return SHELL_SECTIONS[(idx + delta + SHELL_SECTIONS.length) % SHELL_SECTIONS.length]
+}
+
 const routeToCwd = {
   "/": "~",
   "/#about": "~/about",
@@ -26,6 +43,13 @@ const routeToCwd = {
 
 const BASE_COMMANDS = [
   "help",
+  "next",
+  "prev",
+  "home",
+  "about",
+  "projects",
+  "experience",
+  "contact",
   "ls",
   "tree",
   "cd",
@@ -448,6 +472,8 @@ function executeSingleStage(tokens, stdinLines, context, fs) {
     return {
       lines: [
         { tone: "accent", text: "Available commands (supports pipes: e.g. cat README.md | grep -i ml)" },
+        { text: "  about | projects | experience | contact | home   jump straight to a section" },
+        { text: "  next / prev       step to the next or previous section" },
         { text: "  cd <dir>          navigate (~, about, projects, experience, contact, ..)" },
         { text: "  ls [-la] [path]   list virtual filesystem entries" },
         { text: "  tree [path]       display directory tree" },
@@ -469,6 +495,46 @@ function executeSingleStage(tokens, stdinLines, context, fs) {
         { text: "  curl              show CLI curl endpoint command" },
         { text: "  clear             clear scrollback (Ctrl+L · Ctrl+R history search)" },
       ],
+    }
+  }
+
+  if (!args.length && (cmd === "next" || cmd === "n")) {
+    const target = getAdjacentSection(cwd, 1)
+    return {
+      navigate: target.route,
+      setCwd: target.path,
+      lines: [{ tone: "teal", text: `→ ${target.path}` }],
+    }
+  }
+
+  if (!args.length && (cmd === "prev" || cmd === "back" || cmd === "p")) {
+    const target = getAdjacentSection(cwd, -1)
+    return {
+      navigate: target.route,
+      setCwd: target.path,
+      lines: [{ tone: "teal", text: `→ ${target.path}` }],
+    }
+  }
+
+  if (!args.length && /^[0-4]$/.test(cmd)) {
+    const target = SHELL_SECTIONS[Number(cmd)]
+    return {
+      navigate: target.route,
+      setCwd: target.path,
+      lines: [{ tone: "teal", text: `→ ${target.path}` }],
+    }
+  }
+
+  if (!args.length) {
+    const directKey = cmdRaw.trim().toLowerCase().replace(/\/+$/, "")
+    if (Object.hasOwn(destinationMap, directKey)) {
+      const route = destinationMap[directKey]
+      const nextCwd = routeToCwd[route] || "~"
+      return {
+        navigate: route,
+        setCwd: nextCwd,
+        lines: [{ tone: "teal", text: `→ ${nextCwd}` }],
+      }
     }
   }
 

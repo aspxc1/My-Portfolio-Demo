@@ -111,6 +111,7 @@ test("a section deep link renders only that section with named destinations to n
     for (const other of ["about", "projects", "activities", "contact"].filter((other) => other !== id)) {
       assert.doesNotMatch(html, new RegExp(`id="${other}"`))
     }
+    assert.match(html, /aria-label="Portfolio navigation"/)
     assert.match(html, /aria-label="Tmux windows"/)
     assert.match(html, /aria-label="Home"/)
   }
@@ -153,12 +154,12 @@ test("404 renders the actual requested pathname with a fuzzy route suggestion", 
   assert.match(html, /~\/projects/)
 })
 
-test("tmux window bar names destinations clearly without shell commands or file permissions", () => {
+test("home and section menus name destinations clearly without shell commands or file permissions", () => {
   for (const path of ["/", "/#about", "/#projects", "/#activities", "/#contact"]) {
     const html = render(path)
-    const menu = html.match(/<nav[^>]+aria-label="Tmux windows"[\s\S]*?<\/nav>/)?.[0]
-    assert.ok(menu, `A tmux window bar is present at ${path}`)
-    for (const label of ["Home", "About", "Projects", "Experience &amp; clubs", "Contact"]) {
+    const menu = html.match(/<nav[^>]+aria-label="Portfolio navigation"[\s\S]*?<\/nav>/)?.[0]
+    assert.ok(menu, `A portfolio navigation menu is present at ${path}`)
+    for (const label of ["About", "Projects", "Experience &amp; clubs", "Contact"]) {
       assert.match(menu, new RegExp(`aria-label="${label}"`))
     }
     assert.doesNotMatch(menu, /ls -la|whoami|git log|ping aaser|cd ~|drwx|lrwx/)
@@ -248,12 +249,14 @@ test("neofetch shows all profile facts together without a disclosure or Learning
   assert.doesNotMatch(html, /<dt>Learning<\/dt>|Backend Development/)
 })
 
-test("unified docked interactive shell renders cleanly across views without ./menu.sh or Navigate buttons", () => {
-  for (const path of ["/", "/#about", "/#projects", "/#activities", "/#contact"]) {
-    const html = render(path)
-    assert.match(html, /aria-label="Interactive terminal shell"/)
-    assert.doesNotMatch(html, /\.\/menu\.sh|navigation-jump|aria-label="Portfolio navigation"/)
-  }
+test("the menu is a queued script command following neofetch alongside the inline shell", () => {
+  const html = render("/")
+  assert.ok(html.indexOf("neofetch") < html.indexOf("./menu.sh"))
+  assert.match(html, /terminal-menu terminal-run terminal-run--queued/)
+  const menu = html.match(/<nav[^>]+aria-label="Portfolio navigation"[^>]*>/)?.[0]
+  assert.match(menu, /inert=""/)
+  assert.match(html, /class="container session-navigation"[\s\S]*aria-label="Interactive terminal shell"/)
+  assert.doesNotMatch(html, /navigation-jump/)
 })
 
 test("TerminalArt defaults to --lattice with --giza and --donut switchable", () => {

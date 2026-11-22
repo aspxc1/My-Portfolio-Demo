@@ -18,7 +18,7 @@ const startProject = projects.find((project) => project.featured) || projects[0]
  * preserving list/grid controls at >=6 projects and category filters when multiple categories exist.
  * Strictly respects empty projects.json without auto-populating.
  */
-export default function Projects() {
+export default function Projects({ onReady }) {
   const browsing = useContext(ProjectBrowsing)
   const navigate = useNavigate()
   const local = useState({ view: "list", category: "all" })
@@ -52,7 +52,7 @@ export default function Projects() {
   }
 
   return (
-    <TerminalSection section={section}>
+    <TerminalSection section={section} onReady={onReady}>
       {projects.length === 0 ? (
         <div className="projects__empty-frame tui-frame">
           <span className="tui-frame__legend" aria-hidden="true">yazi · ~/projects</span>

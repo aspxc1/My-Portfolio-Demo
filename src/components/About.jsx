@@ -19,7 +19,7 @@ function AboutCommand({ command, run, children }) {
   )
 }
 
-export default function About() {
+export default function About({ onReady }) {
   const [skipped, setSkipped] = useState(false)
   const skipButton = useRef(null)
   const heading = useTerminalRun(section.command, { immediate: skipped })
@@ -36,7 +36,10 @@ export default function About() {
   }, [heading.ref])
 
   useEffect(() => {
-    if (monitor.finished) return
+    if (monitor.finished) {
+      onReady?.()
+      return
+    }
     function onKeyDown(event) {
       if (event.key === "Escape" && !event.defaultPrevented && !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey
         && !heading.ref.current?.closest("[inert]")) {
@@ -46,7 +49,7 @@ export default function About() {
     }
     document.addEventListener("keydown", onKeyDown)
     return () => document.removeEventListener("keydown", onKeyDown)
-  }, [heading.ref, monitor.finished, skipPlayback])
+  }, [heading.ref, monitor.finished, onReady, skipPlayback])
 
   return (
     <section id={section.id} className="terminal-section" aria-labelledby={`${section.id}-title`}>

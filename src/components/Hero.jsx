@@ -1,4 +1,4 @@
-import { useContext } from "react"
+import { useContext, useEffect } from "react"
 import useTerminalRun from "../lib/useTerminalRun.js"
 import { DEFAULT_THEME } from "../lib/terminalTheme.js"
 import { hero, profile } from "../content/site.js"
@@ -10,11 +10,15 @@ import "./Hero.css"
 
 const contacts = [{ label: "Email", icon: "email", href: `mailto:${profile.email}` }, ...profile.links]
 
-export default function Hero() {
+export default function Hero({ onReady }) {
   const run = useTerminalRun("neofetch")
   const theme = useContext(TerminalTheme)
   const accents = theme?.accents || DEFAULT_THEME.accents
   const activeAccent = theme?.accent || accents[0].id
+
+  useEffect(() => {
+    if (run.finished) onReady?.()
+  }, [run.finished, onReady])
 
   return (
     <section aria-labelledby="hero-title" className="container hero">

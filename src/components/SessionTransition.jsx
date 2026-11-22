@@ -158,15 +158,6 @@ export default function SessionTransition({ children }) {
           return
         }
         disarmPrefix()
-        return
-      }
-
-      if (!palette?.isOpen && !event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey && /^[0-4]$/.test(event.key)) {
-        const target = event.target instanceof Element ? event.target : null
-        if (!target?.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="textbox"], [role="dialog"], [data-keyboard-scope]')) {
-          event.preventDefault()
-          navigate(windowRoutes[Number(event.key)])
-        }
       }
     }
 
@@ -399,15 +390,6 @@ export default function SessionTransition({ children }) {
             />
           ) : null}
         </div>
-
-        {!isSplit && !showStartup ? (
-          <TerminalShell
-            path={workspace?.shellCwd || task.path}
-            mode="dock"
-            active={activePane === "shell"}
-            onActivate={() => workspace?.setActivePane("shell")}
-          />
-        ) : null}
 
         <TerminalStatusBar location={displayed} prefixArmed={prefixArmed} />
       </div>

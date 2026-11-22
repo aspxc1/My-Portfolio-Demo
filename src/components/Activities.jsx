@@ -18,9 +18,9 @@ function shortHash(seed) {
  * Experience & clubs rendered as `git log --graph --decorate`.
  * Strictly respects empty activities.json without auto-populating.
  */
-export default function Activities() {
+export default function Activities({ onReady }) {
   return (
-    <TerminalSection section={section} roomy>
+    <TerminalSection section={section} roomy onReady={onReady}>
       {activities.length === 0 ? (
         <div className="activities__empty-frame tui-frame">
           <span className="tui-frame__legend" aria-hidden="true">git · main</span>

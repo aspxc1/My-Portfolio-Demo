@@ -21,6 +21,25 @@ test("shell navigation, tmux split, and theme commands return structured side-ef
 
   const cleared = executeShellCommand("clear")
   assert.equal(cleared.clear, true)
+
+  const direct = executeShellCommand("about")
+  assert.equal(direct.navigate, "/#about")
+  assert.equal(direct.setCwd, "~/about")
+
+  const nextFromHome = executeShellCommand("next", { currentPath: "~" })
+  assert.equal(nextFromHome.navigate, "/#about")
+  assert.equal(nextFromHome.setCwd, "~/about")
+
+  const nextFromAbout = executeShellCommand("next", { currentPath: "~/about" })
+  assert.equal(nextFromAbout.navigate, "/#projects")
+
+  const prevFromAbout = executeShellCommand("prev", { currentPath: "~/about" })
+  assert.equal(prevFromAbout.navigate, "/")
+  assert.equal(prevFromAbout.setCwd, "~")
+
+  const byIndex = executeShellCommand("4")
+  assert.equal(byIndex.navigate, "/#contact")
+  assert.equal(byIndex.setCwd, "~/contact")
 })
 
 test("virtual filesystem resolves relative paths, reads files, renders man page, and refuses sudo", () => {

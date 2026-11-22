@@ -22,7 +22,6 @@
 
 .session__topbar,
 .session__workspace,
-.terminal-shell--dock,
 .tmux-bar {
   position: relative;
   z-index: 1;
@@ -131,7 +130,6 @@
 
 .terminal-home {
   display: flex;
-  flex: 1;
   flex-direction: column;
 }
 
