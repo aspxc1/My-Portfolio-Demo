@@ -256,6 +256,13 @@ test("unified docked interactive shell renders cleanly across views without ./me
   }
 })
 
+test("TerminalArt defaults to --lattice with --giza and --donut switchable", () => {
+  const html = render("/")
+  assert.match(html, /class="terminal-art__mode" aria-pressed="true">--lattice<\/button>/)
+  assert.match(html, /class="terminal-art__mode" aria-pressed="false">--giza<\/button>/)
+  assert.match(html, /class="terminal-art__mode" aria-pressed="false">--donut<\/button>/)
+})
+
 test("project context and overview precede the optional gallery, with clear return actions", () => {
   const html = render("/projects/with-images")
   for (const text of ["The problem to solve.", "My specific contribution.", "The measured outcome.", "Project overview."]) {

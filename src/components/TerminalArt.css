@@ -32,7 +32,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 0.25rem;
+  gap: 0.45rem;
   font-family: var(--font-mono);
   font-size: 0.6875rem;
 }
@@ -40,12 +40,11 @@
 .terminal-art__mode,
 .terminal-art__pause {
   min-height: 1.65rem;
-  padding: 0.1rem 0.45rem;
-  border: 1px solid transparent;
+  padding: 0.1rem 0.35rem;
   border-radius: var(--radius);
   color: var(--muted-foreground);
   cursor: pointer;
-  transition: color 120ms ease, border-color 120ms ease, background-color 120ms ease;
+  transition: color 120ms ease, background-color 120ms ease;
 }
 
 .terminal-art__mode:hover,
@@ -55,13 +54,14 @@
 }
 
 .terminal-art__mode[aria-pressed="true"] {
-  border-color: var(--border);
-  background: var(--surface);
   color: var(--primary);
+  text-decoration: underline;
+  text-decoration-thickness: 1.5px;
+  text-underline-offset: 4px;
 }
 
 .terminal-art__pause {
-  margin-left: 0.15rem;
+  margin-left: 0.1rem;
 }
 
 @media (prefers-reduced-motion: reduce) {
