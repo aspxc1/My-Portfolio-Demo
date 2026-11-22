@@ -1,6 +1,6 @@
 .section-heading {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr);
   gap: 0.5rem 0.75rem;
   align-items: center;
 }
@@ -33,11 +33,6 @@
   line-height: 1.45;
   font-weight: 700;
   letter-spacing: -0.015em;
-}
-
-.section-heading > .navigation-jump {
-  grid-column: 2;
-  grid-row: 1;
 }
 
 @media (min-width: 768px) {

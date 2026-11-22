@@ -1,13 +1,12 @@
 import TerminalCommand from "./TerminalCommand.jsx"
-import NavigationJump from "./NavigationJump.jsx"
 import "./SectionHeading.css"
 
 /**
  * The heading at the top of each section:
- *   ~/about ------------------------------ [Navigate ↓]
+ *   ~/about --------------------------------
  *   % whoami
  */
-export default function SectionHeading({ path, command, id, onNavigate }) {
+export default function SectionHeading({ path, command, id }) {
   return (
     <header className="section-heading">
       <div className="section-heading__path">
@@ -17,7 +16,6 @@ export default function SectionHeading({ path, command, id, onNavigate }) {
       <h1 id={id} className="section-heading__title">
         <TerminalCommand command={command} />
       </h1>
-      {onNavigate ? <NavigationJump onClick={onNavigate} /> : null}
     </header>
   )
 }

@@ -1,13 +1,9 @@
 import useTerminalRun from "../lib/useTerminalRun.js"
-import { useEffect } from "react"
 import SectionHeading from "./SectionHeading.jsx"
 import "./TerminalSection.css"
 
-export default function TerminalSection({ section, roomy = false, onReady, onNavigate, children }) {
+export default function TerminalSection({ section, roomy = false, children }) {
   const run = useTerminalRun(section.command)
-  useEffect(() => {
-    if (run.finished) onReady?.()
-  }, [run.finished, onReady])
 
   return (
     <section
@@ -18,7 +14,7 @@ export default function TerminalSection({ section, roomy = false, onReady, onNav
       style={run.style}
     >
       <div className={`container section-inner${roomy ? " section-inner--roomy" : ""}`}>
-        <SectionHeading path={section.path} command={section.command} id={`${section.id}-title`} onNavigate={onNavigate} />
+        <SectionHeading path={section.path} command={section.command} id={`${section.id}-title`} />
         <div className="terminal-section__output" inert={!run.finished}>
           {children}
         </div>

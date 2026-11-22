@@ -56,7 +56,7 @@ test("normal-motion browser arrival boots only Home, before mounting its command
       assert.match(html, /aria-label="Terminal startup"/)
       assert.match(html, /Skip startup/)
       assert.match(html, /<title>Aaser Mohamed \| CE Student<\/title>/)
-      assert.doesNotMatch(html, /id="hero-title"|terminal-run--typing|\.\/menu\.sh/)
+      assert.doesNotMatch(html, /id="hero-title"|terminal-run--typing|\.\/menu\.sh|aria-label="Interactive terminal shell"/)
     }
     for (const path of ["/#about", "/#projects", "/#contact", "/projects/with-images", "/missing"]) {
       assert.doesNotMatch(render(path), /aria-label="Terminal startup"/)
@@ -111,7 +111,7 @@ test("a section deep link renders only that section with named destinations to n
     for (const other of ["about", "projects", "activities", "contact"].filter((other) => other !== id)) {
       assert.doesNotMatch(html, new RegExp(`id="${other}"`))
     }
-    assert.match(html, /aria-label="Portfolio navigation"/)
+    assert.match(html, /aria-label="Tmux windows"/)
     assert.match(html, /aria-label="Home"/)
   }
 })
@@ -153,12 +153,12 @@ test("404 renders the actual requested pathname with a fuzzy route suggestion", 
   assert.match(html, /~\/projects/)
 })
 
-test("home and section menus name destinations clearly without shell commands or file permissions", () => {
+test("tmux window bar names destinations clearly without shell commands or file permissions", () => {
   for (const path of ["/", "/#about", "/#projects", "/#activities", "/#contact"]) {
     const html = render(path)
-    const menu = html.match(/<nav[^>]+aria-label="Portfolio navigation"[\s\S]*?<\/nav>/)?.[0]
-    assert.ok(menu, `A portfolio navigation menu is present at ${path}`)
-    for (const label of ["About", "Projects", "Experience &amp; clubs", "Contact"]) {
+    const menu = html.match(/<nav[^>]+aria-label="Tmux windows"[\s\S]*?<\/nav>/)?.[0]
+    assert.ok(menu, `A tmux window bar is present at ${path}`)
+    for (const label of ["Home", "About", "Projects", "Experience &amp; clubs", "Contact"]) {
       assert.match(menu, new RegExp(`aria-label="${label}"`))
     }
     assert.doesNotMatch(menu, /ls -la|whoami|git log|ping aaser|cd ~|drwx|lrwx/)
@@ -248,12 +248,12 @@ test("neofetch shows all profile facts together without a disclosure or Learning
   assert.doesNotMatch(html, /<dt>Learning<\/dt>|Backend Development/)
 })
 
-test("the menu is a queued script command following neofetch", () => {
-  const html = render("/")
-  assert.ok(html.indexOf("neofetch") < html.indexOf("./menu.sh"))
-  assert.match(html, /terminal-menu terminal-run terminal-run--queued/)
-  const menu = html.match(/<nav[^>]+aria-label="Portfolio navigation"[^>]*>/)?.[0]
-  assert.match(menu, /inert=""/)
+test("unified docked interactive shell renders cleanly across views without ./menu.sh or Navigate buttons", () => {
+  for (const path of ["/", "/#about", "/#projects", "/#activities", "/#contact"]) {
+    const html = render(path)
+    assert.match(html, /aria-label="Interactive terminal shell"/)
+    assert.doesNotMatch(html, /\.\/menu\.sh|navigation-jump|aria-label="Portfolio navigation"/)
+  }
 })
 
 test("project context and overview precede the optional gallery, with clear return actions", () => {
@@ -283,13 +283,6 @@ test("project neighbours never link to the same project or duplicate the only ot
   assert.deepEqual(getProjectNeighbours([a, b], b.slug), { prev: null, next: a })
   assert.deepEqual(getProjectNeighbours([a, b, c], a.slug), { prev: c, next: b })
   assert.deepEqual(getProjectNeighbours([a, b, c], "missing"), { prev: null, next: null })
-})
-
-test("the heading navigation control follows the routed h1 in keyboard order", () => {
-  for (const path of ["/", "/#about", "/#projects", "/#activities", "/#contact"]) {
-    const html = render(path)
-    assert.ok(html.indexOf('class="navigation-jump"') > html.indexOf("</h1>"), `Tab after the heading reaches Navigate at ${path}`)
-  }
 })
 
 test("terminal command typing and startup expose resolved CSS timing properties", () => {

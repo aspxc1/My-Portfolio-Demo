@@ -45,7 +45,7 @@ function getCairoClock() {
   }
 }
 
-export default function Contact({ onReady, onNavigate }) {
+export default function Contact() {
   const [copyStatus, setCopyStatus] = useState("")
   const [cairoClock, setCairoClock] = useState("")
   const [localAvailability, setLocalAvailability] = useState({})
@@ -132,7 +132,7 @@ export default function Contact({ onReady, onNavigate }) {
   const reachableCount = baseReplies.filter((r, idx) => idx < probedCount && (!r.localFile || localAvailability[r.href] !== "missing")).length
 
   return (
-    <TerminalSection section={section} roomy onReady={onReady} onNavigate={onNavigate}>
+    <TerminalSection section={section} roomy>
       <div className="contact__columns">
         <div className="contact__intro">
           <p className="contact__availability">

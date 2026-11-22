@@ -19,7 +19,7 @@ function AboutCommand({ command, run, children }) {
   )
 }
 
-export default function About({ onReady, onNavigate }) {
+export default function About() {
   const [skipped, setSkipped] = useState(false)
   const skipButton = useRef(null)
   const heading = useTerminalRun(section.command, { immediate: skipped })
@@ -36,10 +36,7 @@ export default function About({ onReady, onNavigate }) {
   }, [heading.ref])
 
   useEffect(() => {
-    if (monitor.finished) {
-      onReady?.()
-      return
-    }
+    if (monitor.finished) return
     function onKeyDown(event) {
       if (event.key === "Escape" && !event.defaultPrevented && !event.altKey && !event.ctrlKey && !event.metaKey && !event.shiftKey
         && !heading.ref.current?.closest("[inert]")) {
@@ -49,13 +46,13 @@ export default function About({ onReady, onNavigate }) {
     }
     document.addEventListener("keydown", onKeyDown)
     return () => document.removeEventListener("keydown", onKeyDown)
-  }, [heading.ref, monitor.finished, onReady, skipPlayback])
+  }, [heading.ref, monitor.finished, skipPlayback])
 
   return (
     <section id={section.id} className="terminal-section" aria-labelledby={`${section.id}-title`}>
       <div className="container section-inner section-inner--roomy">
         <div ref={heading.ref} className={`terminal-run terminal-run--${heading.stage}`} style={heading.style}>
-          <SectionHeading path={section.path} command={section.command} id={`${section.id}-title`} onNavigate={onNavigate} />
+          <SectionHeading path={section.path} command={section.command} id={`${section.id}-title`} />
           <p className="about__whoami">
             <span className="about__whoami-handle">{profile.handle}</span>
             <span aria-hidden="true" className="about__whoami-sep"> — </span>

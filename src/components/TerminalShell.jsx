@@ -19,7 +19,7 @@ function isTypingContext(target) {
  * - Dock mode: razor-thin single prompt bar at bottom (expands smoothly once commands run)
  * - Split mode: full resizable tmux terminal pane with Ctrl+R reverse search, Ctrl+C, Ctrl+L, Tab completion
  */
-export default function TerminalShell({ path = "~", mode = "dock", active = false, zoomed = false, onActivate, onOpenPalette }) {
+export default function TerminalShell({ path = "~", mode = "dock", active = false, zoomed = false, onActivate }) {
   const appearance = useContext(TerminalTheme)
   const workspace = useContext(WorkspaceControl)
   const navigate = useNavigate()
@@ -376,11 +376,6 @@ export default function TerminalShell({ path = "~", mode = "dock", active = fals
         {!isSplit ? (
           <span aria-hidden="true" className="terminal-shell__key-hints">
             <kbd className="tui-kbd">/</kbd>
-            {onOpenPalette ? (
-              <button type="button" className="terminal-shell__pane-btn" onClick={onOpenPalette}>
-                fzf
-              </button>
-            ) : null}
           </span>
         ) : null}
       </form>

@@ -1,25 +1,20 @@
-import { useContext, useEffect } from "react"
+import { useContext } from "react"
 import useTerminalRun from "../lib/useTerminalRun.js"
 import { DEFAULT_THEME } from "../lib/terminalTheme.js"
 import { hero, profile } from "../content/site.js"
 import { TerminalTheme } from "./PortfolioSession.jsx"
 import TerminalArt from "./TerminalArt.jsx"
 import TerminalCommand from "./TerminalCommand.jsx"
-import NavigationJump from "./NavigationJump.jsx"
 import ContactIcon from "./ContactIcon.jsx"
 import "./Hero.css"
 
 const contacts = [{ label: "Email", icon: "email", href: `mailto:${profile.email}` }, ...profile.links]
 
-export default function Hero({ onReady, onNavigate }) {
+export default function Hero() {
   const run = useTerminalRun("neofetch")
   const theme = useContext(TerminalTheme)
   const accents = theme?.accents || DEFAULT_THEME.accents
   const activeAccent = theme?.accent || accents[0].id
-
-  useEffect(() => {
-    if (run.finished) onReady?.()
-  }, [run.finished, onReady])
 
   return (
     <section aria-labelledby="hero-title" className="container hero">
@@ -38,7 +33,6 @@ export default function Hero({ onReady, onNavigate }) {
             <h1 id="hero-title" className="hero__name">{profile.name}</h1>
             <span aria-hidden="true" className="hero__divider" />
           </div>
-          <NavigationJump onClick={onNavigate} />
 
           <div className="hero__art">
             <TerminalArt active={run.inView && run.finished} />

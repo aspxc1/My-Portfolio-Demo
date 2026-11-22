@@ -158,6 +158,15 @@ export default function SessionTransition({ children }) {
           return
         }
         disarmPrefix()
+        return
+      }
+
+      if (!palette?.isOpen && !event.ctrlKey && !event.metaKey && !event.altKey && !event.shiftKey && /^[0-4]$/.test(event.key)) {
+        const target = event.target instanceof Element ? event.target : null
+        if (!target?.closest('input, textarea, select, [contenteditable]:not([contenteditable="false"]), [role="textbox"], [role="dialog"], [data-keyboard-scope]')) {
+          event.preventDefault()
+          navigate(windowRoutes[Number(event.key)])
+        }
       }
     }
 
@@ -281,6 +290,7 @@ export default function SessionTransition({ children }) {
     }
   }
 
+  const showStartup = starting && !reducedMotion
   const isSplit = splitMode !== "dock"
   const splitStyle = isSplit ? { "--split-primary": `${(splitRatio * 100).toFixed(2)}%` } : undefined
   const hideMain = zoomed && isSplit && activePane === "shell"
@@ -358,7 +368,7 @@ export default function SessionTransition({ children }) {
                 if (event.target === event.currentTarget && phase === "entering") setPhase("idle")
               }}
             >
-              {starting && !reducedMotion
+              {showStartup
                 ? <TerminalStartup onComplete={finishStartup} />
                 : children(displayed)}
             </div>
@@ -386,10 +396,18 @@ export default function SessionTransition({ children }) {
               active={isSplit && activePane === "shell"}
               zoomed={zoomed}
               onActivate={() => workspace?.setActivePane("shell")}
-              onOpenPalette={palette?.open}
             />
           ) : null}
         </div>
+
+        {!isSplit && !showStartup ? (
+          <TerminalShell
+            path={workspace?.shellCwd || task.path}
+            mode="dock"
+            active={activePane === "shell"}
+            onActivate={() => workspace?.setActivePane("shell")}
+          />
+        ) : null}
 
         <TerminalStatusBar location={displayed} prefixArmed={prefixArmed} />
       </div>
