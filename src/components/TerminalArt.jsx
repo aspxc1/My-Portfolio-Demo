@@ -435,6 +435,7 @@ export default function TerminalArt({ active }) {
     themeObserver.observe(document.documentElement, { attributes: true, attributeFilter: ["data-theme", "data-accent"] })
 
     let resizeObserver = null
+    let resizeRafId = 0
     const onWindowResize = () => {
       if (syncSize(canvas.clientWidth, canvas.clientHeight)) drawFrame()
     }
@@ -442,7 +443,12 @@ export default function TerminalArt({ active }) {
       resizeObserver = new ResizeObserver((entries) => {
         const entry = entries[entries.length - 1]
         if (!entry) return
-        if (syncSize(entry.contentRect.width, entry.contentRect.height)) drawFrame()
+        const { width, height } = entry.contentRect
+        if (resizeRafId) window.cancelAnimationFrame(resizeRafId)
+        resizeRafId = window.requestAnimationFrame(() => {
+          resizeRafId = 0
+          if (syncSize(width, height)) drawFrame()
+        })
       })
       resizeObserver.observe(canvas)
     } else {
@@ -454,6 +460,7 @@ export default function TerminalArt({ active }) {
     if (!active || paused) {
       return () => {
         drawRef.current = null
+        if (resizeRafId) window.cancelAnimationFrame(resizeRafId)
         themeObserver.disconnect()
         if (resizeObserver) resizeObserver.disconnect()
         else window.removeEventListener("resize", onWindowResize)
@@ -485,6 +492,7 @@ export default function TerminalArt({ active }) {
     rafId = window.requestAnimationFrame(step)
     return () => {
       drawRef.current = null
+      if (resizeRafId) window.cancelAnimationFrame(resizeRafId)
       window.cancelAnimationFrame(rafId)
       themeObserver.disconnect()
       if (resizeObserver) resizeObserver.disconnect()
