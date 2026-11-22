@@ -2,6 +2,7 @@ import { useContext, useId, useLayoutEffect, useRef, useState } from "react"
 import { Link } from "react-router"
 import { profile } from "../content/site.js"
 import { SURFACES, THEMES, getSessionTask } from "../lib/terminalTheme.js"
+import { scrollElementInstant } from "../lib/scrollInstant.js"
 import { TerminalTheme } from "./PortfolioSession.jsx"
 import "./TerminalStatusBar.css"
 
@@ -21,7 +22,7 @@ export default function TerminalStatusBar({ location, prefixArmed = false }) {
   const task = getSessionTask(location)
 
   useLayoutEffect(() => {
-    if (open) footer.current?.scrollIntoView({ block: "nearest", behavior: "instant" })
+    if (open) scrollElementInstant(footer.current, "nearest")
   }, [open])
 
   return (

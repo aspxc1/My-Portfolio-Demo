@@ -11,7 +11,7 @@ export default function useTerminalRun(command, { enabled = true, immediate = fa
   const completedCommand = useRef(null)
   const reducedMotion = useReducedMotion()
   const [stage, setStage] = useState("waiting")
-  const [inView, setInView] = useState(false)
+  const [inView, setInView] = useState(true)
   const [pageVisible, setPageVisible] = useState(true)
   const { start, type: duration, submit } = getRunTiming(command, replay)
 
@@ -45,7 +45,7 @@ export default function useTerminalRun(command, { enabled = true, immediate = fa
     const updateVisibility = () => setPageVisible(document.visibilityState !== "hidden")
     updateVisibility()
     document.addEventListener("visibilitychange", updateVisibility)
-    if (typeof IntersectionObserver === "undefined") {
+    if (typeof IntersectionObserver === "undefined" || !ref.current) {
       setInView(true)
       return () => document.removeEventListener("visibilitychange", updateVisibility)
     }
@@ -60,6 +60,7 @@ export default function useTerminalRun(command, { enabled = true, immediate = fa
   }, [])
 
   const finished = enabled && (immediate || reducedMotion || stage === "output")
+  const steps = Math.max(1, command.length)
   return {
     ref,
     inView: inView && pageVisible && !reducedMotion,
@@ -67,8 +68,9 @@ export default function useTerminalRun(command, { enabled = true, immediate = fa
     stage: !enabled ? "queued" : finished ? "output" : stage,
     style: {
       "--command-width": `${command.length}ch`,
-      "--command-steps": command.length,
-      "--type-duration": `${duration}ms`,
+      "--command-steps": steps,
+      "--type-duration": `${Math.max(1, duration)}ms`,
+      "--type-timing": `steps(${steps}, end)`,
     },
   }
 }

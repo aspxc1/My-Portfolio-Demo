@@ -2,6 +2,7 @@
   display: inline-flex;
   align-items: baseline;
   vertical-align: bottom;
+  padding-right: 0.8ch;
   letter-spacing: 0;
 }
 
@@ -10,23 +11,55 @@
   color: var(--terminal-prompt-color, var(--terminal-blue));
 }
 
+.terminal-command__field {
+  position: relative;
+  display: inline-flex;
+  align-items: baseline;
+}
+
 .terminal-command__text {
   display: inline-block;
-  width: 0;
-  overflow: hidden;
   white-space: nowrap;
+  -webkit-clip-path: inset(0% 100% 0% 0%);
+  clip-path: inset(0% 100% 0% 0%);
 }
 
 .terminal-run--typing .terminal-command__text {
-  width: var(--command-width);
-  transition: width var(--type-duration) steps(var(--command-steps), end);
+  animation-name: terminal-type-reveal;
+  animation-duration: var(--type-duration, 320ms);
+  animation-timing-function: var(--type-timing, steps(8, end));
+  animation-fill-mode: both;
+  will-change: clip-path;
 }
 
 .terminal-run--output .terminal-command__text {
-  width: auto;
+  -webkit-clip-path: none;
+  clip-path: none;
+  animation: none;
+  will-change: auto;
+}
+
+.terminal-command__caret-track {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+  transform: translate3d(-100%, 0, 0);
+}
+
+.terminal-run--typing .terminal-command__caret-track {
+  animation-name: terminal-caret-slide;
+  animation-duration: var(--type-duration, 320ms);
+  animation-timing-function: var(--type-timing, steps(8, end));
+  animation-fill-mode: both;
+  will-change: transform;
 }
 
 .terminal-command .terminal-command__caret {
+  position: absolute;
+  left: calc(100% + 0.15ch);
+  margin-left: 0;
   display: none;
   animation: none;
 }
@@ -34,13 +67,40 @@
 .terminal-run--waiting .terminal-command__caret,
 .terminal-run--typing .terminal-command__caret {
   display: inline-block;
-  animation: blink 1s steps(1) infinite;
+  animation: blink 1s steps(1, end) infinite;
+}
+
+@keyframes terminal-type-reveal {
+  from {
+    -webkit-clip-path: inset(0% 100% 0% 0%);
+    clip-path: inset(0% 100% 0% 0%);
+  }
+  to {
+    -webkit-clip-path: inset(0% 0% 0% 0%);
+    clip-path: inset(0% 0% 0% 0%);
+  }
+}
+
+@keyframes terminal-caret-slide {
+  from {
+    transform: translate3d(-100%, 0, 0);
+  }
+  to {
+    transform: translate3d(0%, 0, 0);
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {
   .terminal-run .terminal-command__text {
-    width: auto;
-    transition: none;
+    -webkit-clip-path: none;
+    clip-path: none;
+    animation: none;
+    will-change: auto;
+  }
+  .terminal-run .terminal-command__caret-track {
+    transform: none;
+    animation: none;
+    will-change: auto;
   }
   .terminal-run--waiting .terminal-command__caret,
   .terminal-run--typing .terminal-command__caret {

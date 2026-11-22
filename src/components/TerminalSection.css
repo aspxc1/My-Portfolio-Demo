@@ -14,7 +14,7 @@
 .terminal-run--output .terminal-section__output {
   visibility: visible;
   opacity: 1;
-  transition: opacity 180ms ease-out;
+  animation: terminal-fade-in 180ms ease-out both;
 }
 
 /* Keep the longest command on one line even on a narrow phone. */
@@ -25,9 +25,11 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .terminal-section__output {
+  .terminal-section__output,
+  .terminal-run--output .terminal-section__output {
     visibility: visible;
     opacity: 1;
+    animation: none;
     transition: none;
   }
 }

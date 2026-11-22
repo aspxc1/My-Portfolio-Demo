@@ -270,7 +270,7 @@ img, svg {
   height: 1.05em;
   margin-left: 0.15ch;
   background: var(--primary);
-  animation: blink 1s steps(1) infinite;
+  animation: blink 1s steps(1, end) infinite;
 }
 
 :focus-visible {
@@ -279,8 +279,31 @@ img, svg {
 }
 
 @keyframes blink {
-  50% {
+  0%, 49.9% {
+    opacity: 1;
+  }
+  50%, 100% {
     opacity: 0;
+  }
+}
+
+@keyframes terminal-fade-in {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes terminal-fade-rise {
+  from {
+    opacity: 0;
+    transform: translate3d(0, 4px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate3d(0, 0, 0);
   }
 }
 

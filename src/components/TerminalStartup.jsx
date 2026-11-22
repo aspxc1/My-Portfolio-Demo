@@ -23,7 +23,14 @@ export default function TerminalStartup({ onComplete }) {
   }, [onComplete])
 
   return (
-    <main className="terminal-startup container" aria-label="Terminal startup" style={{ "--startup-duration": `${startupDuration}ms` }}>
+    <main
+      className="terminal-startup container"
+      aria-label="Terminal startup"
+      style={{
+        "--startup-duration": `${startupDuration}ms`,
+        "--startup-clear-delay": `${startupDuration - 180}ms`,
+      }}
+    >
       <title>{site.title}</title>
       <meta name="description" content={site.description} />
       <p role="status" className="sr-only">Starting the portfolio terminal. Press Escape to skip.</p>

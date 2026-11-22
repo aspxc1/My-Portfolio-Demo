@@ -1,6 +1,7 @@
 import { useCallback, useContext, useEffect, useLayoutEffect, useRef, useState } from "react"
 import { useLocation, useNavigate } from "react-router"
 import { profile } from "../content/site.js"
+import { scrollWindowTopInstant } from "../lib/scrollInstant.js"
 import { DEFAULT_THEME, getSessionTask } from "../lib/terminalTheme.js"
 import useReducedMotion from "../lib/useReducedMotion.js"
 import { PaletteControl, TerminalTheme, WorkspaceControl } from "./PortfolioSession.jsx"
@@ -196,13 +197,19 @@ export default function SessionTransition({ children }) {
     return () => window.clearTimeout(timer)
   }, [requested, reducedMotion])
 
+  useEffect(() => {
+    if (phase !== "entering") return undefined
+    const fallback = window.setTimeout(() => setPhase("idle"), 340)
+    return () => window.clearTimeout(fallback)
+  }, [phase])
+
   useLayoutEffect(() => {
     if (firstRender.current) {
       firstRender.current = false
       return
     }
     if (screenRef.current) screenRef.current.scrollTop = 0
-    window.scrollTo({ top: 0, left: 0, behavior: "instant" })
+    scrollWindowTopInstant()
     const heading = screenRef.current?.querySelector("h1, h2")
     const target = heading && getComputedStyle(heading).visibility !== "hidden"
       ? heading

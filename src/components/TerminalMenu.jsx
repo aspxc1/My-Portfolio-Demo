@@ -2,6 +2,7 @@ import { useCallback, useEffect, useRef, useState } from "react"
 import { Link } from "react-router"
 import { sections } from "../content/site.js"
 import { getMenuKeyAction } from "../lib/menuKeyboard.js"
+import { scrollElementInstant } from "../lib/scrollInstant.js"
 import useTerminalRun from "../lib/useTerminalRun.js"
 import TerminalCommand from "./TerminalCommand.jsx"
 import "./TerminalMenu.css"
@@ -32,7 +33,7 @@ export default function TerminalMenu({ current, enabled = true, request = 0 }) {
     if (!request || !run.finished) return
     const link = menuRef.current?.querySelectorAll("a")[selectedRef.current]
     link?.focus({ preventScroll: true })
-    menuRef.current?.scrollIntoView({ block: "center", behavior: "instant" })
+    scrollElementInstant(menuRef.current, "center")
   }, [request, run.finished])
 
   useEffect(() => {

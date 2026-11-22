@@ -291,3 +291,18 @@ test("the heading navigation control follows the routed h1 in keyboard order", (
     assert.ok(html.indexOf('class="navigation-jump"') > html.indexOf("</h1>"), `Tab after the heading reaches Navigate at ${path}`)
   }
 })
+
+test("terminal command typing and startup expose resolved CSS timing properties", () => {
+  const heroHtml = render("/")
+  assert.match(heroHtml, /--type-timing:steps\(8, end\)/)
+  assert.match(heroHtml, /terminal-command__caret-track/)
+
+  globalThis.window = { matchMedia: () => ({ matches: false }) }
+  try {
+    const startupHtml = render("/")
+    assert.match(startupHtml, /--startup-duration:1720ms/)
+    assert.match(startupHtml, /--startup-clear-delay:1540ms/)
+  } finally {
+    delete globalThis.window
+  }
+})

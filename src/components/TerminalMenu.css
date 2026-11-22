@@ -23,7 +23,7 @@
 .terminal-menu.terminal-run--output .terminal-menu__output {
   visibility: visible;
   opacity: 1;
-  transition: opacity 120ms ease-out;
+  animation: terminal-fade-in 140ms ease-out both;
 }
 
 .terminal-menu__heading {
@@ -112,5 +112,8 @@
 
 @media (prefers-reduced-motion: reduce) {
   .terminal-menu.terminal-run--output .terminal-menu__output,
-  .terminal-menu__option { transition: none; }
+  .terminal-menu__option {
+    animation: none;
+    transition: none;
+  }
 }

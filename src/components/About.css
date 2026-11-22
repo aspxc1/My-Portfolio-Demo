@@ -12,7 +12,7 @@
 .terminal-run--output > .about__whoami {
   visibility: visible;
   opacity: 1;
-  transition: opacity 160ms ease-out;
+  animation: terminal-fade-in 160ms ease-out both;
 }
 
 .about__whoami-handle {
@@ -32,7 +32,10 @@
 .about__run.terminal-run--queued { display: none; }
 .about__command { color: var(--foreground); font-size: 0.875rem; font-weight: 600; }
 .about__output { display: none; padding-top: 0.85rem; }
-.about__run.terminal-run--output > .about__output { display: block; }
+.about__run.terminal-run--output > .about__output {
+  display: block;
+  animation: terminal-fade-in 160ms ease-out both;
+}
 
 .about__stack {
   padding: 1.15rem 1.125rem 0.95rem;
@@ -127,7 +130,12 @@
 
 @media (prefers-reduced-motion: reduce) {
   .about__whoami,
+  .terminal-run--output > .about__whoami,
+  .about__run.terminal-run--output > .about__output,
   .about__stack-group li {
+    visibility: visible;
+    opacity: 1;
+    animation: none;
     transition: none;
   }
   .about__skip { display: none; }

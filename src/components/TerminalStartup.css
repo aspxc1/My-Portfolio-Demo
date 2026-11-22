@@ -8,12 +8,19 @@
 
 .terminal-startup__output {
   padding-top: 0.5rem;
-  animation: startup-clear 180ms cubic-bezier(0.4, 0, 1, 1) calc(var(--startup-duration) - 180ms) both;
+  animation-name: startup-clear;
+  animation-duration: 180ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 1, 1);
+  animation-delay: var(--startup-clear-delay, 1540ms);
+  animation-fill-mode: both;
 }
 
 .terminal-startup__line {
-  visibility: hidden;
-  animation: startup-line 1ms step-end both;
+  opacity: 0;
+  animation-name: startup-line;
+  animation-duration: 28ms;
+  animation-timing-function: ease-out;
+  animation-fill-mode: both;
   overflow-wrap: anywhere;
 }
 
@@ -40,13 +47,30 @@
 .terminal-startup__skip:hover { color: var(--primary); }
 .terminal-startup__skip kbd { font: inherit; color: var(--terminal-teal); }
 
-@keyframes startup-line { to { visibility: visible; } }
-@keyframes startup-clear { to { transform: translateY(-1.5rem); opacity: 0; } }
+@keyframes startup-line {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes startup-clear {
+  from {
+    transform: translate3d(0, 0, 0);
+    opacity: 1;
+  }
+  to {
+    transform: translate3d(0, -1.5rem, 0);
+    opacity: 0;
+  }
+}
 
 @media (min-width: 700px) {
   .terminal-startup { padding-top: 2.75rem; font-size: 0.875rem; }
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .terminal-startup__output, .terminal-startup__line { animation: none; visibility: visible; }
+  .terminal-startup__output, .terminal-startup__line {
+    animation: none;
+    opacity: 1;
+    transform: none;
+  }
 }
