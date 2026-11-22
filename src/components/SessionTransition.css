@@ -20,19 +20,9 @@
   background: var(--background);
 }
 
-/* Barely-perceptible matte grain for depth without textureless plastic flatness. */
-.session__window::before {
-  content: "";
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-  z-index: 0;
-  opacity: 0.018;
-  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.85' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='120' height='120' filter='url(%23n)' opacity='1'/%3E%3C/svg%3E");
-}
-
 .session__topbar,
 .session__workspace,
+.terminal-shell--dock,
 .tmux-bar {
   position: relative;
   z-index: 1;
@@ -79,19 +69,18 @@
 
 .session__topbar-curl {
   display: none;
-  padding: 0.0625rem 0.4rem;
-  border: 1px solid var(--border-subtle);
+  padding: 0.1rem 0.4rem;
   border-radius: 2px;
   color: var(--muted-foreground);
   font-size: 0.6875rem;
   cursor: pointer;
   white-space: nowrap;
-  transition: color 120ms ease, border-color 120ms ease;
+  transition: color 120ms ease, background-color 120ms ease;
 }
 
 .session__topbar-curl:hover {
   color: var(--primary);
-  border-color: var(--primary);
+  background: var(--surface);
 }
 
 .session__topbar-clock {
@@ -106,19 +95,18 @@
   align-items: center;
   gap: 0.375rem;
   padding: 0.125rem 0.45rem;
-  border: 1px solid var(--border);
   border-radius: 2px;
-  background: var(--surface);
-  color: var(--foreground);
+  background: transparent;
+  color: var(--muted-foreground);
   font: inherit;
   cursor: pointer;
   white-space: nowrap;
-  transition: border-color 120ms ease, color 120ms ease, background-color 120ms ease;
+  transition: color 120ms ease, background-color 120ms ease;
 }
 
 .session__topbar-btn:hover,
 .session__topbar-btn[aria-pressed="true"] {
-  border-color: var(--primary);
+  background: var(--surface);
   color: var(--primary);
 }
 

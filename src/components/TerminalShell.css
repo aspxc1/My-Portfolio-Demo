@@ -11,7 +11,9 @@
 }
 
 .terminal-shell--dock {
-  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+  border-top: 1px solid var(--border-subtle);
+  contain: layout style;
 }
 
 .terminal-shell--vertical,
@@ -22,6 +24,11 @@
 
 .terminal-shell--active {
   border-color: color-mix(in oklab, var(--primary) 55%, var(--border));
+}
+
+.terminal-shell--dock.terminal-shell--active {
+  border-color: transparent;
+  border-top-color: color-mix(in oklab, var(--primary) 55%, var(--border-subtle));
 }
 
 .terminal-shell__pane-bar {
@@ -57,18 +64,17 @@
 }
 
 .terminal-shell__pane-btn {
-  padding: 0.0625rem 0.4rem;
-  border: 1px solid var(--border-subtle);
+  padding: 0.1rem 0.4rem;
   border-radius: 2px;
   color: var(--muted-foreground);
   font-size: 0.6875rem;
   cursor: pointer;
-  transition: color 120ms ease, border-color 120ms ease;
+  transition: color 120ms ease, background-color 120ms ease;
 }
 
 .terminal-shell__pane-btn:hover {
   color: var(--primary);
-  border-color: var(--primary);
+  background: var(--surface);
 }
 
 .terminal-shell__welcome {

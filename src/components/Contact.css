@@ -36,9 +36,9 @@
 .contact__btn {
   min-height: 2.25rem;
   padding: 0.35rem 0.75rem;
-  border: 1px solid var(--border);
+  border: 1px solid var(--border-subtle);
   border-radius: var(--radius);
-  background: var(--surface);
+  background: var(--mantle);
   color: var(--foreground);
   font: 0.8125rem/1.4 var(--font-mono);
   cursor: pointer;
@@ -47,6 +47,7 @@
 
 .contact__btn:hover {
   border-color: var(--primary);
+  background: var(--surface);
   color: var(--primary);
 }
 

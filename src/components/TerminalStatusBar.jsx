@@ -1,4 +1,4 @@
-import { memo, useContext, useId, useLayoutEffect, useRef, useState } from "react"
+import { memo, useContext, useEffect, useId, useLayoutEffect, useRef, useState } from "react"
 import { Link } from "react-router"
 import { profile } from "../content/site.js"
 import { SURFACES, THEMES, getSessionTask } from "../lib/terminalTheme.js"
@@ -18,11 +18,34 @@ function TerminalStatusBar({ location, prefixArmed = false }) {
   const appearance = useContext(TerminalTheme)
   const [open, setOpen] = useState(false)
   const footer = useRef(null)
+  const controlRef = useRef(null)
   const panelId = useId()
   const task = getSessionTask(location)
 
   useLayoutEffect(() => {
     if (open) scrollElementInstant(footer.current, "nearest")
+  }, [open])
+
+  useEffect(() => {
+    if (!open) return undefined
+    function onPointerDown(event) {
+      if (footer.current && !footer.current.contains(event.target)) {
+        setOpen(false)
+      }
+    }
+    function onKeyDown(event) {
+      if (event.key === "Escape") {
+        event.preventDefault()
+        setOpen(false)
+        controlRef.current?.focus({ preventScroll: true })
+      }
+    }
+    document.addEventListener("pointerdown", onPointerDown)
+    document.addEventListener("keydown", onKeyDown)
+    return () => {
+      document.removeEventListener("pointerdown", onPointerDown)
+      document.removeEventListener("keydown", onKeyDown)
+    }
   }, [open])
 
   return (
@@ -52,6 +75,7 @@ function TerminalStatusBar({ location, prefixArmed = false }) {
       <div className="tmux-bar__right">
         {appearance ? (
           <button
+            ref={controlRef}
             type="button"
             className="tmux-bar__control"
             aria-expanded={open}

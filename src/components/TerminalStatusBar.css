@@ -1,5 +1,7 @@
 .tmux-bar {
+  position: relative;
   display: flex;
+  flex-shrink: 0;
   flex-wrap: wrap;
   align-items: center;
   justify-content: space-between;
@@ -10,6 +12,7 @@
   background: var(--mantle);
   font: 0.75rem/1.25 var(--font-mono);
   color: var(--muted-foreground);
+  contain: style;
 }
 
 .tmux-bar__left,
@@ -69,17 +72,17 @@
   align-items: center;
   gap: 0.4rem;
   min-height: 1.9rem;
-  padding: 0.125rem 0.5rem;
-  border: 1px solid var(--border);
+  padding: 0.125rem 0.45rem;
   border-radius: 2px;
-  background: var(--surface);
+  background: transparent;
   color: var(--foreground);
   cursor: pointer;
-  transition: border-color 120ms ease, color 120ms ease;
+  transition: background-color 120ms ease, color 120ms ease;
 }
 
-.tmux-bar__control:hover {
-  border-color: var(--primary);
+.tmux-bar__control:hover,
+.tmux-bar__control[aria-expanded="true"] {
+  background: var(--surface);
   color: var(--primary);
 }
 
@@ -107,12 +110,20 @@
 }
 
 .tmux-bar__settings:not([hidden]) {
-  flex-basis: 100%;
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 100%;
+  z-index: 20;
   display: flex;
   flex-direction: column;
   gap: 0.875rem;
-  padding-block: 0.75rem 0.5rem;
-  border-top: 1px solid var(--border-subtle);
+  max-height: min(65svh, 24rem);
+  overflow-y: auto;
+  padding: 0.85rem 1.25rem;
+  border-top: 1px solid var(--border);
+  background: var(--mantle);
+  box-shadow: 0 -14px 36px -12px rgba(0, 0, 0, 0.55);
 }
 
 .tmux-bar__theme-strip {
