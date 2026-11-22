@@ -1,4 +1,4 @@
-import { useContext, useId, useLayoutEffect, useRef, useState } from "react"
+import { memo, useContext, useId, useLayoutEffect, useRef, useState } from "react"
 import { Link } from "react-router"
 import { profile } from "../content/site.js"
 import { SURFACES, THEMES, getSessionTask } from "../lib/terminalTheme.js"
@@ -14,7 +14,7 @@ const tmuxWindows = [
   { index: 4, label: "contact", name: "Contact", to: "/#contact" },
 ]
 
-export default function TerminalStatusBar({ location, prefixArmed = false }) {
+function TerminalStatusBar({ location, prefixArmed = false }) {
   const appearance = useContext(TerminalTheme)
   const [open, setOpen] = useState(false)
   const footer = useRef(null)
@@ -157,3 +157,5 @@ export default function TerminalStatusBar({ location, prefixArmed = false }) {
     </footer>
   )
 }
+
+export default memo(TerminalStatusBar)

@@ -1,22 +1,33 @@
-import { useState } from "react"
+import { useMemo, useState } from "react"
 
-const dateLabel = (date) => new Date(date).toLocaleDateString("en", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" })
-const monthShort = (date) => new Date(date).toLocaleDateString("en", { month: "short", timeZone: "UTC" })
+const dateFormatter = new Intl.DateTimeFormat("en", { month: "short", day: "numeric", year: "numeric", timeZone: "UTC" })
+const monthFormatter = new Intl.DateTimeFormat("en", { month: "short", timeZone: "UTC" })
+const dateLabel = (date) => dateFormatter.format(new Date(date))
+const monthShort = (date) => monthFormatter.format(new Date(date))
 const daysByKey = { ArrowLeft: -7, ArrowRight: 7, ArrowUp: -1, ArrowDown: 1 }
 
 export default function GitHubHeatmap({ weeks }) {
   const [selectedDate, setSelectedDate] = useState(null)
-  const days = weeks.flat().filter(Boolean)
-  const selected = days.find((day) => day.date === selectedDate) || days.at(-1)
 
-  const monthLabels = weeks.map((week, idx) => {
-    const first = week.find(Boolean)
-    if (!first) return ""
-    const label = monthShort(first.date)
-    const prevFirst = idx > 0 ? weeks[idx - 1].find(Boolean) : null
-    if (!prevFirst || monthShort(prevFirst.date) !== label) return label
-    return ""
-  })
+  const { days, monthLabels, formattedLabels } = useMemo(() => {
+    const flatDays = weeks.flat().filter(Boolean)
+    const labelsByDate = Object.create(null)
+    for (let i = 0; i < flatDays.length; i++) {
+      const date = flatDays[i].date
+      labelsByDate[date] = dateLabel(date)
+    }
+    const months = weeks.map((week, idx) => {
+      const first = week.find(Boolean)
+      if (!first) return ""
+      const label = monthShort(first.date)
+      const prevFirst = idx > 0 ? weeks[idx - 1].find(Boolean) : null
+      if (!prevFirst || monthShort(prevFirst.date) !== label) return label
+      return ""
+    })
+    return { days: flatDays, monthLabels: months, formattedLabels: labelsByDate }
+  }, [weeks])
+
+  const selected = days.find((day) => day.date === selectedDate) || days.at(-1)
 
   function onCalendarKey(event) {
     if (event.altKey || event.ctrlKey || event.metaKey || event.shiftKey) return
@@ -74,7 +85,7 @@ export default function GitHubHeatmap({ weeks }) {
                     className="htop__cell"
                     data-level={day.level}
                     data-selected={selected.date === day.date || undefined}
-                    title={`${dateLabel(day.date)}: ${day.count}`}
+                    title={`${formattedLabels[day.date]}: ${day.count}`}
                     onPointerEnter={() => setSelectedDate(day.date)}
                     onPointerDown={() => setSelectedDate(day.date)}
                   />
@@ -86,7 +97,7 @@ export default function GitHubHeatmap({ weeks }) {
       </div>
       <div className="htop__heat-details">
         <p id="htop-calendar-day" aria-live="polite">
-          {dateLabel(selected.date)} · {selected.count} {selected.count === 1 ? "contribution" : "contributions"}
+          {formattedLabels[selected.date]} · {selected.count} {selected.count === 1 ? "contribution" : "contributions"}
         </p>
         <div className="htop__legend" aria-hidden="true">
           <span>Less</span>

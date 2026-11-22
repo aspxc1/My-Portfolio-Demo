@@ -1,4 +1,4 @@
-import { createContext, useCallback, useLayoutEffect, useMemo, useRef, useState } from "react"
+import { createContext, useCallback, useEffect, useLayoutEffect, useMemo, useRef, useState } from "react"
 import { APPEARANCE_KEY, getTheme, normalizeAppearance, readAppearance } from "../lib/terminalTheme.js"
 
 export const PlaybackHistory = createContext(null)
@@ -32,25 +32,32 @@ export default function PortfolioSession({ children }) {
     const root = document.documentElement
     root.dataset.theme = appearance.theme
     root.dataset.accent = appearance.accent
-    const styles = getComputedStyle(root)
-    const bg = styles.getPropertyValue("--background").trim()
-    const border = styles.getPropertyValue("--border").trim()
-    const fg = styles.getPropertyValue("--foreground").trim()
-    const primary = styles.getPropertyValue("--primary").trim()
-    if (bg) document.querySelector('meta[name="theme-color"]')?.setAttribute("content", bg)
-    if (bg && border && fg && primary) {
-      const iconLink = document.querySelector('link[rel="icon"][type="image/svg+xml"]')
-      if (iconLink) {
-        const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect x="1" y="1" width="30" height="30" rx="5" fill="${bg}" stroke="${border}" stroke-width="1.5"/><rect x="6.5" y="19.5" width="4.5" height="4.5" rx="0.8" fill="${primary}"/><path d="M22.5 7.5 14 24.5" fill="none" stroke="${fg}" stroke-width="3.2" stroke-linecap="round"/></svg>`
-        iconLink.setAttribute("href", `data:image/svg+xml,${encodeURIComponent(svg)}`)
-      }
-    }
     try {
       window.localStorage.setItem(APPEARANCE_KEY, JSON.stringify(appearance))
     } catch {
       // Appearance still works for this visit if storage is unavailable.
     }
   }, [appearance])
+
+  useEffect(() => {
+    const rafId = window.requestAnimationFrame(() => {
+      const root = document.documentElement
+      const styles = getComputedStyle(root)
+      const bg = styles.getPropertyValue("--background").trim()
+      const border = styles.getPropertyValue("--border").trim()
+      const fg = styles.getPropertyValue("--foreground").trim()
+      const primary = styles.getPropertyValue("--primary").trim()
+      if (bg) document.querySelector('meta[name="theme-color"]')?.setAttribute("content", bg)
+      if (bg && border && fg && primary) {
+        const iconLink = document.querySelector('link[rel="icon"][type="image/svg+xml"]')
+        if (iconLink) {
+          const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32"><rect x="1" y="1" width="30" height="30" rx="5" fill="${bg}" stroke="${border}" stroke-width="1.5"/><rect x="6.5" y="19.5" width="4.5" height="4.5" rx="0.8" fill="${primary}"/><path d="M22.5 7.5 14 24.5" fill="none" stroke="${fg}" stroke-width="3.2" stroke-linecap="round"/></svg>`
+          iconLink.setAttribute("href", `data:image/svg+xml,${encodeURIComponent(svg)}`)
+        }
+      }
+    })
+    return () => window.cancelAnimationFrame(rafId)
+  }, [appearance.theme, appearance.accent])
 
   const appearanceContext = useMemo(() => ({
     ...appearance,

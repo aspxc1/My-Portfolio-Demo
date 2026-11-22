@@ -221,23 +221,42 @@ export default function SessionTransition({ children }) {
   }, [displayed])
 
   function onDividerPointerDown(event) {
-    if (!workspaceRef.current || !workspace?.setSplitRatio) return
+    const workspaceEl = workspaceRef.current
+    if (!workspaceEl || !workspace?.setSplitRatio) return
     event.preventDefault()
-    const rect = workspaceRef.current.getBoundingClientRect()
+    const rect = workspaceEl.getBoundingClientRect()
     const isVertical = splitMode === "vertical"
+    let latestRatio = splitRatio
+    let rafId = 0
+
+    function applyRatio() {
+      rafId = 0
+      workspaceEl.style.setProperty("--split-primary", `${(latestRatio * 100).toFixed(2)}%`)
+    }
 
     function onMove(moveEvent) {
       const next = isVertical
         ? (moveEvent.clientX - rect.left) / rect.width
         : (moveEvent.clientY - rect.top) / rect.height
-      workspace.setSplitRatio(Math.max(0.28, Math.min(0.76, next)))
+      latestRatio = Math.max(0.28, Math.min(0.76, next))
+      if (!rafId) rafId = window.requestAnimationFrame(applyRatio)
     }
+
     function onUp() {
+      if (rafId) {
+        window.cancelAnimationFrame(rafId)
+        rafId = 0
+      }
+      applyRatio()
+      workspace.setSplitRatio(latestRatio)
       window.removeEventListener("pointermove", onMove)
       window.removeEventListener("pointerup", onUp)
+      window.removeEventListener("pointercancel", onUp)
     }
+
     window.addEventListener("pointermove", onMove)
     window.addEventListener("pointerup", onUp)
+    window.addEventListener("pointercancel", onUp)
   }
 
   function onDividerKeyDown(event) {
@@ -375,7 +394,7 @@ export default function SessionTransition({ children }) {
         <TerminalStatusBar location={displayed} prefixArmed={prefixArmed} />
       </div>
 
-      {palette ? <CommandPalette open={palette.isOpen} onClose={palette.close} isMac={isMac} /> : null}
+      {palette?.isOpen ? <CommandPalette open onClose={palette.close} isMac={isMac} /> : null}
     </div>
   )
 }
