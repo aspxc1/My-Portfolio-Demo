@@ -69,6 +69,7 @@ const BASE_COMMANDS = [
   "theme",
   "accent",
   "surface",
+  "bg",
   "split",
   "zoom",
   "audio",
@@ -405,7 +406,7 @@ export function getShellSuggestion(input, context = {}) {
     return match ? match.slice(rest.length) : ""
   }
 
-  if (cmd === "surface") {
+  if (cmd === "surface" || cmd === "bg" || cmd === "background") {
     const match = SURFACES.map((s) => s.id).find((id) => id.startsWith(restLower) && id !== restLower)
     return match ? match.slice(rest.length) : ""
   }
@@ -485,7 +486,7 @@ function executeSingleStage(tokens, stdinLines, context, fs) {
         { text: "  git log | status  inspect experience history" },
         { text: "  theme [name]      switch theme (kanagawa, noir, gruvbox, mocha, amber, phosphor, dracula, paper)" },
         { text: "  accent [name]     switch active theme accent" },
-        { text: "  surface [mode]    set surface physics (auto | flat | crt)" },
+        { text: "  surface [mode]    set surface physics (auto | hybrid | flat | crt)" },
         { text: "  split [v|h|off]   toggle real tmux split pane (or Ctrl+B % / \")" },
         { text: "  zoom              toggle active pane zoom (or Ctrl+B z)" },
         { text: "  audio [on|off]    toggle subtle mechanical keyclick / BEL" },
@@ -910,7 +911,7 @@ function executeSingleStage(tokens, stdinLines, context, fs) {
         lines: [{ tone: "success", text: `✓ surface set to ${mapped}` }],
       }
     }
-    return { lines: [{ tone: "error", text: `Unknown surface "${argStr}". Try: auto, flat, crt` }] }
+    return { lines: [{ tone: "error", text: `Unknown surface "${argStr}". Try: auto, hybrid, flat, crt` }] }
   }
 
   if (cmd === "split") {

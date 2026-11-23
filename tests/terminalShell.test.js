@@ -40,6 +40,10 @@ test("shell navigation, tmux split, and theme commands return structured side-ef
   const byIndex = executeShellCommand("4")
   assert.equal(byIndex.navigate, "/#contact")
   assert.equal(byIndex.setCwd, "~/contact")
+
+  assert.equal(executeShellCommand("surface hybrid").setSurface, "hybrid")
+  assert.equal(executeShellCommand("bg hybrid").setSurface, "hybrid")
+  assert.equal(executeShellCommand("bg flat").setSurface, "flat")
 })
 
 test("virtual filesystem resolves relative paths, reads files, renders man page, and refuses sudo", () => {
@@ -72,4 +76,6 @@ test("zsh-style autosuggestion completes commands, themes, accents, and VFS path
   assert.equal(getShellSuggestion("accent cr", { accents: [{ id: "carp" }, { id: "crystal" }] }), "ystal")
   assert.equal(getShellSuggestion("cat READ"), "ME.md")
   assert.equal(getShellSuggestion("split v"), "ertical")
+  assert.equal(getShellSuggestion("bg h"), "ybrid")
+  assert.equal(getShellSuggestion("surface f"), "lat")
 })

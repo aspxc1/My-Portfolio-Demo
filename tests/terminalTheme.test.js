@@ -21,6 +21,7 @@ test("unknown or inherited object keys fall back to the home session task", () =
 })
 
 test("themes, their accents, and surface modes expose unique valid identifiers", () => {
+  assert.equal(THEMES[0].surface, "hybrid")
   assert.equal(new Set(THEMES.map((item) => item.id)).size, THEMES.length)
   assert.equal(new Set(SURFACES.map((item) => item.id)).size, SURFACES.length)
   const css = readFileSync(new URL("../src/styles/terminalThemes.css", import.meta.url), "utf8")
@@ -38,6 +39,9 @@ test("appearance validates stored choices, defaults to Kanagawa Wave, and migrat
   assert.deepEqual(normalizeAppearance({ theme: "unknown", accent: "unknown", surface: "unknown" }), defaults)
   assert.deepEqual(normalizeAppearance({ theme: "dracula", accent: "carp", background: "crt", audio: true }), {
     theme: "dracula", accent: "cyan", surface: "crt", audio: true,
+  })
+  assert.deepEqual(normalizeAppearance({ theme: "paper", accent: "rust", surface: "hybrid" }), {
+    theme: "paper", accent: "rust", surface: "hybrid", audio: false,
   })
   assert.deepEqual(normalizeAppearance({ theme: "paper", accent: "rust", surface: "flat" }), {
     theme: "paper", accent: "rust", surface: "flat", audio: false,

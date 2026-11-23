@@ -4,28 +4,28 @@ export const THEMES = [
   {
     id: "kanagawa",
     label: "Kanagawa Wave",
-    surface: "flat",
+    surface: "hybrid",
     preview: ["#1f1f28", "#e6c384", "#7aa89f", "#7e9cd8"],
     accents: accents({ carp: "carp", wave: "wave", crystal: "crystal", autumn: "autumn", spring: "spring" }),
   },
   {
     id: "noir",
     label: "Ghostty Noir",
-    surface: "flat",
+    surface: "hybrid",
     preview: ["#111215", "#79c7b6", "#e6e4de", "#e2c078"],
     accents: accents({ jade: "jade", bone: "bone", "ochre-noir": "ochre", ice: "ice" }),
   },
   {
     id: "gruvbox",
     label: "Gruvbox Dark",
-    surface: "flat",
+    surface: "hybrid",
     preview: ["#282828", "#fabd2f", "#8ec07c", "#fe8019"],
     accents: accents({ gold: "gold", olive: "olive", aqua: "aqua", coral: "coral", lilac: "lilac" }),
   },
   {
     id: "mocha",
     label: "Catppuccin Mocha",
-    surface: "flat",
+    surface: "hybrid",
     preview: ["#1e1e2e", "#cba6f7", "#94e2d5", "#89b4fa"],
     accents: accents({ mauve: "mauve", green: "green", teal: "teal", blue: "sapphire", peach: "peach" }),
   },
@@ -46,7 +46,7 @@ export const THEMES = [
   {
     id: "dracula",
     label: "Dracula",
-    surface: "flat",
+    surface: "hybrid",
     preview: ["#282a36", "#8be9fd", "#50fa7b", "#bd93f9"],
     accents: accents({ cyan: "cyan", violet: "violet", pink: "pink", mint: "mint", apricot: "apricot" }),
   },
@@ -64,6 +64,7 @@ export const APPEARANCE_KEY = "portfolio-appearance"
 
 export const SURFACES = [
   { id: "auto", label: "auto" },
+  { id: "hybrid", label: "hybrid" },
   { id: "flat", label: "flat" },
   { id: "crt", label: "crt" },
 ]
