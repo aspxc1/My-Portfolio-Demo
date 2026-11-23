@@ -66,10 +66,11 @@ test("normal-motion browser arrival boots only Home, before mounting its command
   }
 })
 
-test("a fresh session starts with Kanagawa Wave on a flat surface; appearance drawer is collapsed", () => {
+test("a fresh session starts with Kanagawa Wave on a hybrid surface; appearance drawer is collapsed", () => {
   for (const path of ["/", "/#about", "/projects/with-images"]) {
     const html = render(path)
-    assert.match(html, /class="session"[^>]+data-theme="kanagawa"[^>]+data-surface="flat"/)
+    assert.match(html, /class="session"[^>]+data-theme="kanagawa"[^>]+data-surface="hybrid"/)
+    assert.match(html, /session__backdrop-canvas/)
     assert.doesNotMatch(html, /terminal-starfield/)
     assert.match(html, /class="tmux-bar__control" aria-expanded="false" aria-controls="[^"]+"/)
     assert.match(html, /class="tmux-bar__settings"[^>]+hidden=""/)

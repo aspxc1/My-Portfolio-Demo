@@ -226,6 +226,91 @@
   }
 }
 
+/* ---------- Hybrid Bayer-topographic backdrop + interior terminal micro-grid ---------- */
+
+.session__backdrop {
+  position: fixed;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+}
+
+.session__backdrop-canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.session__backdrop-datum {
+  display: none;
+}
+
+@media (min-width: 1040px) {
+  .session__backdrop-datum {
+    display: block;
+    position: absolute;
+    font: 0.6875rem/1 var(--font-mono);
+    letter-spacing: 0.06em;
+    color: var(--muted-foreground);
+    opacity: 0.55;
+    user-select: none;
+  }
+
+  .session__backdrop-datum--tl {
+    top: 0.6rem;
+    left: 0.85rem;
+  }
+
+  .session__backdrop-datum--br {
+    right: 0.85rem;
+    bottom: 0.6rem;
+  }
+}
+
+.session[data-surface="hybrid"] .session__window::before,
+.session[data-surface="hybrid"] .session__window::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
+}
+
+.session[data-surface="hybrid"] .session__window::before {
+  background-image: radial-gradient(
+    circle,
+    color-mix(in oklab, var(--muted-foreground) 9%, transparent) 0.9px,
+    transparent 0.9px
+  );
+  background-size: 9px 21px;
+  background-position: 4px 6px;
+}
+
+.session[data-theme="paper"][data-surface="hybrid"] .session__window::before {
+  background-image: radial-gradient(
+    circle,
+    color-mix(in oklab, var(--muted-foreground) 14%, transparent) 0.9px,
+    transparent 0.9px
+  );
+}
+
+.session[data-surface="hybrid"] .session__window::after {
+  background: radial-gradient(
+    115% 95% at 50% 18%,
+    transparent 52%,
+    color-mix(in oklab, var(--backdrop) 30%, transparent) 100%
+  );
+}
+
+.session[data-theme="paper"][data-surface="hybrid"] .session__window::after {
+  background: radial-gradient(
+    115% 95% at 50% 18%,
+    transparent 52%,
+    color-mix(in oklab, var(--backdrop) 16%, transparent) 100%
+  );
+}
+
 /* ---------- Authentic CRT surface physics (strictly for CRT mode/themes) ---------- */
 
 .session[data-surface="crt"] .terminal-command__prompt,
@@ -268,6 +353,10 @@
     padding: clamp(0.75rem, 1.5vw, 1.25rem);
   }
 
+  .session[data-surface="hybrid"] {
+    padding: clamp(0.875rem, 1.8vw, 2rem);
+  }
+
   .session__window {
     max-width: 78rem;
     margin-inline: auto;
@@ -276,8 +365,41 @@
     overflow: hidden;
   }
 
+  .session[data-surface="hybrid"] .session__window {
+    background: color-mix(in oklab, var(--background) 91%, transparent);
+    -webkit-backdrop-filter: blur(8px) saturate(108%);
+    backdrop-filter: blur(8px) saturate(108%);
+    box-shadow:
+      0 22px 48px -18px rgb(0 0 0 / 0.45),
+      inset 0 1px 0 rgb(255 255 255 / 0.06);
+  }
+
+  .session[data-theme="paper"][data-surface="hybrid"] .session__window {
+    box-shadow:
+      0 22px 48px -18px rgb(0 0 0 / 0.14),
+      inset 0 1px 0 rgb(255 255 255 / 0.45);
+  }
+
+  .session[data-surface="hybrid"] .session__topbar,
+  .session[data-surface="hybrid"] .tmux-bar {
+    background: color-mix(in oklab, var(--mantle) 94%, transparent);
+  }
+
   .session[data-surface="crt"] .session__window {
     border-radius: 10px / 8px;
+  }
+}
+
+@media (prefers-reduced-transparency: reduce) {
+  .session[data-surface="hybrid"] .session__window {
+    background: var(--background);
+    -webkit-backdrop-filter: none;
+    backdrop-filter: none;
+  }
+
+  .session[data-surface="hybrid"] .session__topbar,
+  .session[data-surface="hybrid"] .tmux-bar {
+    background: var(--mantle);
   }
 }
 

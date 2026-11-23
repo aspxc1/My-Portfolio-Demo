@@ -6,6 +6,7 @@ import { DEFAULT_THEME, getSessionTask } from "../lib/terminalTheme.js"
 import useReducedMotion from "../lib/useReducedMotion.js"
 import { PaletteControl, TerminalTheme, WorkspaceControl } from "./PortfolioSession.jsx"
 import CommandPalette from "./CommandPalette.jsx"
+import SessionBackdrop from "./SessionBackdrop.jsx"
 import TerminalShell from "./TerminalShell.jsx"
 import TerminalStartup from "./TerminalStartup.jsx"
 import TerminalStatusBar from "./TerminalStatusBar.jsx"
@@ -293,6 +294,12 @@ export default function SessionTransition({ children }) {
       data-theme={theme?.theme || DEFAULT_THEME.id}
       data-surface={surface}
     >
+      {surface === "hybrid" ? (
+        <SessionBackdrop
+          themeId={theme?.theme || DEFAULT_THEME.id}
+          accentId={theme?.accent || DEFAULT_THEME.accents[0].id}
+        />
+      ) : null}
       <div className="session__window">
         <header className="session__topbar" aria-label="Terminal session bar">
           <div className="session__topbar-left">
