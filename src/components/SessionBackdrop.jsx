@@ -1,11 +1,16 @@
-import { memo, useEffect, useRef } from "react"
+import { memo, useEffect, useLayoutEffect, useRef } from "react"
 
-const BAYER_4X4 = [
-  [0, 8, 2, 10],
-  [12, 4, 14, 6],
-  [3, 11, 1, 9],
-  [15, 7, 13, 5],
-]
+const useIsomorphicLayoutEffect = typeof window !== "undefined" ? useLayoutEffect : useEffect
+
+const BAYER_THRESHOLDS = Float32Array.from(
+  [
+    0, 8, 2, 10,
+    12, 4, 14, 6,
+    3, 11, 1, 9,
+    15, 7, 13, 5,
+  ],
+  (v) => (v + 0.5) / 16,
+)
 
 function parseCssColor(value, fallback) {
   if (!value) return fallback
@@ -35,26 +40,9 @@ function parseCssColor(value, fallback) {
   return fallback
 }
 
-function mixRgb(a, b, t) {
-  const k = Math.max(0, Math.min(1, t))
-  return [
-    Math.round(a[0] + (b[0] - a[0]) * k),
-    Math.round(a[1] + (b[1] - a[1]) * k),
-    Math.round(a[2] + (b[2] - a[2]) * k),
-  ]
-}
-
-function elevation(nx, ny) {
-  const d1 = Math.hypot((nx - 0.22) * 1.35, ny - 0.28)
-  const d2 = Math.hypot((nx - 0.82) * 1.25, ny - 0.74)
-  const d3 = Math.hypot((nx - 0.58) * 1.1, ny - 0.16)
-  return (
-    Math.exp(-d1 * d1 * 4.5) * 1.05 +
-    Math.exp(-d2 * d2 * 3.6) * 0.95 +
-    Math.exp(-d3 * d3 * 6.0) * 0.55 +
-    0.2 * Math.sin(nx * 5.2 + ny * 2.4) +
-    0.12 * Math.cos(nx * 2.7 - ny * 4.8)
-  )
+function mixChannel(a, b, t) {
+  const k = t < 0 ? 0 : t > 1 ? 1 : t
+  return Math.round(a + (b - a) * k)
 }
 
 function drawHybridBackdrop(canvas) {
@@ -82,57 +70,161 @@ function drawHybridBackdrop(canvas) {
   const luma = 0.299 * cBack[0] + 0.587 * cBack[1] + 0.114 * cBack[2]
   const isLight = styles.colorScheme === "light" || luma > 145
 
+  const minorT = isLight ? 0.55 : 0.48
+  const minorR = mixChannel(cBack[0], cBorder[0], minorT)
+  const minorG = mixChannel(cBack[1], cBorder[1], minorT)
+  const minorB = mixChannel(cBack[2], cBorder[2], minorT)
+
+  const majorR = mixChannel(cBorder[0], cPrimary[0], 0.28)
+  const majorG = mixChannel(cBorder[1], cPrimary[1], 0.28)
+  const majorB = mixChannel(cBorder[2], cPrimary[2], 0.28)
+
+  const pal = new Uint8Array([
+    cBack[0], cBack[1], cBack[2],
+    mixChannel(cBack[0], cMantle[0], 0.85), mixChannel(cBack[1], cMantle[1], 0.85), mixChannel(cBack[2], cMantle[2], 0.85),
+    mixChannel(cBack[0], cBg[0], 0.72), mixChannel(cBack[1], cBg[1], 0.72), mixChannel(cBack[2], cBg[2], 0.72),
+    mixChannel(cMantle[0], cSurface[0], 0.55), mixChannel(cMantle[1], cSurface[1], 0.55), mixChannel(cMantle[2], cSurface[2], 0.55),
+  ])
+
+  // Precompute separable 1D factors along X so the inner loop uses pure arithmetic.
+  const ex1 = new Float32Array(w)
+  const dex1 = new Float32Array(w)
+  const ex2 = new Float32Array(w)
+  const dex2 = new Float32Array(w)
+  const ex3 = new Float32Array(w)
+  const dex3 = new Float32Array(w)
+  const s1x = new Float32Array(w)
+  const c1x = new Float32Array(w)
+  const s2x = new Float32Array(w)
+  const c2x = new Float32Array(w)
+
+  const invW = 1 / w
+  const invH = 1 / h
+  for (let x = 0; x < w; x++) {
+    const nx = x * invW
+    const u1 = nx - 0.22
+    const u2 = nx - 0.82
+    const u3 = nx - 0.58
+
+    const g1x = 1.05 * Math.exp(-8.20125 * u1 * u1)
+    ex1[x] = g1x
+    dex1[x] = g1x * (-16.4025 * u1)
+
+    const g2x = 0.95 * Math.exp(-5.625 * u2 * u2)
+    ex2[x] = g2x
+    dex2[x] = g2x * (-11.25 * u2)
+
+    const g3x = 0.55 * Math.exp(-7.26 * u3 * u3)
+    ex3[x] = g3x
+    dex3[x] = g3x * (-14.52 * u3)
+
+    const a1 = 5.2 * nx
+    s1x[x] = Math.sin(a1)
+    c1x[x] = Math.cos(a1)
+
+    const a2 = 2.7 * nx
+    s2x[x] = Math.sin(a2)
+    c2x[x] = Math.cos(a2)
+  }
+
   const img = ctx.createImageData(w, h)
   const data = img.data
   const bands = 11
   const maxDim = Math.max(w, h)
-  const eps = 1 / maxDim
-  const minorLine = mixRgb(cBack, cBorder, isLight ? 0.55 : 0.48)
-  const majorLine = mixRgb(cBorder, cPrimary, 0.28)
-  const ditherPal = [
-    cBack,
-    mixRgb(cBack, cMantle, 0.85),
-    mixRgb(cBack, cBg, 0.72),
-    mixRgb(cMantle, cSurface, 0.55),
-  ]
+  const scaleNorm = maxDim / bands
+  const invRange = 3 / 1.75
 
   for (let y = 0; y < h; y++) {
-    const ny = y / h
-    const by = ((y / 2) | 0) & 3
-    for (let x = 0; x < w; x++) {
-      const nx = x / w
-      const bx = ((x / 2) | 0) & 3
+    const ny = y * invH
+    const byOffset = (((y >> 1) & 3) << 2)
+    const v1 = ny - 0.28
+    const v2 = ny - 0.74
+    const v3 = ny - 0.16
 
-      const h0 = elevation(nx, ny)
-      const hx = elevation(nx + eps, ny)
-      const hy = elevation(nx, ny + eps)
-      const grad = Math.hypot(hx - h0, hy - h0) / eps
+    const ey1 = Math.exp(-4.5 * v1 * v1)
+    const dey1 = ey1 * (-9.0 * v1)
+    const ey2 = Math.exp(-3.6 * v2 * v2)
+    const dey2 = ey2 * (-7.2 * v2)
+    const ey3 = Math.exp(-6.0 * v3 * v3)
+    const dey3 = ey3 * (-12.0 * v3)
+
+    const s1y = Math.sin(2.4 * ny)
+    const c1y = Math.cos(2.4 * ny)
+    const s2y = Math.sin(4.8 * ny)
+    const c2y = Math.cos(4.8 * ny)
+
+    let idx = y * w * 4
+    for (let x = 0; x < w; x++) {
+      const gx1 = ex1[x]
+      const gx2 = ex2[x]
+      const gx3 = ex3[x]
+      const sx1 = s1x[x]
+      const cx1 = c1x[x]
+      const sx2 = s2x[x]
+      const cx2 = c2x[x]
+
+      const sin1 = sx1 * c1y + cx1 * s1y
+      const cos1 = cx1 * c1y - sx1 * s1y
+      const cos2 = cx2 * c2y + sx2 * s2y
+      const sin2 = sx2 * c2y - cx2 * s2y
+
+      const h0 =
+        gx1 * ey1 +
+        gx2 * ey2 +
+        gx3 * ey3 +
+        0.2 * sin1 +
+        0.12 * cos2
+
+      const dhdx =
+        dex1[x] * ey1 +
+        dex2[x] * ey2 +
+        dex3[x] * ey3 +
+        1.04 * cos1 -
+        0.324 * sin2
+
+      const dhdy =
+        gx1 * dey1 +
+        gx2 * dey2 +
+        gx3 * dey3 +
+        0.48 * cos1 +
+        0.576 * sin2
+
+      const grad = Math.sqrt(dhdx * dhdx + dhdy * dhdy)
 
       const scaled = (h0 + 0.5) * bands
       const bandIdx = Math.floor(scaled)
       const frac = scaled - bandIdx
-      const distToEdge = Math.min(frac, 1 - frac)
-      const screenDist = (distToEdge / Math.max(0.05, grad * bands)) * maxDim
+      const distToEdge = frac < 0.5 ? frac : 1 - frac
+      const denom = grad > 0.05 / bands ? grad : 0.05 / bands
+      const screenDist = (distToEdge / denom) * scaleNorm
       const isMajor = ((bandIdx % 3) + 3) % 3 === 0
       const lineWidth = isMajor ? 1.15 : 0.75
 
-      const normH = Math.max(0, Math.min(0.999, (h0 + 0.3) / 1.75)) * (ditherPal.length - 1)
-      const lo = Math.floor(normH)
-      const hi = Math.min(ditherPal.length - 1, lo + 1)
-      const thresh = (BAYER_4X4[by][bx] + 0.5) / 16
-      const baseCol = normH - lo > thresh ? ditherPal[hi] : ditherPal[lo]
+      const normH = Math.max(0, Math.min(2.999, (h0 + 0.3) * invRange))
+      const lo = normH | 0
+      const hi = lo < 3 ? lo + 1 : 3
+      const thresh = BAYER_THRESHOLDS[byOffset | ((x >> 1) & 3)]
+      const pOff = (normH - lo > thresh ? hi : lo) * 3
 
-      let finalCol = baseCol
+      let r = pal[pOff]
+      let g = pal[pOff + 1]
+      let b = pal[pOff + 2]
+
       if (screenDist < lineWidth) {
         const lineAlpha = (1 - screenDist / lineWidth) * (isMajor ? 0.62 : 0.28)
-        finalCol = mixRgb(baseCol, isMajor ? majorLine : minorLine, lineAlpha)
+        const tr = isMajor ? majorR : minorR
+        const tg = isMajor ? majorG : minorG
+        const tb = isMajor ? majorB : minorB
+        r = Math.round(r + (tr - r) * lineAlpha)
+        g = Math.round(g + (tg - g) * lineAlpha)
+        b = Math.round(b + (tb - b) * lineAlpha)
       }
 
-      const idx = (y * w + x) * 4
-      data[idx] = finalCol[0]
-      data[idx + 1] = finalCol[1]
-      data[idx + 2] = finalCol[2]
+      data[idx] = r
+      data[idx + 1] = g
+      data[idx + 2] = b
       data[idx + 3] = 255
+      idx += 4
     }
   }
   ctx.putImageData(img, 0, 0)
@@ -155,25 +247,21 @@ function drawHybridBackdrop(canvas) {
   }
 }
 
-/** Static one-shot Bayer-dithered topographic contour desktop wallpaper for the hybrid surface. */
+/** Static one-shot Bayer-dithered topographic contour desktop wallpaper rendered before first paint. */
 function SessionBackdrop({ themeId, accentId }) {
   const canvasRef = useRef(null)
   const sizeRef = useRef({ w: 0, h: 0 })
 
-  useEffect(() => {
+  useIsomorphicLayoutEffect(() => {
+    const root = document.documentElement
+    if (themeId && root.dataset.theme !== themeId) root.dataset.theme = themeId
+    if (accentId && root.dataset.accent !== accentId) root.dataset.accent = accentId
+
+    sizeRef.current = { w: window.innerWidth, h: window.innerHeight }
+    drawHybridBackdrop(canvasRef.current)
+
     let rafId = 0
     let resizeTimer = 0
-
-    const scheduleRender = () => {
-      if (rafId) window.cancelAnimationFrame(rafId)
-      rafId = window.requestAnimationFrame(() => {
-        rafId = 0
-        sizeRef.current = { w: window.innerWidth, h: window.innerHeight }
-        drawHybridBackdrop(canvasRef.current)
-      })
-    }
-
-    scheduleRender()
 
     const onResize = () => {
       window.clearTimeout(resizeTimer)
@@ -181,7 +269,12 @@ function SessionBackdrop({ themeId, accentId }) {
         const dw = Math.abs(window.innerWidth - sizeRef.current.w)
         const dh = Math.abs(window.innerHeight - sizeRef.current.h)
         if (dw > 48 || dh > 48) {
-          scheduleRender()
+          if (rafId) window.cancelAnimationFrame(rafId)
+          rafId = window.requestAnimationFrame(() => {
+            rafId = 0
+            sizeRef.current = { w: window.innerWidth, h: window.innerHeight }
+            drawHybridBackdrop(canvasRef.current)
+          })
         }
       }, 180)
     }
